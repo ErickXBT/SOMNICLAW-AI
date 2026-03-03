@@ -1,6 +1,6 @@
 # SOMNICLAW Website
 
-A React-based landing page for the SOMNICLAW AI crypto project with a cyberpunk neon theme, featuring a Generative AI interface powered by OpenAI's gpt-image-1 model.
+A React-based landing page for the SOMNICLAW AI crypto project with a cyberpunk neon theme, featuring a Generative AI interface powered by OpenAI's gpt-image-1 model and a Solana Launchpad with Phantom wallet integration.
 
 ## Tech Stack
 
@@ -8,10 +8,14 @@ A React-based landing page for the SOMNICLAW AI crypto project with a cyberpunk 
 - **Build Tool**: Vite 6
 - **Backend**: Express v5 (TypeScript, run with tsx)
 - **AI**: OpenAI gpt-image-1 via Replit AI Integrations
+- **Blockchain**: Solana Web3.js, SPL Token (mainnet-beta)
+- **Wallet**: Phantom wallet integration via window.solana
 - **Styling**: Tailwind CSS 4 (via `@tailwindcss/vite`), Radix UI primitives
 - **Animations**: Motion (Framer Motion), Three.js particle background
 - **Charts**: Recharts (token distribution)
 - **Icons**: Lucide React, MUI Icons
+- **Font**: Poppins Bold (Google Fonts) for headlines
+- **Polyfills**: vite-plugin-node-polyfills (Buffer, crypto for Solana libs)
 
 ## Project Structure
 
@@ -26,7 +30,7 @@ src/
       Hero.tsx, Roadmap.tsx, TokenDistribution.tsx, etc.
     pages/               # Route pages
       AssistantPage.tsx   # /assistant
-      LaunchpadPage.tsx   # /launchpad
+      LaunchpadPage.tsx   # /launchpad (Solana token launchpad with Phantom wallet)
       GenerativeAiPage.tsx # /generative-ai (full AI image generation UI)
   styles/               # CSS files (Tailwind, theme, fonts, custom)
   main.tsx              # Entry point with React Router setup
@@ -48,13 +52,23 @@ vite.config.ts
 - Vite dev server on port 5000 with proxy forwarding `/api/*` to backend on port 3001
 - React Router v7 (`react-router` package, NOT `react-router-dom`)
 
+### Launchpad (/launchpad)
+- Phantom wallet connect/disconnect with auto-reconnect
+- SOL balance display
+- Token creation form (name, ticker, description, logo, socials)
+- SPL Token mint on Solana mainnet-beta (1B supply, 9 decimals)
+- Success modal with Solscan/Dexscreener links
+- Send SOL modal
+- Recent launches sidebar
+- Toast notification system
+
 ## Routing
 
 - Uses `react-router` (v7) with `BrowserRouter`
 - Routes configured in `src/main.tsx`
 - `/` — Homepage (App component)
 - `/assistant` — Somniclaw Assistant page
-- `/launchpad` — Somniclaw Launchpad page
+- `/launchpad` — Somniclaw Launchpad page (Solana token deployment)
 - `/generative-ai` — Somniclaw Generative AI page
 
 ## Development
@@ -74,9 +88,11 @@ vite.config.ts
 - Workflow: "Start application" → `npm run dev`
 - Vite: `allowedHosts: true`, `host: '0.0.0.0'` for Replit proxy compatibility
 - AI Integration: `AI_INTEGRATIONS_OPENAI_API_KEY` and `AI_INTEGRATIONS_OPENAI_BASE_URL` env vars auto-configured
+- Node polyfills: `vite-plugin-node-polyfills` provides Buffer/crypto for Solana browser libs
 
 ## Notes
 
 - Three.js `ParticleBackground` component gracefully handles environments without WebGL support
 - Express v5 uses `/{*path}` syntax for catch-all routes (not `*`)
 - gpt-image-1 always returns b64_json format (no response_format parameter needed)
+- Phantom wallet detection uses `window.solana?.isPhantom`; redirects to phantom.app if not installed

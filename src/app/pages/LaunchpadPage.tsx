@@ -1,7 +1,216 @@
 import { Link } from 'react-router';
-import { motion } from 'motion/react';
-import { ArrowLeft, Rocket, BarChart3, Zap, TrendingUp, ExternalLink, ChevronRight } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import {
+  ArrowLeft, Rocket, BarChart3, Zap, TrendingUp, ExternalLink,
+  ChevronRight, Wallet, Copy, Check, X, Upload, Send, Loader2, Globe, LogOut
+} from 'lucide-react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import {
+  Connection, PublicKey, clusterApiUrl, LAMPORTS_PER_SOL,
+  Transaction, SystemProgram
+} from '@solana/web3.js';
+import {
+  createInitializeMintInstruction, createAssociatedTokenAccountInstruction,
+  createMintToInstruction, getAssociatedTokenAddress, getMinimumBalanceForRentExemptMint,
+  MINT_SIZE, TOKEN_PROGRAM_ID
+} from '@solana/spl-token';
+
+type ToastType = 'success' | 'error' | 'loading' | 'info';
+interface Toast { id: string; type: ToastType; message: string; }
+
+interface LaunchedToken {
+  name: string;
+  ticker: string;
+  mintAddress: string;
+  logoPreview: string | null;
+  timestamp: number;
+}
+
+interface SuccessData {
+  mintAddress: string;
+  name: string;
+  ticker: string;
+  logoPreview: string | null;
+}
+
+const connection = new Connection(clusterApiUrl('mainnet-beta'), 'confirmed');
+
+function ToastContainer({ toasts, onRemove }: { toasts: Toast[]; onRemove: (id: string) => void }) {
+  const colors: Record<ToastType, string> = {
+    success: 'border-green-500/40 bg-green-950/80 text-green-300',
+    error: 'border-red-500/40 bg-red-950/80 text-red-300',
+    loading: 'border-purple-500/40 bg-purple-950/80 text-purple-300',
+    info: 'border-blue-500/40 bg-blue-950/80 text-blue-300',
+  };
+  return (
+    <div className="fixed top-4 right-4 z-[100] flex flex-col gap-2 max-w-sm">
+      <AnimatePresence>
+        {toasts.map((t) => (
+          <motion.div
+            key={t.id}
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 100 }}
+            className={`px-4 py-3 rounded-xl border backdrop-blur-sm text-sm flex items-center gap-3 ${colors[t.type]}`}
+          >
+            {t.type === 'loading' && <Loader2 className="w-4 h-4 animate-spin shrink-0" />}
+            <span className="flex-1">{t.message}</span>
+            <button onClick={() => onRemove(t.id)} className="shrink-0 cursor-pointer opacity-60 hover:opacity-100"><X className="w-3 h-3" /></button>
+          </motion.div>
+        ))}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function SuccessModal({ data, onClose }: { data: SuccessData; onClose: () => void }) {
+  const [copied, setCopied] = useState(false);
+  const copyAddress = () => {
+    navigator.clipboard.writeText(data.mintAddress);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-lg rounded-2xl border border-purple-500/30 bg-gradient-to-b from-purple-950/90 to-[#0b0000] backdrop-blur-xl p-8"
+      >
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-poppins font-bold text-green-400">Token Deployed</h3>
+          <button onClick={onClose} className="text-gray-500 hover:text-white cursor-pointer"><X className="w-5 h-5" /></button>
+        </div>
+
+        {data.logoPreview && (
+          <div className="flex justify-center mb-6">
+            <img src={data.logoPreview} alt="Token Logo" className="w-20 h-20 rounded-2xl border border-purple-500/30 object-cover" />
+          </div>
+        )}
+
+        <div className="text-center mb-6">
+          <p className="text-2xl font-poppins font-bold text-white">{data.name}</p>
+          <p className="text-pink-400 font-mono text-sm">${data.ticker}</p>
+        </div>
+
+        <div className="space-y-3 mb-6">
+          <div className="flex items-center gap-2 p-3 rounded-xl bg-purple-950/40 border border-purple-500/20">
+            <span className="text-xs text-gray-500 shrink-0">Mint:</span>
+            <span className="text-xs text-purple-300 font-mono truncate flex-1">{data.mintAddress}</span>
+            <button onClick={copyAddress} className="shrink-0 cursor-pointer text-purple-400 hover:text-white">
+              {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="p-3 rounded-xl bg-purple-950/40 border border-purple-500/20">
+              <p className="text-xs text-gray-500 mb-1">Market Cap</p>
+              <p className="text-sm font-bold text-white">$0.00</p>
+            </div>
+            <div className="p-3 rounded-xl bg-purple-950/40 border border-purple-500/20">
+              <p className="text-xs text-gray-500 mb-1">Liquidity</p>
+              <p className="text-sm font-bold text-yellow-400">Pending</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <a
+            href={`https://solscan.io/token/${data.mintAddress}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full py-2.5 rounded-xl border border-purple-500/30 bg-purple-600/10 text-purple-300 text-sm font-medium hover:bg-purple-600/20 transition-all duration-300 flex items-center justify-center gap-2"
+          >
+            View on Solscan <ExternalLink className="w-3 h-3" />
+          </a>
+          <a
+            href={`https://dexscreener.com/solana/${data.mintAddress}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full py-2.5 rounded-xl border border-pink-500/30 bg-pink-600/10 text-pink-300 text-sm font-medium hover:bg-pink-600/20 transition-all duration-300 flex items-center justify-center gap-2"
+          >
+            View on Dexscreener <ExternalLink className="w-3 h-3" />
+          </a>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+function SendSolModal({
+  onClose,
+  onSend,
+  sending,
+}: {
+  onClose: () => void;
+  onSend: (recipient: string, amount: number) => Promise<void>;
+  sending: boolean;
+}) {
+  const [recipient, setRecipient] = useState('');
+  const [amount, setAmount] = useState('0.001');
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-md rounded-2xl border border-purple-500/30 bg-gradient-to-b from-purple-950/90 to-[#0b0000] backdrop-blur-xl p-8"
+      >
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-poppins font-bold text-white">Send SOL</h3>
+          <button onClick={onClose} className="text-gray-500 hover:text-white cursor-pointer"><X className="w-5 h-5" /></button>
+        </div>
+        <div className="space-y-4">
+          <div>
+            <label className="text-xs text-gray-400 mb-1 block">Recipient Address</label>
+            <input
+              value={recipient}
+              onChange={(e) => setRecipient(e.target.value)}
+              placeholder="Enter Solana address"
+              className="w-full px-4 py-3 rounded-xl bg-purple-950/40 border border-purple-500/20 text-white text-sm placeholder-gray-600 focus:border-purple-500/50 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="text-xs text-gray-400 mb-1 block">Amount (SOL)</label>
+            <input
+              type="number"
+              step="0.001"
+              min="0"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl bg-purple-950/40 border border-purple-500/20 text-white text-sm focus:border-purple-500/50 focus:outline-none"
+            />
+          </div>
+          <button
+            onClick={() => onSend(recipient, parseFloat(amount))}
+            disabled={sending || !recipient || !amount}
+            className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium hover:from-purple-500 hover:to-pink-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+          >
+            {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+            {sending ? 'Sending...' : 'Send Transaction'}
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
 
 const mockStats = [
   { label: 'Total Projects', value: '24', icon: Rocket, color: 'from-purple-400 to-pink-400' },
@@ -10,245 +219,551 @@ const mockStats = [
   { label: 'AI Score Index', value: '92.4', icon: BarChart3, color: 'from-orange-400 to-yellow-400' },
 ];
 
-const mockProjects = [
-  {
-    name: 'NeuraSleep Protocol',
-    description: 'AI-driven sleep optimization engine with on-chain biometric analysis for traders.',
-    symbol: '$NSLP',
-    raised: 320000,
-    goal: 500000,
-    status: 'Live' as const,
-  },
-  {
-    name: 'DreamVault AI',
-    description: 'Decentralized dream journaling platform powered by generative AI and Solana.',
-    symbol: '$DVAI',
-    raised: 180000,
-    goal: 300000,
-    status: 'Live' as const,
-  },
-  {
-    name: 'CircadianDAO',
-    description: 'Community-governed circadian rhythm research fund with tokenized sleep data.',
-    symbol: '$CRDN',
-    raised: 750000,
-    goal: 750000,
-    status: 'Completed' as const,
-  },
-  {
-    name: 'MelatoninFi',
-    description: 'DeFi protocol that rewards healthy sleep habits with yield-bearing positions.',
-    symbol: '$MELA',
-    raised: 0,
-    goal: 400000,
-    status: 'Upcoming' as const,
-  },
-  {
-    name: 'NightOwl Analytics',
-    description: 'Real-time market sentiment analysis tool optimized for late-night trading sessions.',
-    symbol: '$NOWL',
-    raised: 95000,
-    goal: 250000,
-    status: 'Live' as const,
-  },
-  {
-    name: 'SleepStake',
-    description: 'Stake-to-earn protocol where sleep quality data determines validator rewards.',
-    symbol: '$SLPS',
-    raised: 0,
-    goal: 600000,
-    status: 'Upcoming' as const,
-  },
-];
-
-async function getLaunchpadData() {
-  return {
-    stats: mockStats,
-    projects: mockProjects,
-  };
-}
-
-function StatCard({ stat, index }: { stat: typeof mockStats[0]; index: number }) {
-  const Icon = stat.icon;
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
-      className="group relative rounded-2xl border border-purple-500/20 bg-purple-950/20 backdrop-blur-sm p-6 hover:border-purple-500/40 hover:shadow-[0_0_30px_rgba(168,85,247,0.15)] transition-all duration-500"
-    >
-      <div className="flex items-center gap-3 mb-3">
-        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity`}>
-          <Icon className="w-5 h-5 text-white" />
-        </div>
-        <span className="text-sm text-gray-400 tracking-wide">{stat.label}</span>
-      </div>
-      <p className={`text-3xl font-poppins font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}>
-        {stat.value}
-      </p>
-    </motion.div>
-  );
-}
-
-function ProjectCard({ project, index }: { project: typeof mockProjects[0]; index: number }) {
-  const progress = project.goal > 0 ? (project.raised / project.goal) * 100 : 0;
-  const statusColor =
-    project.status === 'Live'
-      ? 'bg-green-500/20 text-green-400 border-green-500/30'
-      : project.status === 'Completed'
-        ? 'bg-purple-500/20 text-purple-400 border-purple-500/30'
-        : 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.2 + index * 0.08 }}
-      className="group relative rounded-2xl border border-purple-500/15 bg-gradient-to-b from-purple-950/30 to-[#0b0000] backdrop-blur-sm p-6 hover:border-purple-500/40 hover:shadow-[0_0_40px_rgba(168,85,247,0.12)] transition-all duration-500"
-    >
-      <div className="flex items-start justify-between mb-4">
-        <div>
-          <h3 className="text-lg font-poppins font-bold text-white group-hover:text-purple-300 transition-colors">
-            {project.name}
-          </h3>
-          <span className="text-xs text-pink-400 font-mono tracking-wider">{project.symbol}</span>
-        </div>
-        <span className={`px-3 py-1 rounded-full text-xs font-medium border ${statusColor}`}>
-          {project.status}
-        </span>
-      </div>
-
-      <p className="text-sm text-gray-400 leading-relaxed mb-5 min-h-[3rem]">
-        {project.description}
-      </p>
-
-      <div className="mb-4">
-        <div className="flex justify-between text-xs text-gray-500 mb-2">
-          <span>Raised: ${(project.raised / 1000).toFixed(0)}K</span>
-          <span>Goal: ${(project.goal / 1000).toFixed(0)}K</span>
-        </div>
-        <div className="w-full h-2 rounded-full bg-purple-950/60 overflow-hidden">
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: `${progress}%` }}
-            transition={{ duration: 1, delay: 0.5 + index * 0.1, ease: 'easeOut' }}
-            className="h-full rounded-full bg-gradient-to-r from-purple-500 via-pink-500 to-red-500"
-          />
-        </div>
-        <p className="text-right text-xs text-gray-500 mt-1">{progress.toFixed(0)}%</p>
-      </div>
-
-      <button className="w-full py-2.5 rounded-xl border border-purple-500/30 bg-purple-600/10 text-purple-300 text-sm font-medium hover:bg-purple-600/25 hover:border-purple-500/50 hover:text-white hover:shadow-[0_0_20px_rgba(168,85,247,0.2)] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer">
-        View Project
-        <ChevronRight className="w-4 h-4" />
-      </button>
-    </motion.div>
-  );
-}
-
 export default function LaunchpadPage() {
-  const [stats, setStats] = useState(mockStats);
-  const [projects, setProjects] = useState(mockProjects);
+  const [walletKey, setWalletKey] = useState<string | null>(null);
+  const [balance, setBalance] = useState<number | null>(null);
+  const [connecting, setConnecting] = useState(false);
+
+  const [projectName, setProjectName] = useState('');
+  const [ticker, setTicker] = useState('');
+  const [description, setDescription] = useState('');
+  const [website, setWebsite] = useState('');
+  const [twitter, setTwitter] = useState('');
+  const [telegram, setTelegram] = useState('');
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const logoInputRef = useRef<HTMLInputElement>(null);
+
+  const [deploying, setDeploying] = useState(false);
+  const [successData, setSuccessData] = useState<SuccessData | null>(null);
+  const [recentLaunches, setRecentLaunches] = useState<LaunchedToken[]>([]);
+
+  const [showSendModal, setShowSendModal] = useState(false);
+  const [sending, setSending] = useState(false);
+
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const addToast = useCallback((type: ToastType, message: string, duration = 4000) => {
+    const id = crypto.randomUUID();
+    setToasts((prev) => [...prev, { id, type, message }]);
+    if (type !== 'loading') {
+      setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), duration);
+    }
+    return id;
+  }, []);
+  const removeToast = useCallback((id: string) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  }, []);
+
+  const fetchBalance = useCallback(async (key: string) => {
+    try {
+      const bal = await connection.getBalance(new PublicKey(key));
+      setBalance(bal / LAMPORTS_PER_SOL);
+    } catch {
+      setBalance(null);
+    }
+  }, []);
 
   useEffect(() => {
-    getLaunchpadData().then((data) => {
-      setStats(data.stats);
-      setProjects(data.projects);
-    });
-  }, []);
+    const sol = window.solana;
+    if (sol?.isPhantom) {
+      sol.connect({ onlyIfTrusted: true }).then((resp: any) => {
+        const key = resp.publicKey.toBase58();
+        setWalletKey(key);
+        fetchBalance(key);
+      }).catch(() => {});
+
+      const handleChange = (pk: any) => {
+        if (pk) {
+          const key = pk.toBase58();
+          setWalletKey(key);
+          fetchBalance(key);
+        } else {
+          setWalletKey(null);
+          setBalance(null);
+        }
+      };
+      sol.on('accountChanged', handleChange);
+      return () => { sol.off('accountChanged', handleChange); };
+    }
+  }, [fetchBalance]);
+
+  const connectWallet = async () => {
+    if (!(window as any).solana?.isPhantom) {
+      window.open('https://phantom.app', '_blank');
+      return;
+    }
+    setConnecting(true);
+    try {
+      const resp = await (window as any).solana.connect();
+      const key = resp.publicKey.toBase58();
+      setWalletKey(key);
+      await fetchBalance(key);
+      addToast('success', 'Wallet connected');
+    } catch (e: any) {
+      addToast('error', e?.message || 'Failed to connect wallet');
+    } finally {
+      setConnecting(false);
+    }
+  };
+
+  const disconnectWallet = async () => {
+    try {
+      await (window as any).solana?.disconnect();
+      setWalletKey(null);
+      setBalance(null);
+      addToast('info', 'Wallet disconnected');
+    } catch {}
+  };
+
+  const truncatedAddress = walletKey ? `${walletKey.slice(0, 4)}...${walletKey.slice(-4)}` : null;
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setLogoFile(file);
+    const reader = new FileReader();
+    reader.onloadend = () => setLogoPreview(reader.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  const formValid = projectName.trim() && ticker.trim() && ticker.length <= 6 && description.trim();
+
+  const handleDeploy = async () => {
+    if (!walletKey || !formValid) return;
+    setDeploying(true);
+    const loadingId = addToast('loading', 'Creating token on Solana mainnet...');
+    try {
+      const phantom = (window as any).solana;
+      const payer = new PublicKey(walletKey);
+
+      const { Keypair } = await import('@solana/web3.js');
+      const mintKeypair = Keypair.generate();
+
+      const lamports = await getMinimumBalanceForRentExemptMint(connection);
+      const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
+
+      const transaction = new Transaction().add(
+        SystemProgram.createAccount({
+          fromPubkey: payer,
+          newAccountPubkey: mintKeypair.publicKey,
+          space: MINT_SIZE,
+          lamports,
+          programId: TOKEN_PROGRAM_ID,
+        }),
+        createInitializeMintInstruction(
+          mintKeypair.publicKey,
+          9,
+          payer,
+          payer,
+          TOKEN_PROGRAM_ID
+        )
+      );
+
+      const ata = await getAssociatedTokenAddress(mintKeypair.publicKey, payer);
+      transaction.add(
+        createAssociatedTokenAccountInstruction(payer, ata, payer, mintKeypair.publicKey)
+      );
+
+      const mintAmount = BigInt(1_000_000_000) * BigInt(10 ** 9);
+      transaction.add(
+        createMintToInstruction(mintKeypair.publicKey, ata, payer, mintAmount)
+      );
+
+      transaction.recentBlockhash = blockhash;
+      transaction.feePayer = payer;
+      transaction.partialSign(mintKeypair);
+
+      const signed = await phantom.signTransaction(transaction);
+      const rawTx = signed.serialize();
+      const sig = await connection.sendRawTransaction(rawTx, { skipPreflight: false });
+      await connection.confirmTransaction({ signature: sig, blockhash, lastValidBlockHeight }, 'confirmed');
+
+      removeToast(loadingId);
+      addToast('success', 'Token deployed successfully!');
+
+      const mintAddr = mintKeypair.publicKey.toBase58();
+      setSuccessData({ mintAddress: mintAddr, name: projectName, ticker, logoPreview });
+      setRecentLaunches((prev) => [
+        { name: projectName, ticker, mintAddress: mintAddr, logoPreview, timestamp: Date.now() },
+        ...prev,
+      ]);
+
+      setProjectName('');
+      setTicker('');
+      setDescription('');
+      setWebsite('');
+      setTwitter('');
+      setTelegram('');
+      setLogoFile(null);
+      setLogoPreview(null);
+
+      await fetchBalance(walletKey);
+    } catch (e: any) {
+      removeToast(loadingId);
+      addToast('error', e?.message || 'Token deployment failed');
+    } finally {
+      setDeploying(false);
+    }
+  };
+
+  const handleSendSol = async (recipient: string, amount: number) => {
+    if (!walletKey) return;
+    setSending(true);
+    const loadingId = addToast('loading', 'Sending SOL...');
+    try {
+      let recipientKey: PublicKey;
+      try {
+        recipientKey = new PublicKey(recipient);
+      } catch {
+        throw new Error('Invalid recipient address');
+      }
+
+      const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
+      const transaction = new Transaction().add(
+        SystemProgram.transfer({
+          fromPubkey: new PublicKey(walletKey),
+          toPubkey: recipientKey,
+          lamports: Math.floor(amount * LAMPORTS_PER_SOL),
+        })
+      );
+      transaction.recentBlockhash = blockhash;
+      transaction.feePayer = new PublicKey(walletKey);
+
+      const { signature } = await (window as any).solana.signAndSendTransaction(transaction);
+      await connection.confirmTransaction({ signature, blockhash, lastValidBlockHeight }, 'confirmed');
+
+      removeToast(loadingId);
+      addToast('success', `Sent ${amount} SOL! Sig: ${signature.slice(0, 8)}...`);
+      setShowSendModal(false);
+      await fetchBalance(walletKey);
+    } catch (e: any) {
+      removeToast(loadingId);
+      addToast('error', e?.message || 'Transaction failed');
+    } finally {
+      setSending(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#0b0000] text-white">
       <div className="fixed inset-0 bg-gradient-to-br from-purple-900/10 via-transparent to-pink-900/10 pointer-events-none" />
       <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/15 via-transparent to-transparent pointer-events-none" />
 
-      <header className="relative z-20 flex items-center justify-between px-6 py-4 border-b border-purple-500/10 backdrop-blur-sm bg-[#0b0000]/60">
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
+
+      <AnimatePresence>
+        {successData && <SuccessModal data={successData} onClose={() => setSuccessData(null)} />}
+        {showSendModal && walletKey && (
+          <SendSolModal onClose={() => setShowSendModal(false)} onSend={handleSendSol} sending={sending} />
+        )}
+      </AnimatePresence>
+
+      <header className="relative z-20 flex items-center justify-between px-4 md:px-6 py-4 border-b border-purple-500/10 backdrop-blur-sm bg-[#0b0000]/60">
         <Link
           to="/"
           className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-600/10 border border-purple-500/30 text-purple-300 hover:text-white hover:bg-purple-600/20 transition-all duration-300 text-sm font-medium"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Home
+          <span className="hidden sm:inline">Back to Home</span>
         </Link>
-        <div className="flex items-center gap-2">
+
+        <div className="hidden md:flex items-center gap-2">
           <Rocket className="w-5 h-5 text-pink-400" />
           <span className="text-sm font-poppins font-bold tracking-wider bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
             SOMNICLAW LAUNCHPAD
           </span>
         </div>
+
+        <div className="flex items-center gap-2">
+          {walletKey ? (
+            <>
+              <button
+                onClick={() => setShowSendModal(true)}
+                className="px-3 py-2 rounded-lg bg-purple-600/10 border border-purple-500/30 text-purple-300 hover:text-white hover:bg-purple-600/20 transition-all text-xs cursor-pointer"
+              >
+                <Send className="w-3.5 h-3.5" />
+              </button>
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-purple-950/40 border border-purple-500/20">
+                <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                <span className="text-xs font-mono text-purple-300">{truncatedAddress}</span>
+                {balance !== null && (
+                  <span className="text-xs text-gray-500">{balance.toFixed(3)} SOL</span>
+                )}
+              </div>
+              <button
+                onClick={disconnectWallet}
+                className="px-3 py-2 rounded-lg bg-red-600/10 border border-red-500/30 text-red-400 hover:text-white hover:bg-red-600/20 transition-all text-xs cursor-pointer"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={connectWallet}
+              disabled={connecting}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-medium hover:from-purple-500 hover:to-pink-500 disabled:opacity-50 transition-all cursor-pointer"
+            >
+              {connecting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wallet className="w-4 h-4" />}
+              {connecting ? 'Connecting...' : 'Connect Phantom'}
+            </button>
+          )}
+        </div>
       </header>
 
       <main className="relative z-10">
-        <section className="px-6 pt-20 pb-16 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="max-w-3xl mx-auto"
-          >
+        <section className="px-4 md:px-6 pt-16 pb-12 text-center">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="max-w-3xl mx-auto">
             <span className="inline-block px-4 py-1.5 rounded-full text-xs font-medium tracking-widest text-purple-300 border border-purple-500/30 bg-purple-600/10 mb-6">
               SOMNICLAW ECOSYSTEM
             </span>
-
-            <h1 className="text-5xl md:text-7xl font-poppins font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent animate-gradient mb-6">
+            <h1 className="text-4xl md:text-7xl font-poppins font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent animate-gradient mb-4">
               SOMNICLAW LAUNCHPAD
             </h1>
-
-            <p className="text-lg md:text-xl text-gray-400 leading-relaxed mb-10 max-w-2xl mx-auto">
+            <p className="text-base md:text-lg text-gray-400 leading-relaxed max-w-2xl mx-auto">
               AI-powered launch infrastructure for Solana-native founders and digital builders.
             </p>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <button className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium hover:from-purple-500 hover:to-pink-500 hover:shadow-[0_0_30px_rgba(168,85,247,0.4)] transition-all duration-300 flex items-center gap-2 cursor-pointer">
-                <Rocket className="w-4 h-4" />
-                Launch Your Project
-              </button>
-              <button className="px-8 py-3.5 rounded-xl border border-purple-500/30 bg-purple-600/10 text-purple-300 font-medium hover:bg-purple-600/20 hover:border-purple-500/50 hover:text-white transition-all duration-300 flex items-center gap-2 cursor-pointer">
-                Explore Projects
-                <ExternalLink className="w-4 h-4" />
-              </button>
-            </div>
           </motion.div>
         </section>
 
-        <section className="px-6 pb-16">
-          <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {stats.map((stat, i) => (
-              <StatCard key={stat.label} stat={stat} index={i} />
-            ))}
+        <section className="px-4 md:px-6 pb-12">
+          <div className="max-w-6xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-3">
+            {mockStats.map((stat, i) => {
+              const Icon = stat.icon;
+              return (
+                <motion.div
+                  key={stat.label}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
+                  className="group rounded-2xl border border-purple-500/20 bg-purple-950/20 backdrop-blur-sm p-4 md:p-6 hover:border-purple-500/40 hover:shadow-[0_0_30px_rgba(168,85,247,0.15)] transition-all duration-500"
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className={`w-8 h-8 md:w-10 md:h-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
+                      <Icon className="w-4 h-4 md:w-5 md:h-5 text-white" />
+                    </div>
+                    <span className="text-xs text-gray-400">{stat.label}</span>
+                  </div>
+                  <p className={`text-2xl md:text-3xl font-poppins font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}>
+                    {stat.value}
+                  </p>
+                </motion.div>
+              );
+            })}
           </div>
         </section>
 
-        <section className="px-6 pb-24">
-          <div className="max-w-6xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10 gap-4"
-            >
-              <div>
-                <h2 className="text-3xl md:text-4xl font-poppins font-bold text-white mb-1">
-                  Featured Projects
-                </h2>
-                <p className="text-gray-500 text-sm">Curated launches vetted by SOMNICLAW AI</p>
-              </div>
-              <div className="flex gap-2">
-                {['All', 'Live', 'Upcoming', 'Completed'].map((filter) => (
-                  <button
-                    key={filter}
-                    className="px-4 py-1.5 rounded-lg text-xs font-medium border border-purple-500/20 text-gray-400 hover:text-purple-300 hover:border-purple-500/40 hover:bg-purple-600/10 transition-all duration-300 cursor-pointer"
-                  >
-                    {filter}
-                  </button>
-                ))}
-              </div>
-            </motion.div>
+        <section className="px-4 md:px-6 pb-20">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="rounded-2xl border border-purple-500/20 bg-gradient-to-b from-purple-950/30 to-[#0b0000] backdrop-blur-sm p-6 md:p-8"
+              >
+                <h2 className="text-2xl font-poppins font-bold text-white mb-6">Deploy Your Token</h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {projects.map((project, i) => (
-                <ProjectCard key={project.symbol} project={project} index={i} />
-              ))}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className="text-xs text-gray-400 mb-1.5 block">Project Name <span className="text-red-400">*</span></label>
+                    <input
+                      value={projectName}
+                      onChange={(e) => setProjectName(e.target.value)}
+                      placeholder="e.g. SomniToken"
+                      className="w-full px-4 py-3 rounded-xl bg-purple-950/40 border border-purple-500/20 text-white text-sm placeholder-gray-600 focus:border-purple-500/50 focus:outline-none transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-gray-400 mb-1.5 block">Ticker Symbol <span className="text-red-400">*</span> <span className="text-gray-600">(max 6)</span></label>
+                    <input
+                      value={ticker}
+                      onChange={(e) => setTicker(e.target.value.toUpperCase().slice(0, 6))}
+                      placeholder="e.g. SOMNI"
+                      className="w-full px-4 py-3 rounded-xl bg-purple-950/40 border border-purple-500/20 text-white text-sm placeholder-gray-600 focus:border-purple-500/50 focus:outline-none font-mono transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div className="mb-4">
+                  <label className="text-xs text-gray-400 mb-1.5 block">Description <span className="text-red-400">*</span></label>
+                  <textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Describe your project..."
+                    rows={3}
+                    className="w-full px-4 py-3 rounded-xl bg-purple-950/40 border border-purple-500/20 text-white text-sm placeholder-gray-600 focus:border-purple-500/50 focus:outline-none resize-none transition-colors"
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label className="text-xs text-gray-400 mb-1.5 block">Project Logo</label>
+                  <div
+                    onClick={() => logoInputRef.current?.click()}
+                    className="flex items-center gap-4 p-4 rounded-xl border-2 border-dashed border-purple-500/20 bg-purple-950/20 cursor-pointer hover:border-purple-500/40 transition-colors"
+                  >
+                    {logoPreview ? (
+                      <img src={logoPreview} alt="Logo" className="w-14 h-14 rounded-xl object-cover border border-purple-500/30" />
+                    ) : (
+                      <div className="w-14 h-14 rounded-xl bg-purple-950/40 border border-purple-500/20 flex items-center justify-center">
+                        <Upload className="w-5 h-5 text-gray-600" />
+                      </div>
+                    )}
+                    <div>
+                      <p className="text-sm text-gray-300">{logoFile ? logoFile.name : 'Upload logo image'}</p>
+                      <p className="text-xs text-gray-600">PNG, JPG up to 2MB</p>
+                    </div>
+                  </div>
+                  <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                  <div>
+                    <label className="text-xs text-gray-400 mb-1.5 block">Website</label>
+                    <div className="relative">
+                      <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
+                      <input
+                        value={website}
+                        onChange={(e) => setWebsite(e.target.value)}
+                        placeholder="https://"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-purple-950/40 border border-purple-500/20 text-white text-sm placeholder-gray-600 focus:border-purple-500/50 focus:outline-none transition-colors"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-xs text-gray-400 mb-1.5 block">Twitter</label>
+                    <input
+                      value={twitter}
+                      onChange={(e) => setTwitter(e.target.value)}
+                      placeholder="@handle"
+                      className="w-full px-4 py-3 rounded-xl bg-purple-950/40 border border-purple-500/20 text-white text-sm placeholder-gray-600 focus:border-purple-500/50 focus:outline-none transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-gray-400 mb-1.5 block">Telegram</label>
+                    <input
+                      value={telegram}
+                      onChange={(e) => setTelegram(e.target.value)}
+                      placeholder="t.me/group"
+                      className="w-full px-4 py-3 rounded-xl bg-purple-950/40 border border-purple-500/20 text-white text-sm placeholder-gray-600 focus:border-purple-500/50 focus:outline-none transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-4 rounded-xl bg-purple-950/30 border border-purple-500/10 mb-6">
+                  <div className="text-xs text-gray-500">
+                    <p>Supply: <span className="text-purple-300 font-mono">1,000,000,000</span></p>
+                    <p>Decimals: <span className="text-purple-300 font-mono">9</span></p>
+                    <p>Network: <span className="text-purple-300">Solana Mainnet</span></p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {walletKey ? (
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-2 h-2 rounded-full bg-green-400" />
+                        <span className="text-xs text-green-400">Connected</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-2 h-2 rounded-full bg-red-400" />
+                        <span className="text-xs text-red-400">Not Connected</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleDeploy}
+                  disabled={deploying || !walletKey || !formValid}
+                  className="w-full py-4 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-poppins font-bold text-lg hover:from-purple-500 hover:to-pink-500 hover:shadow-[0_0_40px_rgba(168,85,247,0.4)] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:shadow-none transition-all duration-300 flex items-center justify-center gap-3 cursor-pointer"
+                >
+                  {deploying ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Deploying to Solana...
+                    </>
+                  ) : (
+                    <>
+                      <Rocket className="w-5 h-5" />
+                      Deploy to Solana
+                    </>
+                  )}
+                </button>
+
+                {!walletKey && (
+                  <p className="text-xs text-center text-gray-600 mt-3">Connect your Phantom wallet to deploy</p>
+                )}
+              </motion.div>
+            </div>
+
+            <div className="lg:col-span-1">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="rounded-2xl border border-purple-500/20 bg-gradient-to-b from-purple-950/30 to-[#0b0000] backdrop-blur-sm p-6 sticky top-6"
+              >
+                <h3 className="text-lg font-poppins font-bold text-white mb-4 flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-pink-400" />
+                  Recent Launches
+                </h3>
+
+                {recentLaunches.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Rocket className="w-10 h-10 text-gray-700 mx-auto mb-3" />
+                    <p className="text-sm text-gray-600">No launches yet</p>
+                    <p className="text-xs text-gray-700 mt-1">Deploy your first token above</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {recentLaunches.map((token) => (
+                      <div
+                        key={token.mintAddress}
+                        className="flex items-center gap-3 p-3 rounded-xl bg-purple-950/30 border border-purple-500/10 hover:border-purple-500/30 transition-colors"
+                      >
+                        {token.logoPreview ? (
+                          <img src={token.logoPreview} alt="" className="w-9 h-9 rounded-lg object-cover border border-purple-500/20" />
+                        ) : (
+                          <div className="w-9 h-9 rounded-lg bg-purple-950/60 border border-purple-500/20 flex items-center justify-center text-xs font-bold text-purple-400">
+                            {token.ticker.slice(0, 2)}
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-white truncate">{token.name}</p>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-pink-400 font-mono">${token.ticker}</span>
+                            <span className="text-xs text-gray-600 font-mono truncate">
+                              {token.mintAddress.slice(0, 6)}...{token.mintAddress.slice(-4)}
+                            </span>
+                          </div>
+                        </div>
+                        <a
+                          href={`https://solscan.io/token/${token.mintAddress}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-purple-500 hover:text-purple-300 transition-colors"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {walletKey && (
+                  <div className="mt-6 pt-4 border-t border-purple-500/10">
+                    <h4 className="text-xs text-gray-500 mb-3 font-medium">WALLET</h4>
+                    <div className="p-3 rounded-xl bg-purple-950/30 border border-purple-500/10">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs text-gray-400">Address</span>
+                        <span className="text-xs font-mono text-purple-300">{truncatedAddress}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-gray-400">Balance</span>
+                        <span className="text-xs font-mono text-white">{balance !== null ? `${balance.toFixed(4)} SOL` : '...'}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </motion.div>
             </div>
           </div>
         </section>

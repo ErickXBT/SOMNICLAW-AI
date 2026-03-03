@@ -1,0 +1,138 @@
+Upgrade the existing /launchpad page into a full Solana meme coin launchpad dashboard with Phantom wallet integration.
+
+Tech stack:
+- Next.js App Router
+- Tailwind CSS
+- Typescript
+- Use "use client"
+- Use Solana Web3.js
+- Use SPL Token program
+- Use Solana mainnet-beta
+
+GOAL:
+Build a production-ready SOMNICLAW Launchpad with real Phantom wallet integration and token creation.
+
+---------------------------------------
+1. WALLET INTEGRATION
+---------------------------------------
+
+Implement Phantom wallet connect using window.solana.
+
+Features:
+- Detect Phantom wallet
+- If not installed → redirect to https://phantom.app
+- Connect wallet button
+- Disconnect functionality
+- Show truncated wallet address
+- Fetch real SOL balance
+- Show status badge:
+   - Green "Connected"
+   - Red "Not Connected"
+- Auto reconnect if already connected
+- Listen for accountChanged event
+
+Deploy button must be disabled if wallet is not connected.
+
+---------------------------------------
+2. TOKEN CREATION
+---------------------------------------
+
+On clicking "Deploy to Solana":
+
+- Create new mint using SPL Token program
+- 9 decimals
+- Mint 1,000,000,000 tokens to connected wallet
+- Use mainnet-beta
+- Request transaction signature from Phantom
+- Show loading state during transaction
+- Show success modal when confirmed
+
+---------------------------------------
+3. SUCCESS MODAL
+---------------------------------------
+
+After successful deployment show modal with:
+
+- Mint Address (copy button)
+- Solscan link (https://solscan.io/token/MINT_ADDRESS)
+- Dexscreener link
+- Market Cap (mock calculation)
+- Liquidity status (mock)
+- Uploaded project logo preview
+- Close button
+
+---------------------------------------
+4. FORM SECTION
+---------------------------------------
+
+Include form fields:
+
+- Project Name
+- Ticker Symbol
+- Description
+- Logo upload (preview before deploy)
+- Website
+- Twitter
+- Telegram
+
+Validate:
+- Required fields
+- Ticker max 6 characters
+
+---------------------------------------
+5. RECENT LAUNCHES SIDEBAR
+---------------------------------------
+
+Maintain local state array of launched tokens.
+After success:
+- Add new token to Recent Launches list
+- Display logo + ticker + mint address (truncated)
+
+---------------------------------------
+6. SEND SOL SECTION
+---------------------------------------
+
+Include:
+- Recipient address input
+- Amount field (default 0.001)
+- Send Transaction button
+- Show transaction success modal with signature
+
+---------------------------------------
+7. UI DESIGN
+---------------------------------------
+
+Design style:
+
+- Dark dominant black futuristic
+- Neon purple & neon pink glow
+- Glassmorphism cards
+- Smooth transitions
+- Loading button animations
+- Toast notifications (success / error / loading)
+- Clean Web3 startup style
+
+---------------------------------------
+8. TOAST SYSTEM
+---------------------------------------
+
+Create simple toast notification system for:
+
+- Wallet connected
+- Wallet disconnected
+- Transaction loading
+- Success
+- Error
+- Copy to clipboard
+
+---------------------------------------
+IMPORTANT
+---------------------------------------
+
+- Use "use client"
+- Keep code production-ready
+- Use async/await properly
+- Handle errors gracefully
+- Use Connection from @solana/web3.js
+- Use clusterApiUrl("mainnet-beta")
+- Ensure wallet status indicator updates correctly
