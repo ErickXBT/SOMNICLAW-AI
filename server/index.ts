@@ -10,6 +10,15 @@ import { getMessages, addMessage } from "./lib/memoryStore.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+process.on("uncaughtException", (err) => {
+  console.error("[Server] Uncaught Exception:", err.message);
+  console.error(err.stack);
+});
+
+process.on("unhandledRejection", (reason) => {
+  console.error("[Server] Unhandled Rejection:", reason);
+});
+
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: "20mb" }));
@@ -151,6 +160,13 @@ app.post("/api/chat", async (req, res) => {
 
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok" });
+});
+
+app.use((err: any, _req: any, res: any, _next: any) => {
+  console.error("[Server] Express error:", err?.message || err);
+  if (!res.headersSent) {
+    res.status(500).json({ error: "An internal server error occurred." });
+  }
 });
 
 const isDev = process.env.NODE_ENV !== "production";
