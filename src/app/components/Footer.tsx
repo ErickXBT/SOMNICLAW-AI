@@ -22,7 +22,7 @@ export function Footer() {
             transition={{ duration: 0.6 }}
             className="text-center"
           >
-            <h3 className="text-3xl mb-2">
+            <h3 className="text-3xl font-poppins font-bold mb-2">
               <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
                 SOMNICLAW
               </span>

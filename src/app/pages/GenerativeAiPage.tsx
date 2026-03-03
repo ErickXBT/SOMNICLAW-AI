@@ -208,7 +208,7 @@ export default function GenerativeAiPage() {
             </Link>
             <div className="flex items-center gap-2">
               <Cpu className="w-5 h-5 text-pink-400" />
-              <span className="text-sm font-bold tracking-wider bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              <span className="text-sm font-poppins font-bold tracking-wider bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
                 SOMNICLAW GENERATIVE AI
               </span>
             </div>

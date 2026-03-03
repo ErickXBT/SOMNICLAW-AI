@@ -22,7 +22,7 @@ export function Problem() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl mb-6">
+          <h2 className="text-4xl md:text-5xl font-poppins font-bold mb-6">
             <span className="bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent">
               The Market Never Sleeps
             </span>

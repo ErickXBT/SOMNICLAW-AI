@@ -11,7 +11,7 @@ export default function LaunchpadPage() {
         transition={{ duration: 0.7 }}
         className="text-center max-w-2xl"
       >
-        <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent animate-gradient mb-6">
+        <h1 className="text-5xl md:text-7xl font-poppins font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent animate-gradient mb-6">
           SOMNICLAW LAUNCHPAD
         </h1>
         <p className="text-lg text-gray-400 mb-10 leading-relaxed">
