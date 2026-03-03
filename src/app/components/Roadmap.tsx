@@ -30,7 +30,10 @@ export function Roadmap() {
       icon: Sparkles,
       color: 'from-purple-500 to-blue-500',
       items: [
-        'Sleep Prediction AI Upgrade',
+        'SOMNICLAW Launchpad Launch',
+        'Phantom Wallet Integration',
+        'SPL Token Deployment on Mainnet',
+        'AI-Powered Project Scoring',
         'Smartwatch Integration',
       ],
     },
@@ -39,6 +42,9 @@ export function Roadmap() {
       icon: Globe,
       color: 'from-pink-500 to-purple-500',
       items: [
+        'SOMNICLAW Generative AI Release',
+        'Neural Canvas Image Generation',
+        'Multi-Model AI Engine Expansion',
         'Global Health Expansion',
         'Institutional Partnerships',
       ],
