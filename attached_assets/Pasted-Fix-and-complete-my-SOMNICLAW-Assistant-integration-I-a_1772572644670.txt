@@ -1,0 +1,107 @@
+Fix and complete my SOMNICLAW Assistant integration.
+
+I already have:
+- Next.js 14 (App Router)
+- A homepage with CTA button "Enter Assistant"
+- An API route at /app/api/chat/route.ts using OpenAI
+
+PROBLEM:
+When clicking "Enter Assistant", it opens a static "Coming Soon" page.
+I want it to open a real AI chat page connected to /api/chat.
+
+========================================
+GOAL
+========================================
+
+1. Create a real AI Chat page at:
+
+/app/assistant/page.tsx
+
+2. Connect it to:
+
+POST /api/chat
+
+3. Make sure CTA "Enter Assistant" routes to:
+
+/assistant
+
+4. Remove the "Coming Soon" static page.
+
+========================================
+REQUIREMENTS
+========================================
+
+Create a fully working AI chat interface with:
+
+- useState for messages
+- input field
+- send button
+- sessionId stored in localStorage
+- fetch call to /api/chat
+- append AI response to chat
+- clean modern dark UI
+
+========================================
+CHAT LOGIC
+========================================
+
+When user sends message:
+
+POST to /api/chat with body:
+
+{
+  message: string,
+  mode: "friendly",
+  sessionId: string
+}
+
+Then render AI reply in chat.
+
+========================================
+SESSION HANDLING
+========================================
+
+On first load:
+If no localStorage session exists:
+Create one using crypto.randomUUID()
+
+========================================
+UI STYLE
+========================================
+
+- Dark background
+- Purple accent button
+- Message bubbles
+- User messages right aligned
+- AI messages left aligned
+- Clean modern AI SaaS style
+
+========================================
+ALSO UPDATE HOMEPAGE BUTTON
+========================================
+
+Find CTA button:
+
+"Enter Assistant →"
+
+Update it to route to:
+
+router.push("/assistant")
+
+OR use <Link href="/assistant">
+
+========================================
+DELIVERABLE
+========================================
+
+Generate:
+
+1. Full working /app/assistant/page.tsx
+2. Updated homepage CTA code snippet
+3. Make sure everything compiles
+4. Use TypeScript
+5. Use Next.js App Router
+6. No placeholders
+7. Production clean code
+
+This must result in a fully working AI chat system.
