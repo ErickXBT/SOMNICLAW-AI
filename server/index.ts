@@ -3,6 +3,10 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import OpenAI, { toFile } from "openai";
+import { baseSystemPrompt } from "./lib/systemPrompt.js";
+import { getModeConfig, type ConsultationMode } from "./lib/modeHandler.js";
+import { detectRisk } from "./lib/riskDetector.js";
+import { getMessages, addMessage } from "./lib/memoryStore.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -78,6 +82,65 @@ app.post("/api/generate-image", async (req, res) => {
 
     const status = error?.status || 500;
     res.status(status).json({ error: message });
+  }
+});
+
+const VALID_MODES: ConsultationMode[] = ['clinical', 'calm', 'data', 'friendly'];
+
+app.post("/api/chat", async (req, res) => {
+  try {
+    const { message, mode = "friendly", sessionId } = req.body;
+
+    if (!message || typeof message !== "string") {
+      return res.status(400).json({ error: "Message is required" });
+    }
+    if (!sessionId || typeof sessionId !== "string") {
+      return res.status(400).json({ error: "Session ID is required" });
+    }
+    if (!VALID_MODES.includes(mode)) {
+      return res.status(400).json({ error: `Invalid mode. Must be one of: ${VALID_MODES.join(", ")}` });
+    }
+
+    const risk = detectRisk(message);
+    if (risk.isRisk) {
+      addMessage(sessionId, "user", message);
+      addMessage(sessionId, "assistant", risk.response!);
+      return res.json({ reply: risk.response });
+    }
+
+    const modeConfig = getModeConfig(mode);
+
+    addMessage(sessionId, "user", message);
+
+    const conversationHistory = getMessages(sessionId);
+
+    const systemMessage = `${baseSystemPrompt}\n\n--- Active Mode: ${mode.toUpperCase()} ---\n${modeConfig.prompt}`;
+
+    const messages: Array<{ role: "system" | "user" | "assistant"; content: string }> = [
+      { role: "system", content: systemMessage },
+      ...conversationHistory,
+    ];
+
+    console.log(`[Chat] session=${sessionId.slice(0, 8)}... mode=${mode} msgCount=${conversationHistory.length}`);
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      temperature: modeConfig.temperature,
+      messages,
+      max_tokens: 1024,
+    });
+
+    const reply = completion.choices[0]?.message?.content || "I'm sorry, I couldn't generate a response. Please try again.";
+
+    addMessage(sessionId, "assistant", reply);
+
+    res.json({ reply });
+  } catch (error: any) {
+    console.error("[Chat] Error:", error?.message || error);
+    const message = error?.message?.includes("timed out")
+      ? "The AI is taking too long to respond. Please try again."
+      : "An internal error occurred. Please try again later.";
+    res.status(500).json({ error: message });
   }
 });
 

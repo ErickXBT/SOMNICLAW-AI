@@ -1,0 +1,160 @@
+Build a production-ready AI backend system for my website called SOMNICLAW.
+
+STACK:
+- Next.js 14 (App Router)
+- TypeScript
+- OpenAI API
+- API route at /app/api/chat/route.ts
+- Use modular folder structure
+
+GOAL:
+When user enters the consultation page and sends a message, the system should:
+1. Detect risk keywords (medical emergency)
+2. Dynamically apply consultation mode behavior
+3. Maintain conversation memory per session
+4. Respond like a structured AI health assistant
+
+========================================
+PROJECT STRUCTURE
+========================================
+
+Create this structure:
+
+/app/api/chat/route.ts
+/lib/systemPrompt.ts
+/lib/modeHandler.ts
+/lib/riskDetector.ts
+/lib/memoryStore.ts
+
+========================================
+SYSTEM BEHAVIOR
+========================================
+
+The AI is called: SOMNICLAW ASSISTANT
+
+It must:
+- Provide evidence-based sleep guidance
+- Provide general health education
+- Reduce anxiety
+- Be structured and clinically calm
+- NEVER diagnose
+- NEVER prescribe medication
+- Add medical disclaimer when topic is serious
+
+If user message includes:
+- chest pain
+- suicide
+- kill myself
+- overdose
+- can't breathe
+- heart attack
+- stroke
+
+Immediately respond:
+
+"This could be serious. Please seek immediate medical attention or contact emergency services in your area."
+
+Do not generate further medical analysis.
+
+========================================
+MODES
+========================================
+
+There are 4 consultation modes:
+
+1) clinical
+- Structured format:
+  • Possible Causes
+  • Risk Factors
+  • Recommended Actions
+  • When to Seek Medical Help
+- Professional tone
+- temperature 0.3
+
+2) calm
+- Empathetic
+- Short paragraphs
+- Emotionally supportive
+- temperature 0.5
+
+3) data
+- Scientific explanation
+- Mention REM, NREM, cortisol, melatonin when relevant
+- Analytical tone
+- temperature 0.4
+
+4) friendly
+- Conversational
+- Simple language
+- temperature 0.7
+
+========================================
+MEMORY
+========================================
+
+Store conversation in memory using sessionId.
+Use in-memory Map for now.
+Append messages every time.
+Return full conversation context to OpenAI.
+
+========================================
+API REQUIREMENTS
+========================================
+
+POST body:
+{
+  message: string,
+  mode: "clinical" | "calm" | "data" | "friendly",
+  sessionId: string
+}
+
+Return:
+{
+  reply: string
+}
+
+========================================
+IMPLEMENTATION DETAILS
+========================================
+
+Use:
+
+import OpenAI from "openai"
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+})
+
+Call:
+
+openai.chat.completions.create({
+  model: "gpt-4o-mini",
+  temperature: dynamicBasedOnMode,
+  messages: [...]
+})
+
+Combine:
+
+baseSystemPrompt + modePrompt
+
+========================================
+SECURITY
+========================================
+
+Wrap everything in try/catch.
+Return 500 on error.
+Log errors.
+
+========================================
+DELIVERABLE
+========================================
+
+Generate FULL WORKING CODE for:
+
+1. systemPrompt.ts
+2. modeHandler.ts
+3. riskDetector.ts
+4. memoryStore.ts
+5. route.ts
+
+Make it clean, production-ready, and properly typed in TypeScript.

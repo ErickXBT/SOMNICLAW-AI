@@ -45,8 +45,15 @@ vite.config.ts
 ### Backend (server/index.ts)
 - Express v5 on port 3001 (dev) or 5000 (prod)
 - `/api/generate-image` — POST endpoint for AI image generation (prompt + optional reference image)
+- `/api/chat` — POST endpoint for SOMNICLAW AI health assistant (gpt-4o-mini)
 - `/api/health` — GET health check
 - In production, serves Vite-built static files from `dist/` with SPA fallback
+
+### AI Chat System (server/lib/)
+- `systemPrompt.ts` — Base system prompt for SOMNICLAW ASSISTANT (sleep/health guidance)
+- `modeHandler.ts` — 4 consultation modes: clinical (0.3), calm (0.5), data (0.4), friendly (0.7)
+- `riskDetector.ts` — Emergency keyword detection (chest pain, suicide, etc.) with immediate safety response
+- `memoryStore.ts` — In-memory conversation store per sessionId with TTL cleanup and message limits
 
 ### Frontend
 - Vite dev server on port 5000 with proxy forwarding `/api/*` to backend on port 3001
