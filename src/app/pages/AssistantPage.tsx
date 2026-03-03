@@ -101,6 +101,13 @@ export default function AssistantPage() {
     setInput('');
     setLoading(true);
 
+    const aiMsgId = crypto.randomUUID();
+
+    setMessages((prev) => [
+      ...prev,
+      { id: aiMsgId, role: 'assistant', content: '', timestamp: Date.now() },
+    ]);
+
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
@@ -108,47 +115,46 @@ export default function AssistantPage() {
         body: JSON.stringify({ message: text, mode, sessionId }),
       });
 
-      const contentType = res.headers.get('content-type') || '';
-      if (!contentType.includes('application/json')) {
-        throw new Error('Server returned an invalid response. Please try again.');
-      }
-
-      const responseText = await res.text();
-      if (!responseText) {
-        throw new Error('Server returned an empty response. Please try again.');
-      }
-
-      let data: any;
-      try {
-        data = JSON.parse(responseText);
-      } catch {
-        throw new Error('Server returned an invalid response. Please try again.');
-      }
-
       if (!res.ok) {
-        throw new Error(data.error || 'Failed to get response');
+        let errorMsg = 'Failed to get response';
+        try {
+          const errData = await res.json();
+          errorMsg = errData.error || errorMsg;
+        } catch {}
+        throw new Error(errorMsg);
       }
 
-      if (!data.reply) {
+      if (!res.body) {
+        throw new Error('Streaming is not supported in this browser.');
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let fullText = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        fullText += chunk;
+        const currentText = fullText;
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === aiMsgId ? { ...msg, content: currentText } : msg
+          )
+        );
+      }
+
+      if (!fullText) {
         throw new Error('No reply received from the assistant.');
       }
-
-      const aiMsg: ChatMessage = {
-        id: crypto.randomUUID(),
-        role: 'assistant',
-        content: data.reply,
-        timestamp: Date.now(),
-      };
-
-      setMessages((prev) => [...prev, aiMsg]);
     } catch (err: any) {
-      const errorMsg: ChatMessage = {
-        id: crypto.randomUUID(),
-        role: 'assistant',
-        content: `⚠️ Error: ${err.message || 'Something went wrong. Please try again.'}`,
-        timestamp: Date.now(),
-      };
-      setMessages((prev) => [...prev, errorMsg]);
+      const errorContent = `⚠️ Error: ${err.message || 'Something went wrong. Please try again.'}`;
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === aiMsgId ? { ...msg, content: errorContent } : msg
+        )
+      );
     } finally {
       setLoading(false);
       inputRef.current?.focus();

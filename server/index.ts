@@ -137,24 +137,42 @@ app.post("/api/chat", async (req, res) => {
 
     console.log(`[Chat] session=${sessionId.slice(0, 8)}... mode=${mode} msgCount=${conversationHistory.length}`);
 
+    res.setHeader("Content-Type", "text/plain; charset=utf-8");
+    res.setHeader("Transfer-Encoding", "chunked");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("X-Content-Type-Options", "nosniff");
+
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       temperature: modeConfig.temperature,
       messages,
       max_tokens: 1024,
+      stream: true,
     });
 
-    const reply = completion.choices[0]?.message?.content || "I'm sorry, I couldn't generate a response. Please try again.";
+    let fullReply = "";
 
-    addMessage(sessionId, "assistant", reply);
+    for await (const chunk of completion) {
+      const content = chunk.choices[0]?.delta?.content;
+      if (content) {
+        fullReply += content;
+        res.write(content);
+      }
+    }
 
-    res.json({ reply });
+    addMessage(sessionId, "assistant", fullReply || "I'm sorry, I couldn't generate a response. Please try again.");
+
+    res.end();
   } catch (error: any) {
     console.error("[Chat] Error:", error?.message || error);
-    const message = error?.message?.includes("timed out")
-      ? "The AI is taking too long to respond. Please try again."
-      : "An internal error occurred. Please try again later.";
-    res.status(500).json({ error: message });
+    if (!res.headersSent) {
+      const message = error?.message?.includes("timed out")
+        ? "The AI is taking too long to respond. Please try again."
+        : "An internal error occurred. Please try again later.";
+      res.status(500).json({ error: message });
+    } else {
+      res.end();
+    }
   }
 });
 
