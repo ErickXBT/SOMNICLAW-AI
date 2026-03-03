@@ -326,7 +326,7 @@ export default function LaunchpadPage() {
     reader.readAsDataURL(file);
   };
 
-  const formValid = projectName.trim() && ticker.trim() && ticker.length <= 6 && description.trim();
+  const formValid = projectName.trim() && ticker.trim() && ticker.length <= 9 && description.trim();
 
   const handleDeploy = async () => {
     if (!walletKey || !formValid) return;
@@ -574,10 +574,10 @@ export default function LaunchpadPage() {
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-gray-400 mb-1.5 block">Ticker Symbol <span className="text-red-400">*</span> <span className="text-gray-600">(max 6)</span></label>
+                    <label className="text-xs text-gray-400 mb-1.5 block">Ticker Symbol <span className="text-red-400">*</span> <span className="text-gray-600">(max 9)</span></label>
                     <input
                       value={ticker}
-                      onChange={(e) => setTicker(e.target.value.toUpperCase().slice(0, 6))}
+                      onChange={(e) => setTicker(e.target.value.toUpperCase().slice(0, 9))}
                       placeholder="e.g. SOMNI"
                       className="w-full px-4 py-3 rounded-xl bg-purple-950/40 border border-purple-500/20 text-white text-sm placeholder-gray-600 focus:border-purple-500/50 focus:outline-none font-mono transition-colors"
                     />
