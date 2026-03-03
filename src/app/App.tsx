@@ -9,6 +9,7 @@ import { Problem } from './components/Problem';
 import { Solution } from './components/Solution';
 import { TokenOverview } from './components/TokenOverview';
 import { TokenDistribution } from './components/TokenDistribution';
+import { OurProduct } from './components/OurProduct';
 import { Utility } from './components/Utility';
 import { Roadmap } from './components/Roadmap';
 import { Security } from './components/Security';
@@ -26,6 +27,7 @@ export default function App() {
       <ScrollToTop />
       <div className="relative z-10 min-h-screen">
         <Hero />
+        <OurProduct />
         <Overview />
         <Problem />
         <Solution />

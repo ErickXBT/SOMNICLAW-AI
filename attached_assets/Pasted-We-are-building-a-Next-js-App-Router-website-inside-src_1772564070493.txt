@@ -1,0 +1,86 @@
+We are building a Next.js App Router website inside src/app.
+
+TASK:
+
+1) Create a new component called:
+   src/app/components/OurProduct.tsx
+
+This component must contain a full-width section with:
+
+- Small top label:
+  "OUR PRODUCT" (uppercase, small, tracking-wide, neon pink tone)
+
+- Large headline:
+  "SOMNICLAW AI AGENT" (big, bold, gradient neon text)
+
+- Subheadline paragraph:
+  "A multi-layer AI ecosystem built for traders, builders and digital creators who never sleep."
+
+Below that, create a 3-column responsive grid (stack on mobile).
+
+Each column must be a neon glass card with:
+- backdrop blur
+- semi-transparent dark background
+- soft neon border glow
+- hover glow animation
+- smooth transition
+
+CARDS CONTENT:
+
+1) Title: SOMNICLAW ASSISTANT
+   Description:
+   "AI-powered insomnia market assistant that monitors volatility, detects whale movement, and generates alpha insights in real time."
+   CTA Button:
+   Text: "Enter Assistant →"
+   Link to: /assistant
+
+2) Title: SOMNICLAW LAUNCHPAD
+   Description:
+   "Token & AI project accelerator built for Solana-native founders. Launch, scale, and dominate the night cycle."
+   CTA Button:
+   Text: "Explore Launchpad →"
+   Link to: /launchpad
+
+3) Title: SOMNICLAW GENERATIVE AI
+   Description:
+   "Neural generative engine that transforms prompts into cyberpunk reality. Visual AI built for digital dominance."
+   CTA Button:
+   Text: "Launch Generative AI →"
+   Link to: /generative-ai
+
+Use Next.js <Link> for routing.
+Use Tailwind CSS.
+Match the cyberpunk / neon / dark theme already used in the homepage.
+
+---
+
+2) Now integrate this section into:
+   src/app/page.tsx
+
+Import the component:
+   import OurProduct from "./components/OurProduct";
+
+Render it directly BELOW the Hero section but ABOVE Utility / Tokenomics section.
+
+---
+
+3) Create empty route pages for now:
+
+Create these files:
+
+src/app/assistant/page.tsx
+src/app/launchpad/page.tsx
+src/app/generative-ai/page.tsx
+
+Each page should:
+- Have a dark cyberpunk layout
+- Display a large headline matching the product name
+- Include a short placeholder description
+- Include a "Back to Home" button linking to "/"
+
+Keep styling consistent with the main design system.
+
+Do not break existing layout.
+Do not modify the navbar.
+Ensure responsive design.
+Ensure clean TypeScript.
