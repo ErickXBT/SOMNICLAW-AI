@@ -108,10 +108,29 @@ export default function AssistantPage() {
         body: JSON.stringify({ message: text, mode, sessionId }),
       });
 
-      const data = await res.json();
+      const contentType = res.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
+        throw new Error('Server returned an invalid response. Please try again.');
+      }
+
+      const responseText = await res.text();
+      if (!responseText) {
+        throw new Error('Server returned an empty response. Please try again.');
+      }
+
+      let data: any;
+      try {
+        data = JSON.parse(responseText);
+      } catch {
+        throw new Error('Server returned an invalid response. Please try again.');
+      }
 
       if (!res.ok) {
         throw new Error(data.error || 'Failed to get response');
+      }
+
+      if (!data.reply) {
+        throw new Error('No reply received from the assistant.');
       }
 
       const aiMsg: ChatMessage = {

@@ -89,7 +89,12 @@ const VALID_MODES: ConsultationMode[] = ['clinical', 'calm', 'data', 'friendly']
 
 app.post("/api/chat", async (req, res) => {
   try {
-    const { message, mode = "friendly", sessionId } = req.body;
+    if (!process.env.AI_INTEGRATIONS_OPENAI_API_KEY) {
+      console.error("[Chat] OPENAI_API_KEY is not configured");
+      return res.status(500).json({ error: "AI service is not configured. Please try again later." });
+    }
+
+    const { message, mode = "friendly", sessionId } = req.body || {};
 
     if (!message || typeof message !== "string") {
       return res.status(400).json({ error: "Message is required" });
