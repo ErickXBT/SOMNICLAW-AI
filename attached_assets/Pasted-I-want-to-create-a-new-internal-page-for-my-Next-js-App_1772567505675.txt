@@ -1,0 +1,84 @@
+I want to create a new internal page for my Next.js App Router project.
+
+Project context:
+- Using Next.js (App Router)
+- Using Tailwind CSS
+- Main domain: somniclaw.xyz
+- This page must be accessible at: /launchpad
+- It must stay inside the same domain (not separate port, not Express)
+
+GOAL:
+Create a fully responsive SOMNICLAW LAUNCHPAD page based on a modern AI crypto launchpad UI style.
+
+File location:
+src/app/launchpad/page.tsx
+
+Requirements:
+
+1. Layout Structure
+- Dark cyberpunk theme (matching homepage)
+- Neon red / purple glow accents
+- Background gradient similar to homepage
+- Clean glassmorphism cards
+- Fully responsive (mobile + tablet + desktop)
+
+2. Hero Section
+- Small label: "SOMNICLAW ECOSYSTEM"
+- Large headline: "SOMNICLAW LAUNCHPAD"
+- Subheadline:
+  "AI-powered launch infrastructure for Solana-native founders and digital builders."
+- CTA button: "Launch Your Project"
+- Secondary button: "Explore Projects"
+
+3. Stats Section (API-ready structure)
+Create a reusable <StatCard /> component.
+Display 4 stats:
+- Total Projects
+- Total Raised
+- Active Launches
+- AI Score Index
+
+Use dummy data first but structure it so later we can replace it with API data (use a const mockStats array).
+
+4. Project Grid Section
+Create reusable <ProjectCard /> component.
+
+Each card should include:
+- Project name
+- Short description
+- Token symbol
+- Funding progress bar
+- Raised amount
+- CTA button: "View Project"
+
+Use mock array:
+const mockProjects = [...]
+
+Structure it so it can later be replaced by API fetch (prepare async function placeholder).
+
+5. Architecture
+- Use functional components
+- Keep components inside the same file for now
+- Use Tailwind only (no component libraries)
+- Use clean semantic structure
+- Make it visually premium
+
+6. API Preparation
+Inside the file, add:
+
+async function getLaunchpadData() {
+  // TODO: Replace with real API call
+  return {
+    stats: mockStats,
+    projects: mockProjects
+  };
+}
+
+Use it inside the page component.
+
+7. Animations
+Add subtle hover glow effect for cards.
+Add smooth button transitions.
+
+IMPORTANT:
+Keep everything clean, production-ready, and visually aligned with a futuristic AI crypto brand.
