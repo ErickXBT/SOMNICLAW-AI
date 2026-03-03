@@ -20,7 +20,7 @@ export function LoadingScreen() {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}
-          className="fixed inset-0 z-[100] bg-[#0b0000] flex items-center justify-center"
+          className="fixed inset-0 z-[100] bg-[#0B0B0F] flex items-center justify-center"
         >
           <div className="text-center space-y-8">
             {/* Logo */}

@@ -193,11 +193,11 @@ export default function GenerativeAiPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0b0000] text-white">
+    <div className="min-h-screen bg-[#0B0B0F] text-white">
       <div className="fixed inset-0 bg-gradient-to-br from-purple-900/10 via-transparent to-pink-900/10 pointer-events-none" />
 
       <div className="relative z-10">
-        <header className="sticky top-0 z-40 backdrop-blur-xl bg-[#0b0000]/80 border-b border-purple-500/10">
+        <header className="sticky top-0 z-40 backdrop-blur-xl bg-[#0B0B0F]/80 border-b border-purple-500/10">
           <div className="max-w-[1600px] mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
             <Link
               to="/"

@@ -176,8 +176,8 @@ export default function AssistantPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0b0000] flex flex-col">
-      <header className="sticky top-0 z-50 border-b border-purple-500/20 bg-[#0b0000]/90 backdrop-blur-xl">
+    <div className="min-h-screen bg-[#0B0B0F] flex flex-col">
+      <header className="sticky top-0 z-50 border-b border-purple-500/20 bg-[#0B0B0F]/90 backdrop-blur-xl">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link
@@ -331,7 +331,7 @@ export default function AssistantPage() {
         </div>
       </div>
 
-      <div className="sticky bottom-0 border-t border-purple-500/20 bg-[#0b0000]/95 backdrop-blur-xl px-4 py-3">
+      <div className="sticky bottom-0 border-t border-purple-500/20 bg-[#0B0B0F]/95 backdrop-blur-xl px-4 py-3">
         <div className="max-w-5xl mx-auto flex gap-3">
           <input
             ref={inputRef}
