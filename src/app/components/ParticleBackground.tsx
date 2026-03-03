@@ -1,16 +1,17 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
 export function ParticleBackground() {
   const containerRef = useRef<HTMLDivElement>(null);
   const mouseX = useRef(0);
   const mouseY = useRef(0);
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     if (!containerRef.current) return;
 
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x0b0b0f, 0.0012);
+    scene.fog = new THREE.FogExp2(0x070707, 0.0012);
 
     const camera = new THREE.PerspectiveCamera(
       75,
@@ -29,10 +30,10 @@ export function ParticleBackground() {
 
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setClearColor(0x0b0b0f, 1);
+    renderer.setClearColor(0x070707, 1);
     containerRef.current.appendChild(renderer.domElement);
 
-    const particleCount = 1400;
+    const particleCount = 1050;
     const particles = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
     const velocities: number[] = [];
@@ -43,19 +44,19 @@ export function ParticleBackground() {
       positions[i + 2] = (Math.random() - 0.5) * 1000;
 
       velocities.push(
-        (Math.random() - 0.5) * 0.06,
-        (Math.random() - 0.5) * 0.06,
-        (Math.random() - 0.5) * 0.06
+        (Math.random() - 0.5) * 0.05,
+        (Math.random() - 0.5) * 0.05,
+        (Math.random() - 0.5) * 0.05
       );
     }
 
     particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
     const particleMaterial = new THREE.PointsMaterial({
-      color: 0x8b0000,
-      size: 1,
+      color: 0xFF1A1A,
+      size: 1.5,
       transparent: true,
-      opacity: 0.08,
+      opacity: 0.1,
       blending: THREE.AdditiveBlending,
       sizeAttenuation: true,
     });
@@ -64,9 +65,9 @@ export function ParticleBackground() {
     scene.add(particleSystem);
 
     const lineMaterial = new THREE.LineBasicMaterial({
-      color: 0x8b0000,
+      color: 0xFF1A1A,
       transparent: true,
-      opacity: 0.04,
+      opacity: 0.03,
       blending: THREE.AdditiveBlending,
     });
 
@@ -78,6 +79,7 @@ export function ParticleBackground() {
     const onMouseMove = (event: MouseEvent) => {
       mouseX.current = (event.clientX / window.innerWidth) * 2 - 1;
       mouseY.current = -(event.clientY / window.innerHeight) * 2 + 1;
+      setCursorPos({ x: event.clientX, y: event.clientY });
     };
 
     window.addEventListener('mousemove', onMouseMove);
@@ -165,16 +167,59 @@ export function ParticleBackground() {
 
   return (
     <>
+      {/* Layer 1: Base black bg + radial red glow */}
       <div
         ref={containerRef}
         className="fixed inset-0 -z-10"
         style={{
-          background: 'radial-gradient(ellipse at 50% 50%, rgba(139, 0, 0, 0.12) 0%, #0B0B0F 70%)',
+          background: 'radial-gradient(ellipse at 50% 50%, rgba(255, 26, 26, 0.12) 0%, #070707 70%)',
         }}
       />
+      {/* Layer 2: Animated red grid */}
       <div
         className="fixed inset-0 -z-[9] pointer-events-none"
-        style={{ background: 'rgba(0, 0, 0, 0.6)' }}
+        style={{
+          backgroundImage:
+            'linear-gradient(rgba(255, 0, 0, 0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 0, 0, 0.06) 1px, transparent 1px)',
+          backgroundSize: '60px 60px',
+          animation: 'gridScroll 20s linear infinite',
+        }}
+      />
+      {/* Layer 3: AI core rotating glow sphere */}
+      <div
+        className="fixed inset-0 -z-[8] pointer-events-none flex items-center justify-center"
+      >
+        <div
+          style={{
+            width: '600px',
+            height: '600px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(255, 26, 26, 0.08) 0%, rgba(139, 0, 0, 0.04) 40%, transparent 70%)',
+            animation: 'sphereRotate 30s linear infinite',
+          }}
+        />
+      </div>
+      {/* Layer 4: Scan lines overlay */}
+      <div
+        className="fixed inset-0 -z-[7] pointer-events-none"
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 26, 26, 0.04) 2px, rgba(255, 26, 26, 0.04) 4px)',
+          animation: 'scanLine 10s linear infinite',
+          opacity: 0.04,
+        }}
+      />
+      {/* Layer 5: Dark overlay */}
+      <div
+        className="fixed inset-0 -z-[6] pointer-events-none"
+        style={{ background: 'rgba(0, 0, 0, 0.5)' }}
+      />
+      {/* Layer 6: Red ambient cursor shadow */}
+      <div
+        className="fixed inset-0 -z-[5] pointer-events-none"
+        style={{
+          background: `radial-gradient(circle 150px at ${cursorPos.x}px ${cursorPos.y}px, rgba(255, 0, 0, 0.15), transparent)`,
+        }}
       />
     </>
   );

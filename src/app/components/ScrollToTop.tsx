@@ -37,8 +37,8 @@ export function ScrollToTop() {
           className="fixed bottom-8 right-8 z-50 group"
         >
           <div className="relative">
-            <div className="absolute inset-0 bg-purple-500/50 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 border border-purple-400/50 flex items-center justify-center hover:from-purple-500 hover:to-pink-500 transition-all duration-300 shadow-lg">
+            <div className="absolute inset-0 bg-red-600/50 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-red-700 to-red-700 border border-red-500/50 flex items-center justify-center hover:from-red-600 hover:to-red-600 transition-all duration-300 shadow-lg">
               <ArrowUp className="w-5 h-5 text-white" />
             </div>
           </div>

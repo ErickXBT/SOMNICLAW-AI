@@ -36,7 +36,7 @@ export function OurProduct() {
           initial={{ opacity: 0, y: 10 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="inline-block text-sm tracking-[0.25em] uppercase text-pink-400 mb-4"
+          className="inline-block text-sm tracking-[0.25em] uppercase text-red-500 mb-4"
         >
           OUR PRODUCT
         </motion.span>
@@ -45,7 +45,7 @@ export function OurProduct() {
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.1 }}
-          className="text-4xl md:text-6xl font-poppins font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent animate-gradient mb-6"
+          className="text-4xl md:text-6xl font-poppins font-bold bg-gradient-to-r from-red-500 via-red-500 to-red-500 bg-clip-text text-transparent animate-gradient mb-6"
         >
           SOMNICLAW AI AGENT
         </motion.h2>
@@ -67,9 +67,9 @@ export function OurProduct() {
               initial={{ opacity: 0, y: 30 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.3 + index * 0.15 }}
-              className="group relative rounded-2xl border border-purple-500/20 bg-black/40 backdrop-blur-xl p-8 text-left transition-all duration-500 hover:border-pink-500/40 hover:shadow-[0_0_40px_rgba(236,72,153,0.15)]"
+              className="group relative rounded-2xl border border-red-600/20 bg-black/40 backdrop-blur-xl p-8 text-left transition-all duration-500 hover:border-red-600/40 hover:shadow-[0_0_40px_rgba(255,26,26,0.15)]"
             >
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-600/5 to-pink-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-red-700/5 to-red-700/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
               <h3 className="relative text-xl font-bold text-white mb-4">
                 {card.title}
@@ -81,7 +81,7 @@ export function OurProduct() {
 
               <Link
                 to={card.link}
-                className="relative inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-purple-600/20 border border-purple-500/40 text-purple-300 hover:text-white hover:bg-purple-600/30 hover:border-pink-500/50 transition-all duration-300 text-sm font-medium"
+                className="relative inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-red-700/20 border border-red-600/40 text-red-400 hover:text-white hover:bg-red-700/30 hover:border-red-600/50 transition-all duration-300 text-sm font-medium"
               >
                 {card.cta}
               </Link>

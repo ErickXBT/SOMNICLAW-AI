@@ -1,0 +1,159 @@
+Transform the entire UI into a controlled neon red cinematic AI theme.
+
+GOAL:
+Create a premium futuristic AI command center look.
+Black dominant with deep neon red energy.
+No purple, no pink, no RGB gaming vibe.
+
+Keep layout unchanged.
+Enhance visuals only.
+
+========================================
+COLOR SYSTEM
+========================================
+
+Base background: #070707
+Secondary dark: #0D0D0F
+Neon red: #FF1A1A
+Deep red: #8B0000
+
+Remove all purple and pink everywhere.
+
+========================================
+HEADLINE
+========================================
+
+Use gradient:
+linear-gradient(90deg, #ff1a1a, #8b0000)
+
+Add subtle glow:
+text-shadow: 0 0 25px rgba(255, 0, 0, 0.35);
+
+========================================
+BUTTONS
+========================================
+
+Primary:
+background: linear-gradient(90deg, #8B0000, #FF1A1A);
+Add subtle red glow.
+
+Secondary:
+dark background with red border.
+
+========================================
+PARTICLES
+========================================
+
+Keep particles active but refined:
+
+- Size: 1–2px
+- Opacity: 0.1
+- Color: #FF1A1A
+- Add blur: 0.5px
+- Reduce density by 25%
+- Slow animation slightly
+- Ensure z-index behind content
+- Remove square blocks
+
+========================================
+ANIMATED RED GRID LAYER
+========================================
+
+Add subtle grid layer:
+
+- Use CSS linear-gradient 1px lines
+- Color: rgba(255, 0, 0, 0.06)
+- Grid spacing: 60px
+- Animate translateY over 20s infinite linear
+- Place above base background but below particles
+- Keep very subtle
+
+========================================
+HOLOGRAPHIC SCAN LINE OVERLAY
+========================================
+
+Add scan line overlay:
+
+- Use repeating-linear-gradient
+- Opacity max 0.04
+- Animation duration 10s
+- Must not block pointer events
+- Cinematic subtle feel
+
+========================================
+LOGO PULSE GLOW
+========================================
+
+Add subtle red pulse animation to logo text.
+
+Animation:
+3s ease-in-out infinite
+Glow range from soft to medium red glow
+No flashing
+
+========================================
+MOUSE DEPTH PARALLAX
+========================================
+
+Add subtle depth movement on mouse move.
+
+- Background layers move slightly (translateX/Y)
+- Max movement 15px
+- Smooth transition
+- Must not cause layout shift
+- Apply to background wrapper only
+
+========================================
+RED AMBIENT CURSOR SHADOW
+========================================
+
+Add subtle red ambient glow following cursor:
+
+- Create radial gradient circle following mouse
+- Color: rgba(255, 0, 0, 0.15)
+- Blur large (150px radius)
+- Smooth transition
+- Must not block interactions
+
+========================================
+AI CORE ROTATING GLOW SPHERE
+========================================
+
+Add subtle rotating glowing sphere in hero background:
+
+Option 1:
+CSS radial-gradient animated rotate
+
+Option 2:
+Three.js sphere with:
+- Low opacity
+- Deep red glow
+- Slow rotation
+- Positioned center behind headline
+
+Must be subtle and cinematic.
+
+========================================
+LAYER ORDER (IMPORTANT)
+========================================
+
+1. Base black background
+2. Radial red glow
+3. Animated grid
+4. AI core glow sphere
+5. Particles
+6. Scan lines overlay
+7. Content
+
+========================================
+IMPORTANT
+========================================
+
+- Keep layout unchanged.
+- Do not add heavy performance cost.
+- Keep everything subtle and premium.
+- No purple tones.
+- Maintain Tailwind compatibility.
+- Deliver updated global background component + required CSS + minimal JS.
+
+Create clean modular implementation.

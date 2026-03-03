@@ -12,7 +12,7 @@ export function Hero() {
   return (
     <section className="relative min-h-screen flex items-center justify-center px-6 overflow-hidden pt-20">
       {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 via-transparent to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-red-950/20 via-transparent to-transparent pointer-events-none" />
       
       <div className="container mx-auto max-w-6xl text-center relative z-10">
         <motion.div
@@ -28,9 +28,9 @@ export function Hero() {
             transition={{ delay: 0.2, duration: 0.6 }}
             className="inline-block"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-purple-500/30 bg-purple-500/10 backdrop-blur-sm">
-              <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" />
-              <span className="text-sm text-purple-300">Built on Solana</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-red-600/30 bg-red-600/10 backdrop-blur-sm">
+              <div className="w-2 h-2 bg-red-600 rounded-full animate-pulse" />
+              <span className="text-sm text-red-400">Built on Solana</span>
             </div>
           </motion.div>
 
@@ -41,10 +41,10 @@ export function Hero() {
             transition={{ delay: 0.3, duration: 0.8 }}
             className="text-6xl md:text-8xl tracking-tight font-poppins font-bold"
           >
-            <span className="block bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent animate-gradient">
+            <span className="block bg-gradient-to-r from-red-500 via-red-500 to-red-500 bg-clip-text text-transparent animate-gradient">
               SOMNICLAW
             </span>
-            <span className="block text-3xl md:text-5xl text-purple-300/90 mt-2">
+            <span className="block text-3xl md:text-5xl text-red-400/90 mt-2">
               ($SOMNICLAW)
             </span>
           </motion.h1>
@@ -90,10 +90,10 @@ export function Hero() {
             {/* View Tokenomics */}
             <button
               onClick={() => scrollToSection('tokenomics')}
-              className="group relative px-8 py-4 rounded-lg bg-purple-600/20 border border-purple-500/50 text-purple-300 hover:text-white transition-all duration-300 overflow-hidden min-w-[200px]"
+              className="group relative px-8 py-4 rounded-lg bg-red-700/20 border border-red-600/50 text-red-400 hover:text-white transition-all duration-300 overflow-hidden min-w-[200px]"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-600/0 via-purple-600/30 to-purple-600/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="absolute inset-0 bg-purple-500/20 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-gradient-to-r from-red-700/0 via-red-700/30 to-red-700/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-red-600/20 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-300" />
               <span className="relative z-10 flex items-center gap-2 justify-center">
                 View Tokenomics
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -121,11 +121,11 @@ export function Hero() {
           transition={{ delay: 1.2, duration: 0.8 }}
           className="absolute bottom-10 left-1/2 -translate-x-1/2"
         >
-          <div className="w-6 h-10 border-2 border-purple-500/30 rounded-full flex items-start justify-center p-2">
+          <div className="w-6 h-10 border-2 border-red-600/30 rounded-full flex items-start justify-center p-2">
             <motion.div
               animate={{ y: [0, 12, 0] }}
               transition={{ duration: 1.5, repeat: Infinity }}
-              className="w-1.5 h-1.5 bg-purple-500 rounded-full"
+              className="w-1.5 h-1.5 bg-red-600 rounded-full"
             />
           </div>
         </motion.div>

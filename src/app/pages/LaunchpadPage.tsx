@@ -39,7 +39,7 @@ function ToastContainer({ toasts, onRemove }: { toasts: Toast[]; onRemove: (id: 
   const colors: Record<ToastType, string> = {
     success: 'border-green-500/40 bg-green-950/80 text-green-300',
     error: 'border-red-500/40 bg-red-950/80 text-red-300',
-    loading: 'border-purple-500/40 bg-purple-950/80 text-purple-300',
+    loading: 'border-red-600/40 bg-red-950/80 text-red-400',
     info: 'border-blue-500/40 bg-blue-950/80 text-blue-300',
   };
   return (
@@ -84,7 +84,7 @@ function SuccessModal({ data, onClose }: { data: SuccessData; onClose: () => voi
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-lg rounded-2xl border border-purple-500/30 bg-gradient-to-b from-purple-950/90 to-[#0B0B0F] backdrop-blur-xl p-8"
+        className="w-full max-w-lg rounded-2xl border border-red-600/30 bg-gradient-to-b from-red-950/90 to-[#070707] backdrop-blur-xl p-8"
       >
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-xl font-poppins font-bold text-green-400">Token Deployed</h3>
@@ -93,30 +93,30 @@ function SuccessModal({ data, onClose }: { data: SuccessData; onClose: () => voi
 
         {data.logoPreview && (
           <div className="flex justify-center mb-6">
-            <img src={data.logoPreview} alt="Token Logo" className="w-20 h-20 rounded-2xl border border-purple-500/30 object-cover" />
+            <img src={data.logoPreview} alt="Token Logo" className="w-20 h-20 rounded-2xl border border-red-600/30 object-cover" />
           </div>
         )}
 
         <div className="text-center mb-6">
           <p className="text-2xl font-poppins font-bold text-white">{data.name}</p>
-          <p className="text-pink-400 font-mono text-sm">${data.ticker}</p>
+          <p className="text-red-500 font-mono text-sm">${data.ticker}</p>
         </div>
 
         <div className="space-y-3 mb-6">
-          <div className="flex items-center gap-2 p-3 rounded-xl bg-purple-950/40 border border-purple-500/20">
+          <div className="flex items-center gap-2 p-3 rounded-xl bg-red-950/40 border border-red-600/20">
             <span className="text-xs text-gray-500 shrink-0">Mint:</span>
-            <span className="text-xs text-purple-300 font-mono truncate flex-1">{data.mintAddress}</span>
-            <button onClick={copyAddress} className="shrink-0 cursor-pointer text-purple-400 hover:text-white">
+            <span className="text-xs text-red-400 font-mono truncate flex-1">{data.mintAddress}</span>
+            <button onClick={copyAddress} className="shrink-0 cursor-pointer text-red-500 hover:text-white">
               {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
             </button>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div className="p-3 rounded-xl bg-purple-950/40 border border-purple-500/20">
+            <div className="p-3 rounded-xl bg-red-950/40 border border-red-600/20">
               <p className="text-xs text-gray-500 mb-1">Market Cap</p>
               <p className="text-sm font-bold text-white">$0.00</p>
             </div>
-            <div className="p-3 rounded-xl bg-purple-950/40 border border-purple-500/20">
+            <div className="p-3 rounded-xl bg-red-950/40 border border-red-600/20">
               <p className="text-xs text-gray-500 mb-1">Liquidity</p>
               <p className="text-sm font-bold text-yellow-400">Pending</p>
             </div>
@@ -128,7 +128,7 @@ function SuccessModal({ data, onClose }: { data: SuccessData; onClose: () => voi
             href={`https://solscan.io/token/${data.mintAddress}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full py-2.5 rounded-xl border border-purple-500/30 bg-purple-600/10 text-purple-300 text-sm font-medium hover:bg-purple-600/20 transition-all duration-300 flex items-center justify-center gap-2"
+            className="w-full py-2.5 rounded-xl border border-red-600/30 bg-red-700/10 text-red-400 text-sm font-medium hover:bg-red-700/20 transition-all duration-300 flex items-center justify-center gap-2"
           >
             View on Solscan <ExternalLink className="w-3 h-3" />
           </a>
@@ -136,7 +136,7 @@ function SuccessModal({ data, onClose }: { data: SuccessData; onClose: () => voi
             href={`https://dexscreener.com/solana/${data.mintAddress}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full py-2.5 rounded-xl border border-pink-500/30 bg-pink-600/10 text-pink-300 text-sm font-medium hover:bg-pink-600/20 transition-all duration-300 flex items-center justify-center gap-2"
+            className="w-full py-2.5 rounded-xl border border-red-600/30 bg-red-700/10 text-red-400 text-sm font-medium hover:bg-red-700/20 transition-all duration-300 flex items-center justify-center gap-2"
           >
             View on Dexscreener <ExternalLink className="w-3 h-3" />
           </a>
@@ -171,7 +171,7 @@ function SendSolModal({
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-md rounded-2xl border border-purple-500/30 bg-gradient-to-b from-purple-950/90 to-[#0B0B0F] backdrop-blur-xl p-8"
+        className="w-full max-w-md rounded-2xl border border-red-600/30 bg-gradient-to-b from-red-950/90 to-[#070707] backdrop-blur-xl p-8"
       >
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-poppins font-bold text-white">Send SOL</h3>
@@ -184,7 +184,7 @@ function SendSolModal({
               value={recipient}
               onChange={(e) => setRecipient(e.target.value)}
               placeholder="Enter Solana address"
-              className="w-full px-4 py-3 rounded-xl bg-purple-950/40 border border-purple-500/20 text-white text-sm placeholder-gray-600 focus:border-purple-500/50 focus:outline-none"
+              className="w-full px-4 py-3 rounded-xl bg-red-950/40 border border-red-600/20 text-white text-sm placeholder-gray-600 focus:border-red-600/50 focus:outline-none"
             />
           </div>
           <div>
@@ -195,13 +195,13 @@ function SendSolModal({
               min="0"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-purple-950/40 border border-purple-500/20 text-white text-sm focus:border-purple-500/50 focus:outline-none"
+              className="w-full px-4 py-3 rounded-xl bg-red-950/40 border border-red-600/20 text-white text-sm focus:border-red-600/50 focus:outline-none"
             />
           </div>
           <button
             onClick={() => onSend(recipient, parseFloat(amount))}
             disabled={sending || !recipient || !amount}
-            className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium hover:from-purple-500 hover:to-pink-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full py-3 rounded-xl bg-gradient-to-r from-red-700 to-red-700 text-white font-medium hover:from-red-600 hover:to-red-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
           >
             {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
             {sending ? 'Sending...' : 'Send Transaction'}
@@ -213,8 +213,8 @@ function SendSolModal({
 }
 
 const mockStats = [
-  { label: 'Total Projects', value: '24', icon: Rocket, color: 'from-purple-400 to-pink-400' },
-  { label: 'Total Raised', value: '$4.2M', icon: TrendingUp, color: 'from-pink-400 to-red-400' },
+  { label: 'Total Projects', value: '24', icon: Rocket, color: 'from-red-500 to-red-500' },
+  { label: 'Total Raised', value: '$4.2M', icon: TrendingUp, color: 'from-red-500 to-red-400' },
   { label: 'Active Launches', value: '6', icon: Zap, color: 'from-red-400 to-orange-400' },
   { label: 'AI Score Index', value: '92.4', icon: BarChart3, color: 'from-orange-400 to-yellow-400' },
 ];
@@ -445,9 +445,9 @@ export default function LaunchpadPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0B0F] text-white">
-      <div className="fixed inset-0 bg-gradient-to-br from-purple-900/10 via-transparent to-pink-900/10 pointer-events-none" />
-      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/15 via-transparent to-transparent pointer-events-none" />
+    <div className="min-h-screen bg-[#070707] text-white">
+      <div className="fixed inset-0 bg-gradient-to-br from-red-950/10 via-transparent to-red-950/10 pointer-events-none" />
+      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-red-950/15 via-transparent to-transparent pointer-events-none" />
 
       <ToastContainer toasts={toasts} onRemove={removeToast} />
 
@@ -458,18 +458,18 @@ export default function LaunchpadPage() {
         )}
       </AnimatePresence>
 
-      <header className="relative z-20 flex items-center justify-between px-4 md:px-6 py-4 border-b border-purple-500/10 backdrop-blur-sm bg-[#0B0B0F]/60">
+      <header className="relative z-20 flex items-center justify-between px-4 md:px-6 py-4 border-b border-red-600/10 backdrop-blur-sm bg-[#070707]/60">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-600/10 border border-purple-500/30 text-purple-300 hover:text-white hover:bg-purple-600/20 transition-all duration-300 text-sm font-medium"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-700/10 border border-red-600/30 text-red-400 hover:text-white hover:bg-red-700/20 transition-all duration-300 text-sm font-medium"
         >
           <ArrowLeft className="w-4 h-4" />
           <span className="hidden sm:inline">Back to Home</span>
         </Link>
 
         <div className="hidden md:flex items-center gap-2">
-          <Rocket className="w-5 h-5 text-pink-400" />
-          <span className="text-sm font-poppins font-bold tracking-wider bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+          <Rocket className="w-5 h-5 text-red-500" />
+          <span className="text-sm font-poppins font-bold tracking-wider bg-gradient-to-r from-red-500 to-red-500 bg-clip-text text-transparent">
             SOMNICLAW LAUNCHPAD
           </span>
         </div>
@@ -479,13 +479,13 @@ export default function LaunchpadPage() {
             <>
               <button
                 onClick={() => setShowSendModal(true)}
-                className="px-3 py-2 rounded-lg bg-purple-600/10 border border-purple-500/30 text-purple-300 hover:text-white hover:bg-purple-600/20 transition-all text-xs cursor-pointer"
+                className="px-3 py-2 rounded-lg bg-red-700/10 border border-red-600/30 text-red-400 hover:text-white hover:bg-red-700/20 transition-all text-xs cursor-pointer"
               >
                 <Send className="w-3.5 h-3.5" />
               </button>
-              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-purple-950/40 border border-purple-500/20">
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-950/40 border border-red-600/20">
                 <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                <span className="text-xs font-mono text-purple-300">{truncatedAddress}</span>
+                <span className="text-xs font-mono text-red-400">{truncatedAddress}</span>
                 {balance !== null && (
                   <span className="text-xs text-gray-500">{balance.toFixed(3)} SOL</span>
                 )}
@@ -501,7 +501,7 @@ export default function LaunchpadPage() {
             <button
               onClick={connectWallet}
               disabled={connecting}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-medium hover:from-purple-500 hover:to-pink-500 disabled:opacity-50 transition-all cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-red-700 to-red-700 text-white text-sm font-medium hover:from-red-600 hover:to-red-600 disabled:opacity-50 transition-all cursor-pointer"
             >
               {connecting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wallet className="w-4 h-4" />}
               {connecting ? 'Connecting...' : 'Connect Phantom'}
@@ -513,10 +513,10 @@ export default function LaunchpadPage() {
       <main className="relative z-10">
         <section className="px-4 md:px-6 pt-16 pb-12 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="max-w-3xl mx-auto">
-            <span className="inline-block px-4 py-1.5 rounded-full text-xs font-medium tracking-widest text-purple-300 border border-purple-500/30 bg-purple-600/10 mb-6">
+            <span className="inline-block px-4 py-1.5 rounded-full text-xs font-medium tracking-widest text-red-400 border border-red-600/30 bg-red-700/10 mb-6">
               SOMNICLAW ECOSYSTEM
             </span>
-            <h1 className="text-4xl md:text-7xl font-poppins font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent animate-gradient mb-4">
+            <h1 className="text-4xl md:text-7xl font-poppins font-bold bg-gradient-to-r from-red-500 via-red-500 to-red-500 bg-clip-text text-transparent animate-gradient mb-4">
               SOMNICLAW LAUNCHPAD
             </h1>
             <p className="text-base md:text-lg text-gray-400 leading-relaxed max-w-2xl mx-auto">
@@ -535,7 +535,7 @@ export default function LaunchpadPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
-                  className="group rounded-2xl border border-purple-500/20 bg-purple-950/20 backdrop-blur-sm p-4 md:p-6 hover:border-purple-500/40 hover:shadow-[0_0_30px_rgba(168,85,247,0.15)] transition-all duration-500"
+                  className="group rounded-2xl border border-red-600/20 bg-red-950/20 backdrop-blur-sm p-4 md:p-6 hover:border-red-600/40 hover:shadow-[0_0_30px_rgba(255,26,26,0.15)] transition-all duration-500"
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <div className={`w-8 h-8 md:w-10 md:h-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
@@ -559,7 +559,7 @@ export default function LaunchpadPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
-                className="rounded-2xl border border-purple-500/20 bg-gradient-to-b from-purple-950/30 to-[#0B0B0F] backdrop-blur-sm p-6 md:p-8"
+                className="rounded-2xl border border-red-600/20 bg-gradient-to-b from-red-950/30 to-[#070707] backdrop-blur-sm p-6 md:p-8"
               >
                 <h2 className="text-2xl font-poppins font-bold text-white mb-6">Deploy Your Token</h2>
 
@@ -570,7 +570,7 @@ export default function LaunchpadPage() {
                       value={projectName}
                       onChange={(e) => setProjectName(e.target.value)}
                       placeholder="e.g. SomniToken"
-                      className="w-full px-4 py-3 rounded-xl bg-purple-950/40 border border-purple-500/20 text-white text-sm placeholder-gray-600 focus:border-purple-500/50 focus:outline-none transition-colors"
+                      className="w-full px-4 py-3 rounded-xl bg-red-950/40 border border-red-600/20 text-white text-sm placeholder-gray-600 focus:border-red-600/50 focus:outline-none transition-colors"
                     />
                   </div>
                   <div>
@@ -579,7 +579,7 @@ export default function LaunchpadPage() {
                       value={ticker}
                       onChange={(e) => setTicker(e.target.value.toUpperCase().slice(0, 9))}
                       placeholder="e.g. SOMNI"
-                      className="w-full px-4 py-3 rounded-xl bg-purple-950/40 border border-purple-500/20 text-white text-sm placeholder-gray-600 focus:border-purple-500/50 focus:outline-none font-mono transition-colors"
+                      className="w-full px-4 py-3 rounded-xl bg-red-950/40 border border-red-600/20 text-white text-sm placeholder-gray-600 focus:border-red-600/50 focus:outline-none font-mono transition-colors"
                     />
                   </div>
                 </div>
@@ -591,7 +591,7 @@ export default function LaunchpadPage() {
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Describe your project..."
                     rows={3}
-                    className="w-full px-4 py-3 rounded-xl bg-purple-950/40 border border-purple-500/20 text-white text-sm placeholder-gray-600 focus:border-purple-500/50 focus:outline-none resize-none transition-colors"
+                    className="w-full px-4 py-3 rounded-xl bg-red-950/40 border border-red-600/20 text-white text-sm placeholder-gray-600 focus:border-red-600/50 focus:outline-none resize-none transition-colors"
                   />
                 </div>
 
@@ -599,12 +599,12 @@ export default function LaunchpadPage() {
                   <label className="text-xs text-gray-400 mb-1.5 block">Project Logo</label>
                   <div
                     onClick={() => logoInputRef.current?.click()}
-                    className="flex items-center gap-4 p-4 rounded-xl border-2 border-dashed border-purple-500/20 bg-purple-950/20 cursor-pointer hover:border-purple-500/40 transition-colors"
+                    className="flex items-center gap-4 p-4 rounded-xl border-2 border-dashed border-red-600/20 bg-red-950/20 cursor-pointer hover:border-red-600/40 transition-colors"
                   >
                     {logoPreview ? (
-                      <img src={logoPreview} alt="Logo" className="w-14 h-14 rounded-xl object-cover border border-purple-500/30" />
+                      <img src={logoPreview} alt="Logo" className="w-14 h-14 rounded-xl object-cover border border-red-600/30" />
                     ) : (
-                      <div className="w-14 h-14 rounded-xl bg-purple-950/40 border border-purple-500/20 flex items-center justify-center">
+                      <div className="w-14 h-14 rounded-xl bg-red-950/40 border border-red-600/20 flex items-center justify-center">
                         <Upload className="w-5 h-5 text-gray-600" />
                       </div>
                     )}
@@ -625,7 +625,7 @@ export default function LaunchpadPage() {
                         value={website}
                         onChange={(e) => setWebsite(e.target.value)}
                         placeholder="https://"
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-purple-950/40 border border-purple-500/20 text-white text-sm placeholder-gray-600 focus:border-purple-500/50 focus:outline-none transition-colors"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-red-950/40 border border-red-600/20 text-white text-sm placeholder-gray-600 focus:border-red-600/50 focus:outline-none transition-colors"
                       />
                     </div>
                   </div>
@@ -635,7 +635,7 @@ export default function LaunchpadPage() {
                       value={twitter}
                       onChange={(e) => setTwitter(e.target.value)}
                       placeholder="@handle"
-                      className="w-full px-4 py-3 rounded-xl bg-purple-950/40 border border-purple-500/20 text-white text-sm placeholder-gray-600 focus:border-purple-500/50 focus:outline-none transition-colors"
+                      className="w-full px-4 py-3 rounded-xl bg-red-950/40 border border-red-600/20 text-white text-sm placeholder-gray-600 focus:border-red-600/50 focus:outline-none transition-colors"
                     />
                   </div>
                   <div>
@@ -644,16 +644,16 @@ export default function LaunchpadPage() {
                       value={telegram}
                       onChange={(e) => setTelegram(e.target.value)}
                       placeholder="t.me/group"
-                      className="w-full px-4 py-3 rounded-xl bg-purple-950/40 border border-purple-500/20 text-white text-sm placeholder-gray-600 focus:border-purple-500/50 focus:outline-none transition-colors"
+                      className="w-full px-4 py-3 rounded-xl bg-red-950/40 border border-red-600/20 text-white text-sm placeholder-gray-600 focus:border-red-600/50 focus:outline-none transition-colors"
                     />
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between p-4 rounded-xl bg-purple-950/30 border border-purple-500/10 mb-6">
+                <div className="flex items-center justify-between p-4 rounded-xl bg-red-950/30 border border-red-600/10 mb-6">
                   <div className="text-xs text-gray-500">
-                    <p>Supply: <span className="text-purple-300 font-mono">1,000,000,000</span></p>
-                    <p>Decimals: <span className="text-purple-300 font-mono">9</span></p>
-                    <p>Network: <span className="text-purple-300">Solana Mainnet</span></p>
+                    <p>Supply: <span className="text-red-400 font-mono">1,000,000,000</span></p>
+                    <p>Decimals: <span className="text-red-400 font-mono">9</span></p>
+                    <p>Network: <span className="text-red-400">Solana Mainnet</span></p>
                   </div>
                   <div className="flex items-center gap-2">
                     {walletKey ? (
@@ -673,7 +673,7 @@ export default function LaunchpadPage() {
                 <button
                   onClick={handleDeploy}
                   disabled={deploying || !walletKey || !formValid}
-                  className="w-full py-4 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-poppins font-bold text-lg hover:from-purple-500 hover:to-pink-500 hover:shadow-[0_0_40px_rgba(168,85,247,0.4)] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:shadow-none transition-all duration-300 flex items-center justify-center gap-3 cursor-pointer"
+                  className="w-full py-4 rounded-xl bg-gradient-to-r from-red-700 to-red-700 text-white font-poppins font-bold text-lg hover:from-red-600 hover:to-red-600 hover:shadow-[0_0_40px_rgba(255,26,26,0.4)] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:shadow-none transition-all duration-300 flex items-center justify-center gap-3 cursor-pointer"
                 >
                   {deploying ? (
                     <>
@@ -699,10 +699,10 @@ export default function LaunchpadPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
-                className="rounded-2xl border border-purple-500/20 bg-gradient-to-b from-purple-950/30 to-[#0B0B0F] backdrop-blur-sm p-6 sticky top-6"
+                className="rounded-2xl border border-red-600/20 bg-gradient-to-b from-red-950/30 to-[#070707] backdrop-blur-sm p-6 sticky top-6"
               >
                 <h3 className="text-lg font-poppins font-bold text-white mb-4 flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-pink-400" />
+                  <Zap className="w-4 h-4 text-red-500" />
                   Recent Launches
                 </h3>
 
@@ -717,19 +717,19 @@ export default function LaunchpadPage() {
                     {recentLaunches.map((token) => (
                       <div
                         key={token.mintAddress}
-                        className="flex items-center gap-3 p-3 rounded-xl bg-purple-950/30 border border-purple-500/10 hover:border-purple-500/30 transition-colors"
+                        className="flex items-center gap-3 p-3 rounded-xl bg-red-950/30 border border-red-600/10 hover:border-red-600/30 transition-colors"
                       >
                         {token.logoPreview ? (
-                          <img src={token.logoPreview} alt="" className="w-9 h-9 rounded-lg object-cover border border-purple-500/20" />
+                          <img src={token.logoPreview} alt="" className="w-9 h-9 rounded-lg object-cover border border-red-600/20" />
                         ) : (
-                          <div className="w-9 h-9 rounded-lg bg-purple-950/60 border border-purple-500/20 flex items-center justify-center text-xs font-bold text-purple-400">
+                          <div className="w-9 h-9 rounded-lg bg-red-950/60 border border-red-600/20 flex items-center justify-center text-xs font-bold text-red-500">
                             {token.ticker.slice(0, 2)}
                           </div>
                         )}
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-white truncate">{token.name}</p>
                           <div className="flex items-center gap-2">
-                            <span className="text-xs text-pink-400 font-mono">${token.ticker}</span>
+                            <span className="text-xs text-red-500 font-mono">${token.ticker}</span>
                             <span className="text-xs text-gray-600 font-mono truncate">
                               {token.mintAddress.slice(0, 6)}...{token.mintAddress.slice(-4)}
                             </span>
@@ -739,7 +739,7 @@ export default function LaunchpadPage() {
                           href={`https://solscan.io/token/${token.mintAddress}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-purple-500 hover:text-purple-300 transition-colors"
+                          className="text-red-600 hover:text-red-400 transition-colors"
                         >
                           <ExternalLink className="w-3.5 h-3.5" />
                         </a>
@@ -749,12 +749,12 @@ export default function LaunchpadPage() {
                 )}
 
                 {walletKey && (
-                  <div className="mt-6 pt-4 border-t border-purple-500/10">
+                  <div className="mt-6 pt-4 border-t border-red-600/10">
                     <h4 className="text-xs text-gray-500 mb-3 font-medium">WALLET</h4>
-                    <div className="p-3 rounded-xl bg-purple-950/30 border border-purple-500/10">
+                    <div className="p-3 rounded-xl bg-red-950/30 border border-red-600/10">
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-xs text-gray-400">Address</span>
-                        <span className="text-xs font-mono text-purple-300">{truncatedAddress}</span>
+                        <span className="text-xs font-mono text-red-400">{truncatedAddress}</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-gray-400">Balance</span>

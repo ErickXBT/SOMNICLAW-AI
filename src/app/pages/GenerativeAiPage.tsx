@@ -48,21 +48,21 @@ function NeonSelect({
 
   return (
     <div className="relative">
-      <label className="block text-xs text-purple-400 tracking-wider uppercase mb-2">
+      <label className="block text-xs text-red-500 tracking-wider uppercase mb-2">
         {label}
       </label>
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-4 py-3 rounded-lg bg-black/60 border border-purple-500/20 text-sm text-gray-200 hover:border-purple-500/40 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 rounded-lg bg-black/60 border border-red-600/20 text-sm text-gray-200 hover:border-red-600/40 transition-colors"
       >
         <span>{selected?.label}</span>
         <ChevronDown
-          className={`w-4 h-4 text-purple-400 transition-transform ${open ? 'rotate-180' : ''}`}
+          className={`w-4 h-4 text-red-500 transition-transform ${open ? 'rotate-180' : ''}`}
         />
       </button>
       {open && (
-        <div className="absolute z-50 mt-1 w-full rounded-lg bg-[#110011] border border-purple-500/30 shadow-[0_0_20px_rgba(168,85,247,0.15)] overflow-hidden">
+        <div className="absolute z-50 mt-1 w-full rounded-lg bg-[#070707] border border-red-600/30 shadow-[0_0_20px_rgba(255,26,26,0.15)] overflow-hidden">
           {options.map((opt) => (
             <button
               key={opt.value}
@@ -73,8 +73,8 @@ function NeonSelect({
               }}
               className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
                 opt.value === value
-                  ? 'bg-purple-600/20 text-purple-300'
-                  : 'text-gray-300 hover:bg-purple-600/10 hover:text-white'
+                  ? 'bg-red-700/20 text-red-400'
+                  : 'text-gray-300 hover:bg-red-700/10 hover:text-white'
               }`}
             >
               {opt.label}
@@ -193,22 +193,22 @@ export default function GenerativeAiPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0B0F] text-white">
-      <div className="fixed inset-0 bg-gradient-to-br from-purple-900/10 via-transparent to-pink-900/10 pointer-events-none" />
+    <div className="min-h-screen bg-[#070707] text-white">
+      <div className="fixed inset-0 bg-gradient-to-br from-red-950/10 via-transparent to-red-950/10 pointer-events-none" />
 
       <div className="relative z-10">
-        <header className="sticky top-0 z-40 backdrop-blur-xl bg-[#0B0B0F]/80 border-b border-purple-500/10">
+        <header className="sticky top-0 z-40 backdrop-blur-xl bg-[#070707]/80 border-b border-red-600/10">
           <div className="max-w-[1600px] mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
             <Link
               to="/"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-600/10 border border-purple-500/30 text-purple-300 hover:text-white hover:bg-purple-600/20 transition-all duration-300 text-sm"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-700/10 border border-red-600/30 text-red-400 hover:text-white hover:bg-red-700/20 transition-all duration-300 text-sm"
             >
               <ArrowLeft className="w-4 h-4" />
               Back to Home
             </Link>
             <div className="flex items-center gap-2">
-              <Cpu className="w-5 h-5 text-pink-400" />
-              <span className="text-sm font-poppins font-bold tracking-wider bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              <Cpu className="w-5 h-5 text-red-500" />
+              <span className="text-sm font-poppins font-bold tracking-wider bg-gradient-to-r from-red-500 to-red-500 bg-clip-text text-transparent">
                 SOMNICLAW GENERATIVE AI
               </span>
             </div>
@@ -224,21 +224,21 @@ export default function GenerativeAiPage() {
               transition={{ duration: 0.5 }}
               className="space-y-5"
             >
-              <div className="rounded-2xl border border-purple-500/15 bg-black/40 backdrop-blur-xl p-5">
+              <div className="rounded-2xl border border-red-600/15 bg-black/40 backdrop-blur-xl p-5">
                 <div className="flex items-center gap-2 mb-5">
-                  <Zap className="w-4 h-4 text-pink-400" />
-                  <h2 className="text-sm font-bold tracking-wider text-purple-300 uppercase">
+                  <Zap className="w-4 h-4 text-red-500" />
+                  <h2 className="text-sm font-bold tracking-wider text-red-400 uppercase">
                     Neural Input
                   </h2>
                 </div>
 
-                <div className="flex rounded-lg bg-black/50 border border-purple-500/15 p-1 mb-5">
+                <div className="flex rounded-lg bg-black/50 border border-red-600/15 p-1 mb-5">
                   <button
                     type="button"
                     onClick={() => setOutputMode('image')}
                     className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md text-sm font-medium transition-all duration-300 ${
                       outputMode === 'image'
-                        ? 'bg-purple-600/30 text-white border border-purple-500/40 shadow-[0_0_12px_rgba(168,85,247,0.2)]'
+                        ? 'bg-red-700/30 text-white border border-red-600/40 shadow-[0_0_12px_rgba(255,26,26,0.2)]'
                         : 'text-gray-500 hover:text-gray-300'
                     }`}
                   >
@@ -250,7 +250,7 @@ export default function GenerativeAiPage() {
                     onClick={() => setOutputMode('video')}
                     className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md text-sm font-medium transition-all duration-300 ${
                       outputMode === 'video'
-                        ? 'bg-purple-600/30 text-white border border-purple-500/40 shadow-[0_0_12px_rgba(168,85,247,0.2)]'
+                        ? 'bg-red-700/30 text-white border border-red-600/40 shadow-[0_0_12px_rgba(255,26,26,0.2)]'
                         : 'text-gray-500 hover:text-gray-300'
                     }`}
                   >
@@ -268,7 +268,7 @@ export default function GenerativeAiPage() {
                 )}
 
                 <div className="mb-5">
-                  <label className="block text-xs text-purple-400 tracking-wider uppercase mb-2">
+                  <label className="block text-xs text-red-500 tracking-wider uppercase mb-2">
                     Master Prompt
                   </label>
                   <textarea
@@ -276,12 +276,12 @@ export default function GenerativeAiPage() {
                     onChange={(e) => setPrompt(e.target.value)}
                     placeholder="Describe the reality you want to generate..."
                     rows={5}
-                    className="w-full px-4 py-3 rounded-lg bg-black/60 border border-purple-500/20 text-sm text-gray-200 placeholder-gray-600 resize-none focus:outline-none focus:border-purple-500/50 focus:shadow-[0_0_15px_rgba(168,85,247,0.1)] transition-all"
+                    className="w-full px-4 py-3 rounded-lg bg-black/60 border border-red-600/20 text-sm text-gray-200 placeholder-gray-600 resize-none focus:outline-none focus:border-red-600/50 focus:shadow-[0_0_15px_rgba(255,26,26,0.1)] transition-all"
                   />
                 </div>
 
                 <div className="mb-5">
-                  <label className="block text-xs text-purple-400 tracking-wider uppercase mb-2">
+                  <label className="block text-xs text-red-500 tracking-wider uppercase mb-2">
                     Neural Reference
                   </label>
                   <input
@@ -292,14 +292,14 @@ export default function GenerativeAiPage() {
                     className="hidden"
                   />
                   {referenceDataUrl ? (
-                    <div className="relative rounded-lg border border-purple-500/20 overflow-hidden">
+                    <div className="relative rounded-lg border border-red-600/20 overflow-hidden">
                       <img
                         src={referenceDataUrl}
                         alt="Reference"
                         className="w-full h-32 object-cover"
                       />
                       <div className="absolute bottom-0 inset-x-0 bg-black/70 px-3 py-1.5 flex items-center justify-between">
-                        <span className="text-xs text-purple-300 truncate max-w-[180px]">
+                        <span className="text-xs text-red-400 truncate max-w-[180px]">
                           {referenceFile}
                         </span>
                         <button
@@ -315,9 +315,9 @@ export default function GenerativeAiPage() {
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="w-full flex flex-col items-center justify-center gap-2 py-6 rounded-lg border-2 border-dashed border-purple-500/20 bg-black/30 hover:border-purple-500/40 hover:bg-purple-600/5 transition-all duration-300 group"
+                      className="w-full flex flex-col items-center justify-center gap-2 py-6 rounded-lg border-2 border-dashed border-red-600/20 bg-black/30 hover:border-red-600/40 hover:bg-red-700/5 transition-all duration-300 group"
                     >
-                      <Upload className="w-6 h-6 text-gray-600 group-hover:text-purple-400 transition-colors" />
+                      <Upload className="w-6 h-6 text-gray-600 group-hover:text-red-500 transition-colors" />
                       <span className="text-xs text-gray-500 group-hover:text-gray-400 transition-colors">
                         Upload reference image
                       </span>
@@ -352,8 +352,8 @@ export default function GenerativeAiPage() {
                   disabled={!prompt.trim() || isGenerating}
                   className="w-full relative py-3.5 rounded-lg font-bold text-sm tracking-wider uppercase overflow-hidden transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed group"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 animate-gradient" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-red-700 via-red-700 to-red-700 animate-gradient" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-red-700 via-red-700 to-red-700 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />
                   <span className="relative z-10 flex items-center justify-center gap-2">
                     {isGenerating ? (
                       <>
@@ -378,11 +378,11 @@ export default function GenerativeAiPage() {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="flex flex-col"
             >
-              <div className="flex-1 rounded-2xl border border-purple-500/15 bg-black/40 backdrop-blur-xl overflow-hidden flex flex-col min-h-[500px]">
-                <div className="flex items-center justify-between px-5 py-3 border-b border-purple-500/10">
+              <div className="flex-1 rounded-2xl border border-red-600/15 bg-black/40 backdrop-blur-xl overflow-hidden flex flex-col min-h-[500px]">
+                <div className="flex items-center justify-between px-5 py-3 border-b border-red-600/10">
                   <div className="flex items-center gap-2">
                     <div
-                      className={`w-2 h-2 rounded-full ${isGenerating ? 'bg-yellow-500' : generatedImage ? 'bg-green-500' : 'bg-pink-500'} animate-pulse`}
+                      className={`w-2 h-2 rounded-full ${isGenerating ? 'bg-yellow-500' : generatedImage ? 'bg-green-500' : 'bg-red-600'} animate-pulse`}
                     />
                     <span className="text-xs text-gray-500 tracking-wider uppercase">
                       Neural Canvas
@@ -396,7 +396,7 @@ export default function GenerativeAiPage() {
                       <button
                         type="button"
                         onClick={handleDownload}
-                        className="flex items-center gap-1.5 px-3 py-1 rounded-md bg-purple-600/20 border border-purple-500/30 text-xs text-purple-300 hover:text-white hover:bg-purple-600/30 transition-all"
+                        className="flex items-center gap-1.5 px-3 py-1 rounded-md bg-red-700/20 border border-red-600/30 text-xs text-red-400 hover:text-white hover:bg-red-700/30 transition-all"
                       >
                         <Download className="w-3 h-3" />
                         Download
@@ -409,15 +409,15 @@ export default function GenerativeAiPage() {
                   {isGenerating ? (
                     <div className="text-center space-y-6">
                       <div className="relative w-24 h-24 mx-auto">
-                        <div className="absolute inset-0 rounded-full border-2 border-purple-500/20 animate-ping" />
-                        <div className="absolute inset-2 rounded-full border-2 border-pink-500/30 animate-spin" />
-                        <div className="absolute inset-4 rounded-full border-2 border-purple-400/40 animate-spin [animation-direction:reverse]" />
+                        <div className="absolute inset-0 rounded-full border-2 border-red-600/20 animate-ping" />
+                        <div className="absolute inset-2 rounded-full border-2 border-red-600/30 animate-spin" />
+                        <div className="absolute inset-4 rounded-full border-2 border-red-500/40 animate-spin [animation-direction:reverse]" />
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <Cpu className="w-8 h-8 text-purple-400" />
+                          <Cpu className="w-8 h-8 text-red-500" />
                         </div>
                       </div>
                       <div>
-                        <p className="text-sm text-purple-300 font-medium mb-1">
+                        <p className="text-sm text-red-400 font-medium mb-1">
                           Neural synthesis in progress
                         </p>
                         <p className="text-xs text-gray-600">
@@ -435,7 +435,7 @@ export default function GenerativeAiPage() {
                       <button
                         type="button"
                         onClick={() => setError(null)}
-                        className="px-4 py-2 rounded-lg text-xs border border-purple-500/20 text-gray-400 hover:text-purple-300 hover:border-purple-500/30 transition-all"
+                        className="px-4 py-2 rounded-lg text-xs border border-red-600/20 text-gray-400 hover:text-red-400 hover:border-red-600/30 transition-all"
                       >
                         Dismiss
                       </button>
@@ -444,16 +444,16 @@ export default function GenerativeAiPage() {
                     <img
                       src={generatedImage}
                       alt="Generated output"
-                      className="max-w-full max-h-full rounded-lg object-contain shadow-[0_0_40px_rgba(168,85,247,0.15)]"
+                      className="max-w-full max-h-full rounded-lg object-contain shadow-[0_0_40px_rgba(255,26,26,0.15)]"
                     />
                   ) : (
                     <div className="text-center space-y-4 max-w-sm">
-                      <div className="w-20 h-20 mx-auto rounded-2xl border border-purple-500/15 bg-purple-600/5 flex items-center justify-center">
-                        <Scan className="w-10 h-10 text-purple-500/30" />
+                      <div className="w-20 h-20 mx-auto rounded-2xl border border-red-600/15 bg-red-700/5 flex items-center justify-center">
+                        <Scan className="w-10 h-10 text-red-600/30" />
                       </div>
                       <p className="text-sm text-gray-500">
                         Enter a prompt and click{' '}
-                        <span className="text-purple-400">
+                        <span className="text-red-500">
                           Generate from Reality
                         </span>{' '}
                         to synthesize your vision
@@ -468,7 +468,7 @@ export default function GenerativeAiPage() {
                             key={suggestion}
                             type="button"
                             onClick={() => setPrompt(suggestion)}
-                            className="px-3 py-1.5 rounded-full text-xs border border-purple-500/15 text-gray-500 hover:text-purple-300 hover:border-purple-500/30 transition-all"
+                            className="px-3 py-1.5 rounded-full text-xs border border-red-600/15 text-gray-500 hover:text-red-400 hover:border-red-600/30 transition-all"
                           >
                             {suggestion}
                           </button>
@@ -487,27 +487,27 @@ export default function GenerativeAiPage() {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="space-y-5"
             >
-              <div className="rounded-2xl border border-purple-500/15 bg-black/40 backdrop-blur-xl p-5">
+              <div className="rounded-2xl border border-red-600/15 bg-black/40 backdrop-blur-xl p-5">
                 <div className="flex items-center gap-2 mb-6">
-                  <Cpu className="w-4 h-4 text-pink-400" />
-                  <h2 className="text-sm font-bold tracking-wider text-purple-300 uppercase">
+                  <Cpu className="w-4 h-4 text-red-500" />
+                  <h2 className="text-sm font-bold tracking-wider text-red-400 uppercase">
                     System Overrides
                   </h2>
                 </div>
 
                 <div className="mb-8">
                   <div className="flex items-center justify-between mb-3">
-                    <label className="text-xs text-purple-400 tracking-wider uppercase">
+                    <label className="text-xs text-red-500 tracking-wider uppercase">
                       Creativity
                     </label>
-                    <span className="text-xs text-pink-400 font-mono font-bold">
+                    <span className="text-xs text-red-500 font-mono font-bold">
                       {creativity}%
                     </span>
                   </div>
                   <div className="relative">
-                    <div className="h-2 rounded-full bg-black/60 border border-purple-500/15 overflow-hidden">
+                    <div className="h-2 rounded-full bg-black/60 border border-red-600/15 overflow-hidden">
                       <div
-                        className="h-full rounded-full bg-gradient-to-r from-purple-600 to-pink-500 transition-all duration-200"
+                        className="h-full rounded-full bg-gradient-to-r from-red-700 to-red-600 transition-all duration-200"
                         style={{ width: `${creativity}%` }}
                       />
                     </div>
@@ -527,7 +527,7 @@ export default function GenerativeAiPage() {
                 </div>
 
                 <div className="mb-6">
-                  <label className="block text-xs text-purple-400 tracking-wider uppercase mb-2">
+                  <label className="block text-xs text-red-500 tracking-wider uppercase mb-2">
                     Entropy Seed
                   </label>
                   <div className="flex gap-2">
@@ -535,12 +535,12 @@ export default function GenerativeAiPage() {
                       type="text"
                       value={entropy}
                       onChange={(e) => setEntropy(e.target.value)}
-                      className="flex-1 px-4 py-2.5 rounded-lg bg-black/60 border border-purple-500/20 text-sm text-gray-200 font-mono focus:outline-none focus:border-purple-500/50 transition-all"
+                      className="flex-1 px-4 py-2.5 rounded-lg bg-black/60 border border-red-600/20 text-sm text-gray-200 font-mono focus:outline-none focus:border-red-600/50 transition-all"
                     />
                     <button
                       type="button"
                       onClick={randomizeSeed}
-                      className="px-3 py-2.5 rounded-lg bg-purple-600/15 border border-purple-500/20 text-purple-400 hover:text-white hover:bg-purple-600/25 transition-all"
+                      className="px-3 py-2.5 rounded-lg bg-red-700/15 border border-red-600/20 text-red-500 hover:text-white hover:bg-red-700/25 transition-all"
                       title="Randomize seed"
                     >
                       <Sparkles className="w-4 h-4" />
@@ -548,23 +548,23 @@ export default function GenerativeAiPage() {
                   </div>
                 </div>
 
-                <div className="space-y-3 pt-4 border-t border-purple-500/10">
+                <div className="space-y-3 pt-4 border-t border-red-600/10">
                   <div className="flex items-center justify-between">
                     <span className="text-[11px] text-gray-500">Mode</span>
-                    <span className="text-[11px] text-purple-300 font-mono uppercase">
+                    <span className="text-[11px] text-red-400 font-mono uppercase">
                       {outputMode}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-[11px] text-gray-500">Aesthetic</span>
-                    <span className="text-[11px] text-purple-300 font-mono">
+                    <span className="text-[11px] text-red-400 font-mono">
                       {aestheticProfiles.find((a) => a.value === aesthetic)
                         ?.label ?? aesthetic}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-[11px] text-gray-500">Output</span>
-                    <span className="text-[11px] text-purple-300 font-mono">
+                    <span className="text-[11px] text-red-400 font-mono">
                       {dimensions.replace('x', '×')}
                     </span>
                   </div>
@@ -580,8 +580,8 @@ export default function GenerativeAiPage() {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-purple-500/15 bg-black/40 backdrop-blur-xl p-5">
-                <h3 className="text-xs font-bold tracking-wider text-purple-300 uppercase mb-3">
+              <div className="rounded-2xl border border-red-600/15 bg-black/40 backdrop-blur-xl p-5">
+                <h3 className="text-xs font-bold tracking-wider text-red-400 uppercase mb-3">
                   Quick Prompts
                 </h3>
                 <div className="space-y-2">
@@ -594,7 +594,7 @@ export default function GenerativeAiPage() {
                       key={quickPrompt}
                       type="button"
                       onClick={() => setPrompt(quickPrompt)}
-                      className="w-full text-left px-3 py-2.5 rounded-lg text-xs text-gray-500 hover:text-purple-300 bg-black/20 hover:bg-purple-600/10 border border-transparent hover:border-purple-500/15 transition-all duration-200 leading-relaxed"
+                      className="w-full text-left px-3 py-2.5 rounded-lg text-xs text-gray-500 hover:text-red-400 bg-black/20 hover:bg-red-700/10 border border-transparent hover:border-red-600/15 transition-all duration-200 leading-relaxed"
                     >
                       {quickPrompt}
                     </button>

@@ -1,6 +1,6 @@
 # SOMNICLAW Website
 
-A React-based landing page for the SOMNICLAW AI crypto project with a cyberpunk neon theme, featuring a Generative AI interface powered by OpenAI's gpt-image-1 model and a Solana Launchpad with Phantom wallet integration.
+A React-based landing page for the SOMNICLAW AI crypto project with a neon red cinematic AI theme (#070707 base, #FF1A1A/#8B0000 neon red accents), featuring a Generative AI interface powered by OpenAI's gpt-image-1 model, a SOMNICLAW AI health assistant (gpt-4o-mini with streaming), and a Solana Launchpad with Phantom wallet integration.
 
 ## Tech Stack
 

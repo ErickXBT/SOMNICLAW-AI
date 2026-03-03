@@ -9,7 +9,7 @@ export function Roadmap() {
     {
       phase: 'Phase 1',
       icon: Rocket,
-      color: 'from-purple-500 to-pink-500',
+      color: 'from-red-600 to-red-600',
       items: [
         'Token Launch on Solana',
         'Website & Branding',
@@ -28,7 +28,7 @@ export function Roadmap() {
     {
       phase: 'Phase 3',
       icon: Sparkles,
-      color: 'from-purple-500 to-blue-500',
+      color: 'from-red-600 to-blue-500',
       items: [
         'SOMNICLAW Launchpad Launch',
         'Phantom Wallet Integration',
@@ -40,7 +40,7 @@ export function Roadmap() {
     {
       phase: 'Phase 4',
       icon: Globe,
-      color: 'from-pink-500 to-purple-500',
+      color: 'from-red-600 to-red-600',
       items: [
         'SOMNICLAW Generative AI Release',
         'Neural Canvas Image Generation',
@@ -61,7 +61,7 @@ export function Roadmap() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-poppins font-bold mb-6">
-            <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-red-500 to-blue-400 bg-clip-text text-transparent">
               Roadmap
             </span>
           </h2>
@@ -69,7 +69,7 @@ export function Roadmap() {
 
         <div className="relative">
           {/* Timeline line */}
-          <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-purple-500/50 via-blue-500/50 to-pink-500/50 -translate-x-1/2" />
+          <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-red-600/50 via-blue-500/50 to-red-600/50 -translate-x-1/2" />
 
           <div className="space-y-12">
             {phases.map((phase, index) => {
@@ -88,17 +88,17 @@ export function Roadmap() {
                 >
                   {/* Content */}
                   <div className={`w-full md:w-5/12 ${isEven ? 'md:text-right' : 'md:text-left'} text-center`}>
-                    <div className={`inline-block p-6 rounded-xl border border-purple-500/30 bg-black/60 backdrop-blur-sm hover:border-purple-500/50 transition-all duration-300 ${isEven ? 'md:ml-auto' : 'md:mr-auto'}`}>
+                    <div className={`inline-block p-6 rounded-xl border border-red-600/30 bg-black/60 backdrop-blur-sm hover:border-red-600/50 transition-all duration-300 ${isEven ? 'md:ml-auto' : 'md:mr-auto'}`}>
                       <div className="flex items-center gap-3 mb-4 justify-center md:justify-start">
                         <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${phase.color} flex items-center justify-center`}>
                           <Icon className="w-5 h-5 text-white" />
                         </div>
-                        <h3 className="text-xl text-purple-300">{phase.phase}</h3>
+                        <h3 className="text-xl text-red-400">{phase.phase}</h3>
                       </div>
                       <ul className="space-y-2 text-left">
                         {phase.items.map((item, itemIndex) => (
                           <li key={itemIndex} className="flex items-start gap-2 text-gray-300">
-                            <span className="text-purple-400 mt-1">•</span>
+                            <span className="text-red-500 mt-1">•</span>
                             <span>{item}</span>
                           </li>
                         ))}

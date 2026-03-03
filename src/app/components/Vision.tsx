@@ -15,7 +15,7 @@ export function Vision() {
           className="text-center mb-12"
         >
           <h2 className="text-4xl md:text-5xl font-poppins font-bold mb-6">
-            <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-red-500 to-red-500 bg-clip-text text-transparent">
               Health is Alpha.
             </span>
             <span className="block text-3xl md:text-4xl text-blue-300 mt-2">
@@ -42,23 +42,23 @@ export function Vision() {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="relative max-w-4xl mx-auto"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-pink-500/20 blur-3xl rounded-3xl" />
+          <div className="absolute inset-0 bg-gradient-to-r from-red-600/20 via-blue-500/20 to-red-600/20 blur-3xl rounded-3xl" />
           
-          <div className="relative p-12 md:p-16 rounded-2xl border-2 border-purple-500/30 bg-black/60 backdrop-blur-xl overflow-hidden">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent" />
+          <div className="relative p-12 md:p-16 rounded-2xl border-2 border-red-600/30 bg-black/60 backdrop-blur-xl overflow-hidden">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1 bg-gradient-to-r from-transparent via-red-600 to-transparent" />
             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent" />
             
             <div className="relative z-10 text-center">
               <div className="flex justify-center mb-6">
                 <div className="relative">
-                  <div className="absolute inset-0 bg-purple-500/50 blur-2xl rounded-full" />
-                  <Sparkles className="relative w-12 h-12 text-purple-400" />
+                  <div className="absolute inset-0 bg-red-600/50 blur-2xl rounded-full" />
+                  <Sparkles className="relative w-12 h-12 text-red-500" />
                 </div>
               </div>
               
               <blockquote className="text-2xl md:text-4xl text-center">
                 <span className="text-gray-400">"</span>
-                <span className="bg-gradient-to-r from-purple-300 via-blue-300 to-pink-300 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-red-400 via-blue-300 to-red-400 bg-clip-text text-transparent">
                   In a market that never sleeps, balance is power.
                 </span>
                 <span className="text-gray-400">"</span>
@@ -66,7 +66,7 @@ export function Vision() {
             </div>
 
             {/* Decorative elements */}
-            <div className="absolute -top-10 -left-10 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl" />
+            <div className="absolute -top-10 -left-10 w-40 h-40 bg-red-600/10 rounded-full blur-3xl" />
             <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl" />
           </div>
         </motion.div>

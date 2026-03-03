@@ -38,7 +38,7 @@ export function Overview() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-poppins font-bold mb-6">
-            <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-red-500 to-red-500 bg-clip-text text-transparent">
               The AI Night Guardian
             </span>
             <span className="block text-3xl md:text-4xl text-blue-300 mt-2">
@@ -59,16 +59,16 @@ export function Overview() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="group relative p-6 rounded-xl border border-purple-500/20 bg-black/40 backdrop-blur-sm hover:border-purple-500/50 transition-all duration-300"
+                className="group relative p-6 rounded-xl border border-red-600/20 bg-black/40 backdrop-blur-sm hover:border-red-600/50 transition-all duration-300"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 rounded-xl transition-opacity duration-300" />
-                <div className="absolute inset-0 bg-purple-500/10 opacity-0 group-hover:opacity-100 blur-xl rounded-xl transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-br from-red-600/5 to-blue-500/5 opacity-0 group-hover:opacity-100 rounded-xl transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-red-600/10 opacity-0 group-hover:opacity-100 blur-xl rounded-xl transition-opacity duration-300" />
                 
                 <div className="relative z-10">
-                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-purple-500/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <Icon className="w-6 h-6 text-purple-400" />
+                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-red-600/20 to-blue-500/20 border border-red-600/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <Icon className="w-6 h-6 text-red-500" />
                   </div>
-                  <h3 className="text-xl mb-2 text-purple-300">{feature.title}</h3>
+                  <h3 className="text-xl mb-2 text-red-400">{feature.title}</h3>
                   <p className="text-gray-400">{feature.description}</p>
                 </div>
               </motion.div>

@@ -27,7 +27,7 @@ interface ChatMessage {
 
 const modeConfig: Record<ConsultationMode, { label: string; icon: typeof Stethoscope; color: string; desc: string }> = {
   clinical: { label: 'Clinical', icon: Stethoscope, color: 'text-blue-400 border-blue-500/40 bg-blue-500/10', desc: 'Structured medical format' },
-  calm: { label: 'Calm', icon: Heart, color: 'text-pink-400 border-pink-500/40 bg-pink-500/10', desc: 'Empathetic & supportive' },
+  calm: { label: 'Calm', icon: Heart, color: 'text-red-500 border-red-600/40 bg-red-600/10', desc: 'Empathetic & supportive' },
   data: { label: 'Data', icon: BarChart3, color: 'text-cyan-400 border-cyan-500/40 bg-cyan-500/10', desc: 'Scientific & analytical' },
   friendly: { label: 'Friendly', icon: Smile, color: 'text-yellow-400 border-yellow-500/40 bg-yellow-500/10', desc: 'Conversational & simple' },
 };
@@ -54,10 +54,10 @@ function escapeHtml(text: string): string {
 function formatMarkdown(text: string): string {
   const escaped = escapeHtml(text);
   let html = escaped
-    .replace(/\*\*(.*?)\*\*/g, '<strong class="text-purple-300 font-semibold">$1</strong>')
+    .replace(/\*\*(.*?)\*\*/g, '<strong class="text-red-400 font-semibold">$1</strong>')
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    .replace(/^### (.*$)/gm, '<h3 class="text-lg font-poppins font-bold text-purple-300 mt-4 mb-2">$1</h3>')
-    .replace(/^## (.*$)/gm, '<h2 class="text-xl font-poppins font-bold text-purple-200 mt-4 mb-2">$1</h2>')
+    .replace(/^### (.*$)/gm, '<h3 class="text-lg font-poppins font-bold text-red-400 mt-4 mb-2">$1</h3>')
+    .replace(/^## (.*$)/gm, '<h2 class="text-xl font-poppins font-bold text-red-300 mt-4 mb-2">$1</h2>')
     .replace(/^- (.*$)/gm, '<li class="ml-4 text-gray-300">• $1</li>')
     .replace(/^(\d+)\. (.*$)/gm, '<li class="ml-4 text-gray-300">$1. $2</li>')
     .replace(/\n\n/g, '<br/><br/>')
@@ -176,24 +176,24 @@ export default function AssistantPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0B0F] flex flex-col">
-      <header className="sticky top-0 z-50 border-b border-purple-500/20 bg-[#0B0B0F]/90 backdrop-blur-xl">
+    <div className="min-h-screen bg-[#070707] flex flex-col">
+      <header className="sticky top-0 z-50 border-b border-red-600/20 bg-[#070707]/90 backdrop-blur-xl">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link
               to="/"
-              className="flex items-center gap-2 text-gray-400 hover:text-purple-300 transition-colors text-sm"
+              className="flex items-center gap-2 text-gray-400 hover:text-red-400 transition-colors text-sm"
             >
               <ArrowLeft className="w-4 h-4" />
               <span className="hidden sm:inline">Home</span>
             </Link>
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-700 to-red-700 flex items-center justify-center">
                 <Moon className="w-4 h-4 text-white" />
               </div>
               <div>
                 <h1 className="font-poppins font-bold text-white text-sm leading-tight">SOMNICLAW</h1>
-                <p className="text-[10px] text-purple-400 leading-tight">AI ASSISTANT</p>
+                <p className="text-[10px] text-red-500 leading-tight">AI ASSISTANT</p>
               </div>
             </div>
           </div>
@@ -239,8 +239,8 @@ export default function AssistantPage() {
               animate={{ opacity: 1, y: 0 }}
               className="flex flex-col items-center justify-center py-20 text-center"
             >
-              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-600/30 to-pink-600/30 border border-purple-500/20 flex items-center justify-center mb-6">
-                <Bot className="w-10 h-10 text-purple-400" />
+              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-red-700/30 to-red-700/30 border border-red-600/20 flex items-center justify-center mb-6">
+                <Bot className="w-10 h-10 text-red-500" />
               </div>
               <h2 className="font-poppins font-bold text-2xl text-white mb-3">
                 SOMNICLAW ASSISTANT
@@ -261,7 +261,7 @@ export default function AssistantPage() {
                       setInput(suggestion);
                       inputRef.current?.focus();
                     }}
-                    className="text-left px-4 py-3 rounded-xl bg-purple-950/20 border border-purple-500/10 text-gray-400 text-xs hover:border-purple-500/30 hover:text-purple-300 hover:bg-purple-950/30 transition-all"
+                    className="text-left px-4 py-3 rounded-xl bg-red-950/20 border border-red-600/10 text-gray-400 text-xs hover:border-red-600/30 hover:text-red-400 hover:bg-red-950/30 transition-all"
                   >
                     {suggestion}
                   </button>
@@ -280,14 +280,14 @@ export default function AssistantPage() {
                 className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 {msg.role === 'assistant' && (
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center shrink-0 mt-1">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-700 to-red-700 flex items-center justify-center shrink-0 mt-1">
                     <Bot className="w-4 h-4 text-white" />
                   </div>
                 )}
                 <div
                   className={`max-w-[75%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                     msg.role === 'user'
-                      ? 'bg-purple-600/30 border border-purple-500/30 text-white rounded-br-md'
+                      ? 'bg-red-700/30 border border-red-600/30 text-white rounded-br-md'
                       : 'bg-gray-900/60 border border-gray-800/60 text-gray-300 rounded-bl-md'
                   }`}
                 >
@@ -301,8 +301,8 @@ export default function AssistantPage() {
                   )}
                 </div>
                 {msg.role === 'user' && (
-                  <div className="w-8 h-8 rounded-lg bg-purple-600/20 border border-purple-500/30 flex items-center justify-center shrink-0 mt-1">
-                    <User className="w-4 h-4 text-purple-400" />
+                  <div className="w-8 h-8 rounded-lg bg-red-700/20 border border-red-600/30 flex items-center justify-center shrink-0 mt-1">
+                    <User className="w-4 h-4 text-red-500" />
                   </div>
                 )}
               </motion.div>
@@ -315,11 +315,11 @@ export default function AssistantPage() {
               animate={{ opacity: 1 }}
               className="flex gap-3 justify-start"
             >
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-700 to-red-700 flex items-center justify-center shrink-0">
                 <Bot className="w-4 h-4 text-white" />
               </div>
               <div className="bg-gray-900/60 border border-gray-800/60 rounded-2xl rounded-bl-md px-4 py-3">
-                <div className="flex items-center gap-2 text-purple-400 text-sm">
+                <div className="flex items-center gap-2 text-red-500 text-sm">
                   <Loader2 className="w-4 h-4 animate-spin" />
                   <span>Thinking...</span>
                 </div>
@@ -331,7 +331,7 @@ export default function AssistantPage() {
         </div>
       </div>
 
-      <div className="sticky bottom-0 border-t border-purple-500/20 bg-[#0B0B0F]/95 backdrop-blur-xl px-4 py-3">
+      <div className="sticky bottom-0 border-t border-red-600/20 bg-[#070707]/95 backdrop-blur-xl px-4 py-3">
         <div className="max-w-5xl mx-auto flex gap-3">
           <input
             ref={inputRef}
@@ -340,12 +340,12 @@ export default function AssistantPage() {
             onKeyDown={handleKeyDown}
             placeholder="Ask about sleep, health, wellness..."
             disabled={loading}
-            className="flex-1 px-4 py-3 rounded-xl bg-gray-900/50 border border-purple-500/20 text-white text-sm placeholder-gray-600 focus:border-purple-500/50 focus:outline-none focus:ring-1 focus:ring-purple-500/20 transition-all disabled:opacity-50"
+            className="flex-1 px-4 py-3 rounded-xl bg-gray-900/50 border border-red-600/20 text-white text-sm placeholder-gray-600 focus:border-red-600/50 focus:outline-none focus:ring-1 focus:ring-red-600/20 transition-all disabled:opacity-50"
           />
           <button
             onClick={sendMessage}
             disabled={!input.trim() || loading}
-            className="px-4 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium text-sm hover:from-purple-500 hover:to-pink-500 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center gap-2"
+            className="px-4 py-3 rounded-xl bg-gradient-to-r from-red-700 to-red-700 text-white font-medium text-sm hover:from-red-600 hover:to-red-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center gap-2"
           >
             <Send className="w-4 h-4" />
             <span className="hidden sm:inline">Send</span>

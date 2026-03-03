@@ -44,7 +44,7 @@ export function Utility() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-poppins font-bold mb-6">
-            <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-red-500 to-red-500 bg-clip-text text-transparent">
               Real Utility.
             </span>
             <span className="block text-3xl md:text-4xl text-blue-300 mt-2">
@@ -62,21 +62,21 @@ export function Utility() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="group relative p-6 rounded-xl border border-purple-500/20 bg-black/40 backdrop-blur-sm hover:border-purple-500/50 transition-all duration-300"
+                className="group relative p-6 rounded-xl border border-red-600/20 bg-black/40 backdrop-blur-sm hover:border-red-600/50 transition-all duration-300"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 rounded-xl transition-opacity duration-300" />
-                <div className="absolute inset-0 bg-purple-500/10 opacity-0 group-hover:opacity-100 blur-xl rounded-xl transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-br from-red-600/10 to-red-600/10 opacity-0 group-hover:opacity-100 rounded-xl transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-red-600/10 opacity-0 group-hover:opacity-100 blur-xl rounded-xl transition-opacity duration-300" />
                 
                 <div className="relative z-10">
-                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500/30 to-pink-500/30 border border-purple-500/40 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-                    <Icon className="w-7 h-7 text-purple-300" />
+                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-red-600/30 to-red-600/30 border border-red-600/40 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                    <Icon className="w-7 h-7 text-red-400" />
                   </div>
-                  <h3 className="text-lg mb-2 text-purple-300">{utility.title}</h3>
+                  <h3 className="text-lg mb-2 text-red-400">{utility.title}</h3>
                   <p className="text-sm text-gray-400">{utility.description}</p>
                 </div>
 
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-purple-500/30 rounded-full blur-2xl" />
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-red-600/30 rounded-full blur-2xl" />
                 </div>
               </motion.div>
             );
@@ -89,28 +89,28 @@ export function Utility() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.6 }}
           >
-            <Link to="/launchpad" className="group relative block p-8 rounded-2xl border border-pink-500/20 bg-black/40 backdrop-blur-sm hover:border-pink-500/50 hover:shadow-[0_0_40px_rgba(236,72,153,0.15)] transition-all duration-500">
-              <div className="absolute inset-0 bg-gradient-to-br from-pink-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity duration-500" />
+            <Link to="/launchpad" className="group relative block p-8 rounded-2xl border border-red-600/20 bg-black/40 backdrop-blur-sm hover:border-red-600/50 hover:shadow-[0_0_40px_rgba(255,26,26,0.15)] transition-all duration-500">
+              <div className="absolute inset-0 bg-gradient-to-br from-red-600/10 to-red-700/10 opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity duration-500" />
               <div className="relative z-10">
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500/30 to-purple-500/30 border border-pink-500/40 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                    <Rocket className="w-8 h-8 text-pink-300" />
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-600/30 to-red-700/30 border border-red-600/40 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                    <Rocket className="w-8 h-8 text-red-400" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-poppins font-bold text-pink-300">SOMNICLAW Launchpad</h3>
-                    <span className="text-xs text-pink-500/60 tracking-wider font-medium">SOLANA MAINNET</span>
+                    <h3 className="text-xl font-poppins font-bold text-red-400">SOMNICLAW Launchpad</h3>
+                    <span className="text-xs text-red-600/60 tracking-wider font-medium">SOLANA MAINNET</span>
                   </div>
                 </div>
                 <p className="text-sm text-gray-400 leading-relaxed mb-4">
                   AI-powered token launch infrastructure for Solana-native founders. Deploy SPL tokens, connect your Phantom wallet, and launch your project directly on mainnet with built-in AI scoring and analytics.
                 </p>
-                <span className="inline-flex items-center gap-2 text-sm text-pink-400 group-hover:text-pink-300 transition-colors">
+                <span className="inline-flex items-center gap-2 text-sm text-red-500 group-hover:text-red-400 transition-colors">
                   Open Launchpad
                   <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
                 </span>
               </div>
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-pink-500/20 rounded-full blur-3xl" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-red-600/20 rounded-full blur-3xl" />
               </div>
             </Link>
           </motion.div>
@@ -120,28 +120,28 @@ export function Utility() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.7 }}
           >
-            <Link to="/generative-ai" className="group relative block p-8 rounded-2xl border border-purple-500/20 bg-black/40 backdrop-blur-sm hover:border-purple-500/50 hover:shadow-[0_0_40px_rgba(168,85,247,0.15)] transition-all duration-500">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity duration-500" />
+            <Link to="/generative-ai" className="group relative block p-8 rounded-2xl border border-red-600/20 bg-black/40 backdrop-blur-sm hover:border-red-600/50 hover:shadow-[0_0_40px_rgba(255,26,26,0.15)] transition-all duration-500">
+              <div className="absolute inset-0 bg-gradient-to-br from-red-600/10 to-blue-500/10 opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity duration-500" />
               <div className="relative z-10">
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/30 to-blue-500/30 border border-purple-500/40 flex items-center justify-center group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300">
-                    <ImageIcon className="w-8 h-8 text-purple-300" />
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-600/30 to-blue-500/30 border border-red-600/40 flex items-center justify-center group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300">
+                    <ImageIcon className="w-8 h-8 text-red-400" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-poppins font-bold text-purple-300">SOMNICLAW Generative AI</h3>
-                    <span className="text-xs text-purple-500/60 tracking-wider font-medium">GPT-IMAGE-1</span>
+                    <h3 className="text-xl font-poppins font-bold text-red-400">SOMNICLAW Generative AI</h3>
+                    <span className="text-xs text-red-600/60 tracking-wider font-medium">GPT-IMAGE-1</span>
                   </div>
                 </div>
                 <p className="text-sm text-gray-400 leading-relaxed mb-4">
                   Generate stunning AI-powered images with our neural canvas. Upload reference images, choose aesthetic profiles, and synthesize cyberpunk-themed artwork using OpenAI's latest gpt-image-1 model.
                 </p>
-                <span className="inline-flex items-center gap-2 text-sm text-purple-400 group-hover:text-purple-300 transition-colors">
+                <span className="inline-flex items-center gap-2 text-sm text-red-500 group-hover:text-red-400 transition-colors">
                   Open Generative AI
                   <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
                 </span>
               </div>
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-purple-500/20 rounded-full blur-3xl" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-red-600/20 rounded-full blur-3xl" />
               </div>
             </Link>
           </motion.div>

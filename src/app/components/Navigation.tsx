@@ -87,14 +87,14 @@ export function Navigation() {
       animate={{ y: 0 }}
       transition={{ duration: 0.6 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-black/80 backdrop-blur-lg border-b border-purple-500/20' : 'bg-transparent'
+        isScrolled ? 'bg-black/80 backdrop-blur-lg border-b border-red-600/20' : 'bg-transparent'
       }`}
     >
       <div className="container mx-auto max-w-6xl px-6 py-4">
         <div className="flex items-center justify-between">
           <button
             onClick={scrollToTop}
-            className="text-xl md:text-2xl bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent hover:from-purple-300 hover:to-pink-300 transition-all duration-300"
+            className="text-xl md:text-2xl bg-gradient-to-r from-red-500 to-red-500 bg-clip-text text-transparent hover:from-red-400 hover:to-red-400 transition-all duration-300"
           >
             <div className="flex items-center gap-2 md:gap-3">
               <ImageWithFallback
@@ -111,7 +111,7 @@ export function Navigation() {
               <button
                 key={index}
                 onClick={() => scrollToSection(item)}
-                className="text-gray-300 hover:text-purple-300 transition-colors duration-300 text-sm"
+                className="text-gray-300 hover:text-red-400 transition-colors duration-300 text-sm"
               >
                 {item.label}
               </button>
@@ -119,9 +119,9 @@ export function Navigation() {
 
             {walletKey ? (
               <div className="flex items-center gap-2">
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-purple-950/40 border border-purple-500/20">
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-950/40 border border-red-600/20">
                   <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                  <span className="text-xs font-mono text-purple-300">{truncatedAddress}</span>
+                  <span className="text-xs font-mono text-red-400">{truncatedAddress}</span>
                 </div>
                 <button
                   onClick={disconnectWallet}
@@ -134,7 +134,7 @@ export function Navigation() {
               <button
                 onClick={connectWallet}
                 disabled={connecting}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-medium hover:from-purple-500 hover:to-pink-500 hover:shadow-[0_0_20px_rgba(168,85,247,0.3)] disabled:opacity-50 transition-all duration-300 cursor-pointer"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-red-700 to-red-700 text-white text-sm font-medium hover:from-red-600 hover:to-red-600 hover:shadow-[0_0_20px_rgba(255,26,26,0.3)] disabled:opacity-50 transition-all duration-300 cursor-pointer"
               >
                 {connecting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wallet className="w-4 h-4" />}
                 {connecting ? 'Connecting...' : 'Connect Wallet'}
@@ -144,12 +144,12 @@ export function Navigation() {
 
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden w-10 h-10 rounded-lg border border-purple-500/30 bg-purple-500/10 flex items-center justify-center hover:border-purple-500/60 transition-colors duration-300"
+            className="md:hidden w-10 h-10 rounded-lg border border-red-600/30 bg-red-600/10 flex items-center justify-center hover:border-red-600/60 transition-colors duration-300"
           >
             {isOpen ? (
-              <X className="w-5 h-5 text-purple-300" />
+              <X className="w-5 h-5 text-red-400" />
             ) : (
-              <Menu className="w-5 h-5 text-purple-300" />
+              <Menu className="w-5 h-5 text-red-400" />
             )}
           </button>
         </div>
@@ -168,17 +168,17 @@ export function Navigation() {
                   <button
                     key={index}
                     onClick={() => scrollToSection(item)}
-                    className="block w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-purple-300 hover:bg-purple-500/10 transition-all duration-300"
+                    className="block w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:text-red-400 hover:bg-red-600/10 transition-all duration-300"
                   >
                     {item.label}
                   </button>
                 ))}
 
                 {walletKey ? (
-                  <div className="flex items-center justify-between px-4 py-3 rounded-lg bg-purple-950/30 border border-purple-500/10">
+                  <div className="flex items-center justify-between px-4 py-3 rounded-lg bg-red-950/30 border border-red-600/10">
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                      <span className="text-xs font-mono text-purple-300">{truncatedAddress}</span>
+                      <span className="text-xs font-mono text-red-400">{truncatedAddress}</span>
                     </div>
                     <button
                       onClick={disconnectWallet}
@@ -191,7 +191,7 @@ export function Navigation() {
                   <button
                     onClick={() => { connectWallet(); setIsOpen(false); }}
                     disabled={connecting}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-medium disabled:opacity-50 transition-all duration-300 cursor-pointer"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-gradient-to-r from-red-700 to-red-700 text-white text-sm font-medium disabled:opacity-50 transition-all duration-300 cursor-pointer"
                   >
                     {connecting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wallet className="w-4 h-4" />}
                     {connecting ? 'Connecting...' : 'Connect Wallet'}
