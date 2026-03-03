@@ -1,11 +1,13 @@
 # SOMNICLAW Website
 
-A React-based landing page for the SOMNICLAW project, built from a Figma design.
+A React-based landing page for the SOMNICLAW AI crypto project with a cyberpunk neon theme, featuring a Generative AI interface powered by OpenAI's gpt-image-1 model.
 
 ## Tech Stack
 
 - **Framework**: React 18 with TypeScript
 - **Build Tool**: Vite 6
+- **Backend**: Express v5 (TypeScript, run with tsx)
+- **AI**: OpenAI gpt-image-1 via Replit AI Integrations
 - **Styling**: Tailwind CSS 4 (via `@tailwindcss/vite`), Radix UI primitives
 - **Animations**: Motion (Framer Motion), Three.js particle background
 - **Charts**: Recharts (token distribution)
@@ -25,12 +27,26 @@ src/
     pages/               # Route pages
       AssistantPage.tsx   # /assistant
       LaunchpadPage.tsx   # /launchpad
-      GenerativeAiPage.tsx # /generative-ai
+      GenerativeAiPage.tsx # /generative-ai (full AI image generation UI)
   styles/               # CSS files (Tailwind, theme, fonts, custom)
   main.tsx              # Entry point with React Router setup
+server/
+  index.ts              # Express backend (API + static file serving in prod)
 index.html
 vite.config.ts
 ```
+
+## Architecture
+
+### Backend (server/index.ts)
+- Express v5 on port 3001 (dev) or 5000 (prod)
+- `/api/generate-image` — POST endpoint for AI image generation (prompt + optional reference image)
+- `/api/health` — GET health check
+- In production, serves Vite-built static files from `dist/` with SPA fallback
+
+### Frontend
+- Vite dev server on port 5000 with proxy forwarding `/api/*` to backend on port 3001
+- React Router v7 (`react-router` package, NOT `react-router-dom`)
 
 ## Routing
 
@@ -43,16 +59,24 @@ vite.config.ts
 
 ## Development
 
-- Runs on port 5000 (bound to 0.0.0.0 for Replit proxy)
-- `npm run dev` — starts the Vite dev server
-- `npm run build` — builds to `dist/`
+- `npm run dev` — starts Vite dev server + Express backend concurrently
+- `npm run build` — builds frontend to `dist/`
+- `npm run start` — production mode (Express serves API + static files)
+
+## Deployment
+
+- Target: Autoscale
+- Build: `npm run build`
+- Run: `npm run start` (Express serves both API and static frontend on port 5000)
 
 ## Replit Configuration
 
-- Workflow: "Start application" → `npm run dev` on port 5000
-- Deployment: Static site, build with `npm run build`, serve from `dist/`
-- `vite.config.ts` has `allowedHosts: true` and `host: '0.0.0.0'` for Replit proxy compatibility
+- Workflow: "Start application" → `npm run dev`
+- Vite: `allowedHosts: true`, `host: '0.0.0.0'` for Replit proxy compatibility
+- AI Integration: `AI_INTEGRATIONS_OPENAI_API_KEY` and `AI_INTEGRATIONS_OPENAI_BASE_URL` env vars auto-configured
 
 ## Notes
 
 - Three.js `ParticleBackground` component gracefully handles environments without WebGL support
+- Express v5 uses `/{*path}` syntax for catch-all routes (not `*`)
+- gpt-image-1 always returns b64_json format (no response_format parameter needed)

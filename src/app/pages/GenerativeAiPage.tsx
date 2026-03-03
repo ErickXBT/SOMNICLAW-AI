@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { Link } from 'react-router';
 import { motion } from 'motion/react';
 import {
@@ -11,21 +11,13 @@ import {
   Zap,
   Cpu,
   Scan,
+  Download,
+  X,
 } from 'lucide-react';
 
 type OutputMode = 'image' | 'video';
 
-interface AestheticOption {
-  value: string;
-  label: string;
-}
-
-interface DimensionOption {
-  value: string;
-  label: string;
-}
-
-const aestheticProfiles: AestheticOption[] = [
+const aestheticProfiles = [
   { value: 'cyberpunk-noir', label: 'Cyberpunk Noir' },
   { value: 'neon-brutalism', label: 'Neon Brutalism' },
   { value: 'dark-synthwave', label: 'Dark Synthwave' },
@@ -34,12 +26,10 @@ const aestheticProfiles: AestheticOption[] = [
   { value: 'phantom-circuit', label: 'Phantom Circuit' },
 ];
 
-const dimensionOptions: DimensionOption[] = [
+const dimensionOptions = [
   { value: '1024x1024', label: '1024 × 1024 (Square)' },
-  { value: '1280x720', label: '1280 × 720 (Landscape)' },
-  { value: '720x1280', label: '720 × 1280 (Portrait)' },
-  { value: '1920x1080', label: '1920 × 1080 (Full HD)' },
   { value: '512x512', label: '512 × 512 (Compact)' },
+  { value: '256x256', label: '256 × 256 (Thumbnail)' },
 ];
 
 function NeonSelect({
@@ -106,20 +96,86 @@ export default function GenerativeAiPage() {
     Math.floor(Math.random() * 999999).toString()
   );
   const [referenceFile, setReferenceFile] = useState<string | null>(null);
+  const [referenceDataUrl, setReferenceDataUrl] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setReferenceFile(file.name);
+      const reader = new FileReader();
+      reader.onload = () => {
+        setReferenceDataUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
-  const handleGenerate = () => {
+  const clearReference = () => {
+    setReferenceFile(null);
+    setReferenceDataUrl(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const buildFullPrompt = useCallback(() => {
+    const aestheticLabel =
+      aestheticProfiles.find((a) => a.value === aesthetic)?.label ?? aesthetic;
+    const parts = [prompt.trim()];
+    parts.push(`Style: ${aestheticLabel}`);
+    parts.push(`Creativity level: ${creativity}%`);
+    if (entropy) parts.push(`Seed: ${entropy}`);
+    return parts.join('. ');
+  }, [prompt, aesthetic, creativity, entropy]);
+
+  const handleGenerate = async () => {
     if (!prompt.trim()) return;
     setIsGenerating(true);
-    setTimeout(() => setIsGenerating(false), 3000);
+    setError(null);
+    setGeneratedImage(null);
+
+    try {
+      const fullPrompt = buildFullPrompt();
+      const body: Record<string, string> = {
+        prompt: fullPrompt,
+        size: dimensions,
+      };
+      if (referenceDataUrl) {
+        body.referenceImage = referenceDataUrl;
+      }
+
+      const response = await fetch('/api/generate-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || `Server error (${response.status})`);
+      }
+
+      const data = await response.json();
+      if (data.b64_json) {
+        setGeneratedImage(`data:image/png;base64,${data.b64_json}`);
+      } else {
+        throw new Error('No image data returned');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Failed to generate image');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleDownload = () => {
+    if (!generatedImage) return;
+    const link = document.createElement('a');
+    link.href = generatedImage;
+    link.download = `somniclaw-${Date.now()}.png`;
+    link.click();
   };
 
   const randomizeSeed = () => {
@@ -151,7 +207,7 @@ export default function GenerativeAiPage() {
 
         <main className="max-w-[1600px] mx-auto px-4 sm:px-6 py-6">
           <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr_280px] gap-6">
-            {/* LEFT PANEL — Neural Input */}
+            {/* LEFT PANEL */}
             <motion.aside
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -166,7 +222,6 @@ export default function GenerativeAiPage() {
                   </h2>
                 </div>
 
-                {/* Image / Video Toggle */}
                 <div className="flex rounded-lg bg-black/50 border border-purple-500/15 p-1 mb-5">
                   <button
                     type="button"
@@ -194,7 +249,14 @@ export default function GenerativeAiPage() {
                   </button>
                 </div>
 
-                {/* Master Prompt */}
+                {outputMode === 'video' && (
+                  <div className="mb-5 px-3 py-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                    <p className="text-xs text-yellow-400">
+                      Video generation is coming soon. Image mode is active.
+                    </p>
+                  </div>
+                )}
+
                 <div className="mb-5">
                   <label className="block text-xs text-purple-400 tracking-wider uppercase mb-2">
                     Master Prompt
@@ -208,7 +270,6 @@ export default function GenerativeAiPage() {
                   />
                 </div>
 
-                {/* Neural Reference Upload */}
                 <div className="mb-5">
                   <label className="block text-xs text-purple-400 tracking-wider uppercase mb-2">
                     Neural Reference
@@ -220,36 +281,43 @@ export default function GenerativeAiPage() {
                     onChange={handleFileUpload}
                     className="hidden"
                   />
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="w-full flex flex-col items-center justify-center gap-2 py-6 rounded-lg border-2 border-dashed border-purple-500/20 bg-black/30 hover:border-purple-500/40 hover:bg-purple-600/5 transition-all duration-300 group"
-                  >
-                    {referenceFile ? (
-                      <>
-                        <Scan className="w-6 h-6 text-pink-400" />
-                        <span className="text-xs text-purple-300 truncate max-w-[200px]">
+                  {referenceDataUrl ? (
+                    <div className="relative rounded-lg border border-purple-500/20 overflow-hidden">
+                      <img
+                        src={referenceDataUrl}
+                        alt="Reference"
+                        className="w-full h-32 object-cover"
+                      />
+                      <div className="absolute bottom-0 inset-x-0 bg-black/70 px-3 py-1.5 flex items-center justify-between">
+                        <span className="text-xs text-purple-300 truncate max-w-[180px]">
                           {referenceFile}
                         </span>
-                        <span className="text-[10px] text-gray-600">
-                          Click to replace
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <Upload className="w-6 h-6 text-gray-600 group-hover:text-purple-400 transition-colors" />
-                        <span className="text-xs text-gray-500 group-hover:text-gray-400 transition-colors">
-                          Upload reference image
-                        </span>
-                        <span className="text-[10px] text-gray-700">
-                          PNG, JPG up to 10MB
-                        </span>
-                      </>
-                    )}
-                  </button>
+                        <button
+                          type="button"
+                          onClick={clearReference}
+                          className="text-gray-400 hover:text-red-400 transition-colors"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="w-full flex flex-col items-center justify-center gap-2 py-6 rounded-lg border-2 border-dashed border-purple-500/20 bg-black/30 hover:border-purple-500/40 hover:bg-purple-600/5 transition-all duration-300 group"
+                    >
+                      <Upload className="w-6 h-6 text-gray-600 group-hover:text-purple-400 transition-colors" />
+                      <span className="text-xs text-gray-500 group-hover:text-gray-400 transition-colors">
+                        Upload reference image
+                      </span>
+                      <span className="text-[10px] text-gray-700">
+                        PNG, JPG up to 10MB
+                      </span>
+                    </button>
+                  )}
                 </div>
 
-                {/* Aesthetic Profile */}
                 <div className="mb-5">
                   <NeonSelect
                     label="Aesthetic Profile"
@@ -259,7 +327,6 @@ export default function GenerativeAiPage() {
                   />
                 </div>
 
-                {/* Output Dimensions */}
                 <div className="mb-6">
                   <NeonSelect
                     label="Output Dimensions"
@@ -269,7 +336,6 @@ export default function GenerativeAiPage() {
                   />
                 </div>
 
-                {/* Generate Button */}
                 <button
                   type="button"
                   onClick={handleGenerate}
@@ -305,17 +371,31 @@ export default function GenerativeAiPage() {
               <div className="flex-1 rounded-2xl border border-purple-500/15 bg-black/40 backdrop-blur-xl overflow-hidden flex flex-col min-h-[500px]">
                 <div className="flex items-center justify-between px-5 py-3 border-b border-purple-500/10">
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-pink-500 animate-pulse" />
+                    <div
+                      className={`w-2 h-2 rounded-full ${isGenerating ? 'bg-yellow-500' : generatedImage ? 'bg-green-500' : 'bg-pink-500'} animate-pulse`}
+                    />
                     <span className="text-xs text-gray-500 tracking-wider uppercase">
                       Neural Canvas
                     </span>
                   </div>
-                  <span className="text-xs text-gray-600">
-                    {dimensions.replace('x', ' × ')} px
-                  </span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-gray-600">
+                      {dimensions.replace('x', ' × ')} px
+                    </span>
+                    {generatedImage && (
+                      <button
+                        type="button"
+                        onClick={handleDownload}
+                        className="flex items-center gap-1.5 px-3 py-1 rounded-md bg-purple-600/20 border border-purple-500/30 text-xs text-purple-300 hover:text-white hover:bg-purple-600/30 transition-all"
+                      >
+                        <Download className="w-3 h-3" />
+                        Download
+                      </button>
+                    )}
+                  </div>
                 </div>
 
-                <div className="flex-1 flex items-center justify-center p-8">
+                <div className="flex-1 flex items-center justify-center p-4 sm:p-8">
                   {isGenerating ? (
                     <div className="text-center space-y-6">
                       <div className="relative w-24 h-24 mx-auto">
@@ -331,10 +411,31 @@ export default function GenerativeAiPage() {
                           Neural synthesis in progress
                         </p>
                         <p className="text-xs text-gray-600">
-                          Processing through diffusion layers...
+                          Processing through diffusion layers... This may take
+                          15-30 seconds.
                         </p>
                       </div>
                     </div>
+                  ) : error ? (
+                    <div className="text-center space-y-4 max-w-sm">
+                      <div className="w-16 h-16 mx-auto rounded-2xl border border-red-500/30 bg-red-600/10 flex items-center justify-center">
+                        <X className="w-8 h-8 text-red-400" />
+                      </div>
+                      <p className="text-sm text-red-400">{error}</p>
+                      <button
+                        type="button"
+                        onClick={() => setError(null)}
+                        className="px-4 py-2 rounded-lg text-xs border border-purple-500/20 text-gray-400 hover:text-purple-300 hover:border-purple-500/30 transition-all"
+                      >
+                        Dismiss
+                      </button>
+                    </div>
+                  ) : generatedImage ? (
+                    <img
+                      src={generatedImage}
+                      alt="Generated output"
+                      className="max-w-full max-h-full rounded-lg object-contain shadow-[0_0_40px_rgba(168,85,247,0.15)]"
+                    />
                   ) : (
                     <div className="text-center space-y-4 max-w-sm">
                       <div className="w-20 h-20 mx-auto rounded-2xl border border-purple-500/15 bg-purple-600/5 flex items-center justify-center">
@@ -349,9 +450,9 @@ export default function GenerativeAiPage() {
                       </p>
                       <div className="flex flex-wrap justify-center gap-2 pt-2">
                         {[
-                          'Cyber cityscape',
-                          'Neural nexus',
-                          'Dark android',
+                          'Cyber cityscape at midnight',
+                          'Neural nexus core',
+                          'Dark android warrior',
                         ].map((suggestion) => (
                           <button
                             key={suggestion}
@@ -369,7 +470,7 @@ export default function GenerativeAiPage() {
               </div>
             </motion.div>
 
-            {/* RIGHT PANEL — System Overrides */}
+            {/* RIGHT PANEL */}
             <motion.aside
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -384,7 +485,6 @@ export default function GenerativeAiPage() {
                   </h2>
                 </div>
 
-                {/* Creativity Slider */}
                 <div className="mb-8">
                   <div className="flex items-center justify-between mb-3">
                     <label className="text-xs text-purple-400 tracking-wider uppercase">
@@ -411,16 +511,11 @@ export default function GenerativeAiPage() {
                     />
                   </div>
                   <div className="flex justify-between mt-1.5">
-                    <span className="text-[10px] text-gray-700">
-                      Precise
-                    </span>
-                    <span className="text-[10px] text-gray-700">
-                      Chaotic
-                    </span>
+                    <span className="text-[10px] text-gray-700">Precise</span>
+                    <span className="text-[10px] text-gray-700">Chaotic</span>
                   </div>
                 </div>
 
-                {/* Entropy Seed */}
                 <div className="mb-6">
                   <label className="block text-xs text-purple-400 tracking-wider uppercase mb-2">
                     Entropy Seed
@@ -443,7 +538,6 @@ export default function GenerativeAiPage() {
                   </div>
                 </div>
 
-                {/* Status Indicators */}
                 <div className="space-y-3 pt-4 border-t border-purple-500/10">
                   <div className="flex items-center justify-between">
                     <span className="text-[11px] text-gray-500">Mode</span>
@@ -476,7 +570,6 @@ export default function GenerativeAiPage() {
                 </div>
               </div>
 
-              {/* Quick Prompts */}
               <div className="rounded-2xl border border-purple-500/15 bg-black/40 backdrop-blur-xl p-5">
                 <h3 className="text-xs font-bold tracking-wider text-purple-300 uppercase mb-3">
                   Quick Prompts
