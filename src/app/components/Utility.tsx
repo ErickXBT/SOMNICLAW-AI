@@ -34,7 +34,7 @@ export function Utility() {
   ];
 
   return (
-    <section ref={ref} className="relative py-24 px-6">
+    <section id="utility" ref={ref} className="relative py-24 px-6">
       <div className="container mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

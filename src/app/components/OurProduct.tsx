@@ -30,7 +30,7 @@ export function OurProduct() {
   const { ref, inView } = useInView();
 
   return (
-    <section ref={ref} className="relative py-24 px-6 overflow-hidden">
+    <section id="ai-agent" ref={ref} className="relative py-24 px-6 overflow-hidden">
       <div className="container mx-auto max-w-6xl text-center">
         <motion.span
           initial={{ opacity: 0, y: 10 }}
