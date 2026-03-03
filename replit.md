@@ -42,12 +42,13 @@ vite.config.ts
 
 ## Architecture
 
-### Backend (server/index.ts)
-- Express v5 on port 3001 (dev) or 5000 (prod)
+### Backend (server/index.ts) — Single Server Architecture
+- Express v5 on port 5000 (configurable via PORT env var)
+- Serves Vite-built static files from `dist/` with SPA fallback
 - `/api/generate-image` — POST endpoint for AI image generation (prompt + optional reference image)
 - `/api/chat` — POST endpoint for SOMNICLAW AI health assistant (gpt-4o-mini)
 - `/api/health` — GET health check
-- In production, serves Vite-built static files from `dist/` with SPA fallback
+- Global crash protection: uncaughtException + unhandledRejection handlers
 
 ### AI Chat System (server/lib/)
 - `systemPrompt.ts` — Base system prompt for SOMNICLAW ASSISTANT (sleep/health guidance)
@@ -56,7 +57,7 @@ vite.config.ts
 - `memoryStore.ts` — In-memory conversation store per sessionId with TTL cleanup and message limits
 
 ### Frontend
-- Vite dev server on port 5000 with proxy forwarding `/api/*` to backend on port 3001
+- Vite builds static assets to `dist/`, Express serves them
 - React Router v7 (`react-router` package, NOT `react-router-dom`)
 
 ### Launchpad (/launchpad)
@@ -80,9 +81,9 @@ vite.config.ts
 
 ## Development
 
-- `npm run dev` — starts Vite dev server + Express backend concurrently
+- `npm run dev` — builds frontend then starts Express (single server on port 5000)
 - `npm run build` — builds frontend to `dist/`
-- `npm run start` — production mode (Express serves API + static files)
+- `npm run start` — production mode (same as dev but with NODE_ENV=production)
 
 ## Deployment
 

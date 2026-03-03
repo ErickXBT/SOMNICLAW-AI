@@ -169,18 +169,14 @@ app.use((err: any, _req: any, res: any, _next: any) => {
   }
 });
 
-const isDev = process.env.NODE_ENV !== "production";
+const distPath = path.resolve(__dirname, "../dist");
+app.use(express.static(distPath));
+app.get("/{*path}", (_req, res) => {
+  res.sendFile(path.join(distPath, "index.html"));
+});
 
-if (!isDev) {
-  const distPath = path.resolve(__dirname, "../dist");
-  app.use(express.static(distPath));
-  app.get("/{*path}", (_req, res) => {
-    res.sendFile(path.join(distPath, "index.html"));
-  });
-}
-const PORT = isDev ? 3001 : 5000;
-const HOST = isDev ? "localhost" : "0.0.0.0";
+const PORT = parseInt(process.env.PORT || "5000", 10);
 
-app.listen(PORT, HOST, () => {
-  console.log(`Backend server running on http://${HOST}:${PORT}`);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`SOMNICLAW server running on http://0.0.0.0:${PORT}`);
 });
