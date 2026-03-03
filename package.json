@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "dev": "NODE_ENV=development tsx server/index.ts & vite",
+    "dev": "NODE_ENV=development concurrently \"tsx server/index.ts\" \"vite\"",
     "start": "NODE_ENV=production tsx server/index.ts"
   },
   "dependencies": {
@@ -46,6 +46,7 @@
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "cmdk": "1.1.1",
+    "concurrently": "^9.2.1",
     "cors": "^2.8.6",
     "date-fns": "3.6.0",
     "drizzle-zod": "^0.8.3",

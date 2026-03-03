@@ -146,11 +146,17 @@ export default function GenerativeAiPage() {
         body.referenceImage = referenceDataUrl;
       }
 
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 120000);
+
       const response = await fetch('/api/generate-image', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
@@ -164,7 +170,11 @@ export default function GenerativeAiPage() {
         throw new Error('No image data returned');
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to generate image');
+      if (err.name === 'AbortError') {
+        setError('Generation timed out. Please try again with a simpler prompt.');
+      } else {
+        setError(err.message || 'Failed to generate image');
+      }
     } finally {
       setIsGenerating(false);
     }
