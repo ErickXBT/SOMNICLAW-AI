@@ -3,7 +3,7 @@ import { Twitter, Send, Github } from 'lucide-react';
 
 export function Footer() {
   const socialLinks = [
-    { icon: Twitter, label: 'Twitter', href: '#' },
+    { icon: Twitter, label: 'Twitter', href: 'https://x.com/somniclaw' },
     { icon: Send, label: 'Telegram', href: '#' },
     { icon: Github, label: 'GitHub', href: '#' },
   ];
@@ -57,6 +57,8 @@ export function Footer() {
                 <a
                   key={index}
                   href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label={social.label}
                   className="group relative w-12 h-12 rounded-lg border border-red-600/30 bg-red-600/10 backdrop-blur-sm flex items-center justify-center hover:border-red-600/60 transition-all duration-300"
                 >
