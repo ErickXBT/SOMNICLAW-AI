@@ -1,0 +1,116 @@
+Refactor the global background styling system for SOMNICLAW AI Launchpad.
+
+IMPORTANT:
+Do NOT modify layout structure.
+Do NOT change UI components.
+Only redesign the global background layer.
+Must remain Tailwind-compatible.
+
+==================================================
+GOAL
+==================================================
+
+Create a globally consistent, black-dominant background
+that feels elite, cinematic, and subtle.
+
+Reduce visual noise.
+Keep futuristic crypto AI vibe.
+Maintain SOMNICLAW red identity.
+
+==================================================
+BASE BACKGROUND
+==================================================
+
+Primary base color:
+#0B0B0F (near black)
+
+Apply as full-screen global layer.
+
+==================================================
+RADIAL GLOW
+==================================================
+
+Add subtle centered radial red glow:
+
+Color:
+rgba(139, 0, 0, 0.12)
+
+Very soft diffusion.
+Large radius.
+No harsh edges.
+Blend mode: soft-light or normal low opacity.
+
+Glow must feel atmospheric, not bright.
+
+==================================================
+PARTICLE SYSTEM (REFINED)
+==================================================
+
+Keep particle effect but refactor:
+
+• Reduce particle size by 60–70%
+• Reduce particle opacity to max 0.08
+• Change particle color to #8B0000 (deep red)
+• Reduce total particle density by 30%
+• Slow animation speed slightly
+• Movement should feel floating and calm
+• Avoid flickering or strong glow
+
+Particles must feel distant and ambient,
+not attention-grabbing.
+
+==================================================
+GLOBAL BLACK OVERLAY
+==================================================
+
+Add subtle overlay layer above particles:
+
+Color:
+rgba(0,0,0,0.6)
+
+Purpose:
+Reduce overall visual noise.
+Increase readability of UI elements.
+Create depth layering effect.
+
+==================================================
+LAYER STRUCTURE
+==================================================
+
+Global background layering order:
+
+1. Base color (#0B0B0F)
+2. Radial deep red glow
+3. Particle layer (reduced)
+4. Black overlay (rgba 0,0,0,0.6)
+5. UI content (existing layout untouched)
+
+==================================================
+MOOD
+==================================================
+
+• Elite
+• Institutional crypto
+• AI intelligence core
+• Dark, controlled, powerful
+• No purple
+• No pink
+• No bright gradients
+• No distracting effects
+
+This must feel like a high-end AI launch protocol,
+not a flashy meme website.
+
+==================================================
+DELIVERABLE
+==================================================
+
+Create a reusable GlobalBackground component design
+that can be implemented as a single wrapper layer
+in Next.js / React with Tailwind support.
+
+Do not redesign buttons.
+Do not redesign cards.
+Do not change typography.
+
+Only refactor global background system.

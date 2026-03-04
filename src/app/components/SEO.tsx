@@ -29,7 +29,7 @@ export function SEO({
       metaThemeColor.setAttribute('name', 'theme-color');
       document.head.appendChild(metaThemeColor);
     }
-    metaThemeColor.setAttribute('content', '#070707');
+    metaThemeColor.setAttribute('content', '#0B0B0F');
 
     // Set viewport
     let metaViewport = document.querySelector('meta[name="viewport"]');

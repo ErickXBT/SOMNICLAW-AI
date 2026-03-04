@@ -19,7 +19,7 @@ export function LoadingScreen() {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}
-          className="fixed inset-0 z-[100] bg-[#070707] flex items-center justify-center"
+          className="fixed inset-0 z-[100] bg-[#0B0B0F] flex items-center justify-center"
         >
           <div className="text-center space-y-8">
             {/* Logo */}
@@ -65,7 +65,7 @@ export function LoadingScreen() {
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-red-600/10 rounded-full blur-3xl animate-pulse" />
             <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-red-600/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-            <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '0.5s' }} />
+            <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-red-600/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '0.5s' }} />
           </div>
         </motion.div>
       )}

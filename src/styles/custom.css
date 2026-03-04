@@ -1,5 +1,4 @@
 @layer utilities {
-  /* Gradient animation for hero text */
   @keyframes gradient {
     0%, 100% {
       background-position: 0% 50%;
@@ -14,73 +13,39 @@
     animation: gradient 8s ease infinite;
   }
 
-  /* Custom scrollbar */
   ::-webkit-scrollbar {
     width: 8px;
   }
 
   ::-webkit-scrollbar-track {
-    background: #070707;
+    background: #0B0B0F;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #ff1a1a, #ff3b3b);
+    background: linear-gradient(180deg, #8B0000, #a00000);
     border-radius: 4px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, #ff3b3b, #ff5050);
+    background: linear-gradient(180deg, #a00000, #b00000);
   }
 
-  /* Smooth scroll behavior */
   html {
     scroll-behavior: smooth;
   }
 
-  /* Body background */
   body {
-    background-color: #070707;
+    background-color: #0B0B0F;
     color: #ffffff;
     overflow-x: hidden;
   }
 
-  /* Grid scroll animation */
-  @keyframes gridScroll {
-    0% {
-      transform: translateY(0);
-    }
-    100% {
-      transform: translateY(60px);
-    }
-  }
-
-  /* Scan line animation */
-  @keyframes scanLine {
-    0% {
-      transform: translateY(0);
-    }
-    100% {
-      transform: translateY(100%);
-    }
-  }
-
-  /* Sphere rotation animation */
-  @keyframes sphereRotate {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-
-  /* Logo pulse glow animation */
   @keyframes logoPulse {
     0%, 100% {
-      filter: drop-shadow(0 0 8px rgba(255, 26, 26, 0.6));
+      filter: drop-shadow(0 0 8px rgba(139, 0, 0, 0.5));
     }
     50% {
-      filter: drop-shadow(0 0 16px rgba(255, 26, 26, 0.9));
+      filter: drop-shadow(0 0 14px rgba(139, 0, 0, 0.8));
     }
   }
 

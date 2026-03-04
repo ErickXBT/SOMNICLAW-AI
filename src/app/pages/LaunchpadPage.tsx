@@ -84,7 +84,7 @@ function SuccessModal({ data, onClose }: { data: SuccessData; onClose: () => voi
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-lg rounded-2xl border border-red-600/30 bg-gradient-to-b from-red-950/90 to-[#070707] backdrop-blur-xl p-8"
+        className="w-full max-w-lg rounded-2xl border border-red-600/30 bg-gradient-to-b from-red-950/90 to-[#0B0B0F] backdrop-blur-xl p-8"
       >
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-xl font-poppins font-bold text-green-400">Token Deployed</h3>
@@ -171,7 +171,7 @@ function SendSolModal({
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-md rounded-2xl border border-red-600/30 bg-gradient-to-b from-red-950/90 to-[#070707] backdrop-blur-xl p-8"
+        className="w-full max-w-md rounded-2xl border border-red-600/30 bg-gradient-to-b from-red-950/90 to-[#0B0B0F] backdrop-blur-xl p-8"
       >
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-poppins font-bold text-white">Send SOL</h3>
@@ -445,7 +445,7 @@ export default function LaunchpadPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#070707] text-white">
+    <div className="min-h-screen bg-[#0B0B0F] text-white">
       <div className="fixed inset-0 bg-gradient-to-br from-red-950/10 via-transparent to-red-950/10 pointer-events-none" />
       <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-red-950/15 via-transparent to-transparent pointer-events-none" />
 
@@ -458,7 +458,7 @@ export default function LaunchpadPage() {
         )}
       </AnimatePresence>
 
-      <header className="relative z-20 flex items-center justify-between px-4 md:px-6 py-4 border-b border-red-600/10 backdrop-blur-sm bg-[#070707]/60">
+      <header className="relative z-20 flex items-center justify-between px-4 md:px-6 py-4 border-b border-red-600/10 backdrop-blur-sm bg-[#0B0B0F]/60">
         <Link
           to="/"
           className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-700/10 border border-red-600/30 text-red-400 hover:text-white hover:bg-red-700/20 transition-all duration-300 text-sm font-medium"
@@ -559,7 +559,7 @@ export default function LaunchpadPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
-                className="rounded-2xl border border-red-600/20 bg-gradient-to-b from-red-950/30 to-[#070707] backdrop-blur-sm p-6 md:p-8"
+                className="rounded-2xl border border-red-600/20 bg-gradient-to-b from-red-950/30 to-[#0B0B0F] backdrop-blur-sm p-6 md:p-8"
               >
                 <h2 className="text-2xl font-poppins font-bold text-white mb-6">Deploy Your Token</h2>
 
@@ -699,7 +699,7 @@ export default function LaunchpadPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
-                className="rounded-2xl border border-red-600/20 bg-gradient-to-b from-red-950/30 to-[#070707] backdrop-blur-sm p-6 sticky top-6"
+                className="rounded-2xl border border-red-600/20 bg-gradient-to-b from-red-950/30 to-[#0B0B0F] backdrop-blur-sm p-6 sticky top-6"
               >
                 <h3 className="text-lg font-poppins font-bold text-white mb-4 flex items-center gap-2">
                   <Zap className="w-4 h-4 text-red-500" />
