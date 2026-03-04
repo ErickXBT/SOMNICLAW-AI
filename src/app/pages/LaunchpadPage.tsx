@@ -2,21 +2,19 @@ import { Link } from 'react-router';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ArrowLeft, Rocket, BarChart3, Zap, TrendingUp, ExternalLink,
-  ChevronRight, Wallet, Copy, Check, X, Upload, Send, Loader2, Globe, LogOut
+  ChevronRight, Wallet, Copy, Check, X, Upload, Send, Loader2, Globe, LogOut,
+  CheckCircle, XCircle, Circle
 } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Connection, PublicKey, clusterApiUrl, LAMPORTS_PER_SOL,
   Transaction, SystemProgram
 } from '@solana/web3.js';
-import {
-  createInitializeMintInstruction, createAssociatedTokenAccountInstruction,
-  createMintToInstruction, getAssociatedTokenAddress, getMinimumBalanceForRentExemptMint,
-  MINT_SIZE, TOKEN_PROGRAM_ID
-} from '@solana/spl-token';
 
 type ToastType = 'success' | 'error' | 'loading' | 'info';
 interface Toast { id: string; type: ToastType; message: string; }
+
+type DeployStatus = 'idle' | 'preparing' | 'signing' | 'confirming' | 'success' | 'failed';
 
 interface LaunchedToken {
   name: string;
@@ -24,6 +22,7 @@ interface LaunchedToken {
   mintAddress: string;
   logoPreview: string | null;
   timestamp: number;
+  signature?: string;
 }
 
 interface SuccessData {
@@ -31,6 +30,12 @@ interface SuccessData {
   name: string;
   ticker: string;
   logoPreview: string | null;
+  signature?: string;
+  metadataUrl?: string;
+}
+
+function formatCA(address: string): string {
+  return `SOMNI-${address.slice(0, 6)}...${address.slice(-4)}`;
 }
 
 const connection = new Connection(clusterApiUrl('mainnet-beta'), 'confirmed');
@@ -60,6 +65,62 @@ function ToastContainer({ toasts, onRemove }: { toasts: Toast[]; onRemove: (id: 
         ))}
       </AnimatePresence>
     </div>
+  );
+}
+
+const DEPLOY_STEPS = [
+  { key: 'preparing', label: 'Preparing transaction' },
+  { key: 'signing', label: 'Wallet signing' },
+  { key: 'confirming', label: 'Confirming on-chain' },
+  { key: 'success', label: 'Complete' },
+] as const;
+
+function DeployProgress({ status }: { status: DeployStatus }) {
+  if (status === 'idle') return null;
+
+  const stepOrder = ['preparing', 'signing', 'confirming', 'success'];
+  const currentIndex = stepOrder.indexOf(status);
+  const isFailed = status === 'failed';
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, height: 0 }}
+      animate={{ opacity: 1, height: 'auto' }}
+      exit={{ opacity: 0, height: 0 }}
+      className="mt-4 p-4 rounded-xl bg-red-950/30 border border-red-600/10"
+    >
+      <div className="space-y-2.5">
+        {DEPLOY_STEPS.map((step, i) => {
+          const stepIndex = stepOrder.indexOf(step.key);
+          let icon;
+          let textColor = 'text-gray-600';
+
+          if (isFailed && stepIndex >= currentIndex) {
+            if (stepIndex === currentIndex || (currentIndex === -1 && stepIndex === 0)) {
+              icon = <XCircle className="w-4 h-4 text-red-500" />;
+              textColor = 'text-red-400';
+            } else {
+              icon = <Circle className="w-4 h-4 text-gray-700" />;
+            }
+          } else if (stepIndex < currentIndex) {
+            icon = <CheckCircle className="w-4 h-4 text-green-500" />;
+            textColor = 'text-green-400';
+          } else if (stepIndex === currentIndex) {
+            icon = <Loader2 className="w-4 h-4 text-red-500 animate-spin" />;
+            textColor = 'text-red-400';
+          } else {
+            icon = <Circle className="w-4 h-4 text-gray-700" />;
+          }
+
+          return (
+            <div key={step.key} className={`flex items-center gap-3 ${textColor}`}>
+              {icon}
+              <span className="text-xs font-medium">{step.label}</span>
+            </div>
+          );
+        })}
+      </div>
+    </motion.div>
   );
 }
 
@@ -100,6 +161,7 @@ function SuccessModal({ data, onClose }: { data: SuccessData; onClose: () => voi
         <div className="text-center mb-6">
           <p className="text-2xl font-poppins font-bold text-white">{data.name}</p>
           <p className="text-red-500 font-mono text-sm">${data.ticker}</p>
+          <p className="text-red-400 font-mono text-xs mt-1">{formatCA(data.mintAddress)}</p>
         </div>
 
         <div className="space-y-3 mb-6">
@@ -110,6 +172,28 @@ function SuccessModal({ data, onClose }: { data: SuccessData; onClose: () => voi
               {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
             </button>
           </div>
+
+          {data.signature && (
+            <div className="flex items-center gap-2 p-3 rounded-xl bg-red-950/40 border border-red-600/20">
+              <span className="text-xs text-gray-500 shrink-0">TX:</span>
+              <a
+                href={`https://solscan.io/tx/${data.signature}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-red-400 font-mono truncate flex-1 hover:text-red-300"
+              >
+                {data.signature.slice(0, 20)}...{data.signature.slice(-8)}
+              </a>
+              <ExternalLink className="w-3 h-3 text-gray-600 shrink-0" />
+            </div>
+          )}
+
+          {data.metadataUrl && (
+            <div className="flex items-center gap-2 p-3 rounded-xl bg-red-950/40 border border-red-600/20">
+              <span className="text-xs text-gray-500 shrink-0">Metadata:</span>
+              <span className="text-xs text-red-400 font-mono truncate flex-1">{data.metadataUrl}</span>
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-3">
             <div className="p-3 rounded-xl bg-red-950/40 border border-red-600/20">
@@ -235,6 +319,7 @@ export default function LaunchpadPage() {
   const logoInputRef = useRef<HTMLInputElement>(null);
 
   const [deploying, setDeploying] = useState(false);
+  const [deployStatus, setDeployStatus] = useState<DeployStatus>('idle');
   const [successData, setSuccessData] = useState<SuccessData | null>(null);
   const [recentLaunches, setRecentLaunches] = useState<LaunchedToken[]>([]);
 
@@ -243,8 +328,10 @@ export default function LaunchpadPage() {
 
   const [aiScore, setAiScore] = useState<{
     score: number; risk: string; whale_interest: boolean;
-    metrics: { liquidity: number; community: number; contract_safety: number; market_timing: number };
+    metrics: Record<string, number>;
     analysis: string;
+    mint_authority?: string;
+    freeze_authority?: string;
   } | null>(null);
   const [scoringLoading, setScoringLoading] = useState(false);
 
@@ -367,60 +454,80 @@ export default function LaunchpadPage() {
   const handleDeploy = async () => {
     if (!walletKey || !formValid) return;
     setDeploying(true);
+    setDeployStatus('preparing');
     const loadingId = addToast('loading', 'Creating token on Solana mainnet...');
+
     try {
       const phantom = (window as any).solana;
-      const payer = new PublicKey(walletKey);
 
-      const { Keypair } = await import('@solana/web3.js');
-      const mintKeypair = Keypair.generate();
-
-      const lamports = await getMinimumBalanceForRentExemptMint(connection);
-      const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
-
-      const transaction = new Transaction().add(
-        SystemProgram.createAccount({
-          fromPubkey: payer,
-          newAccountPubkey: mintKeypair.publicKey,
-          space: MINT_SIZE,
-          lamports,
-          programId: TOKEN_PROGRAM_ID,
+      const deployRes = await fetch('/api/deploy-token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          walletAddress: walletKey,
+          name: projectName.trim(),
+          symbol: ticker.trim(),
+          description: description.trim(),
+          website: website.trim() || undefined,
+          twitter: twitter.trim() || undefined,
+          telegram: telegram.trim() || undefined,
+          logo: logoPreview || undefined,
         }),
-        createInitializeMintInstruction(
-          mintKeypair.publicKey,
-          9,
-          payer,
-          payer,
-          TOKEN_PROGRAM_ID
-        )
-      );
+      });
 
-      const ata = await getAssociatedTokenAddress(mintKeypair.publicKey, payer);
-      transaction.add(
-        createAssociatedTokenAccountInstruction(payer, ata, payer, mintKeypair.publicKey)
-      );
+      const deployData = await deployRes.json();
+      if (!deployRes.ok) throw new Error(deployData.error || 'Failed to prepare transaction');
 
-      const mintAmount = BigInt(1_000_000_000) * BigInt(10 ** 9);
-      transaction.add(
-        createMintToInstruction(mintKeypair.publicKey, ata, payer, mintAmount)
-      );
+      const { transaction: txBase64, mintAddress } = deployData;
 
-      transaction.recentBlockhash = blockhash;
-      transaction.feePayer = payer;
-      transaction.partialSign(mintKeypair);
+      setDeployStatus('signing');
+      removeToast(loadingId);
+      const signingId = addToast('loading', 'Please sign the transaction in your wallet...');
+
+      const txBuffer = Uint8Array.from(atob(txBase64), c => c.charCodeAt(0));
+      const transaction = Transaction.from(txBuffer);
 
       const signed = await phantom.signTransaction(transaction);
       const rawTx = signed.serialize();
-      const sig = await connection.sendRawTransaction(rawTx, { skipPreflight: false });
-      await connection.confirmTransaction({ signature: sig, blockhash, lastValidBlockHeight }, 'confirmed');
 
-      removeToast(loadingId);
+      setDeployStatus('confirming');
+      removeToast(signingId);
+      const confirmingId = addToast('loading', 'Confirming transaction on Solana...');
+
+      const sig = await connection.sendRawTransaction(rawTx, { skipPreflight: false });
+
+      const confirmRes = await fetch('/api/confirm-deploy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          signature: sig,
+          mintAddress,
+          name: projectName.trim(),
+          symbol: ticker.trim(),
+          description: description.trim(),
+          website: website.trim() || undefined,
+          twitter: twitter.trim() || undefined,
+          telegram: telegram.trim() || undefined,
+          logo: logoPreview || undefined,
+        }),
+      });
+
+      const confirmData = await confirmRes.json();
+
+      removeToast(confirmingId);
+      setDeployStatus('success');
       addToast('success', 'Token deployed successfully!');
 
-      const mintAddr = mintKeypair.publicKey.toBase58();
-      setSuccessData({ mintAddress: mintAddr, name: projectName, ticker, logoPreview });
+      setSuccessData({
+        mintAddress,
+        name: projectName,
+        ticker,
+        logoPreview,
+        signature: sig,
+        metadataUrl: confirmData?.metadataUrl,
+      });
       setRecentLaunches((prev) => [
-        { name: projectName, ticker, mintAddress: mintAddr, logoPreview, timestamp: Date.now() },
+        { name: projectName, ticker, mintAddress, logoPreview, timestamp: Date.now(), signature: sig },
         ...prev,
       ]);
 
@@ -436,9 +543,11 @@ export default function LaunchpadPage() {
       await fetchBalance(walletKey);
     } catch (e: any) {
       removeToast(loadingId);
+      setDeployStatus('failed');
       addToast('error', e?.message || 'Token deployment failed');
     } finally {
       setDeploying(false);
+      setTimeout(() => setDeployStatus('idle'), 8000);
     }
   };
 
@@ -690,6 +799,7 @@ export default function LaunchpadPage() {
                     <p>Supply: <span className="text-red-400 font-mono">1,000,000,000</span></p>
                     <p>Decimals: <span className="text-red-400 font-mono">9</span></p>
                     <p>Network: <span className="text-red-400">Solana Mainnet</span></p>
+                    <p>Deploy Fee: <span className="text-yellow-400 font-mono">0.1 SOL</span></p>
                   </div>
                   <div className="flex items-center gap-2">
                     {walletKey ? (
@@ -723,6 +833,10 @@ export default function LaunchpadPage() {
                     </>
                   )}
                 </button>
+
+                <AnimatePresence>
+                  <DeployProgress status={deployStatus} />
+                </AnimatePresence>
 
                 {!walletKey && (
                   <p className="text-xs text-center text-gray-600 mt-3">Connect your Phantom wallet to deploy</p>
@@ -767,7 +881,7 @@ export default function LaunchpadPage() {
                           <div className="flex items-center gap-2">
                             <span className="text-xs text-red-500 font-mono">${token.ticker}</span>
                             <span className="text-xs text-gray-600 font-mono truncate">
-                              {token.mintAddress.slice(0, 6)}...{token.mintAddress.slice(-4)}
+                              {formatCA(token.mintAddress)}
                             </span>
                           </div>
                         </div>
@@ -852,10 +966,27 @@ export default function LaunchpadPage() {
                         </div>
                       </div>
 
+                      {(aiScore.mint_authority || aiScore.freeze_authority) && (
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="p-2.5 rounded-lg bg-red-950/30 border border-red-600/10">
+                            <p className="text-[10px] text-gray-500 mb-0.5">Mint Authority</p>
+                            <p className={`text-xs font-bold uppercase ${
+                              aiScore.mint_authority === 'revoked' ? 'text-green-400' : 'text-yellow-400'
+                            }`}>{aiScore.mint_authority || 'N/A'}</p>
+                          </div>
+                          <div className="p-2.5 rounded-lg bg-red-950/30 border border-red-600/10">
+                            <p className="text-[10px] text-gray-500 mb-0.5">Freeze Authority</p>
+                            <p className={`text-xs font-bold uppercase ${
+                              aiScore.freeze_authority === 'revoked' ? 'text-green-400' : 'text-yellow-400'
+                            }`}>{aiScore.freeze_authority || 'N/A'}</p>
+                          </div>
+                        </div>
+                      )}
+
                       <div className="space-y-1.5">
                         {Object.entries(aiScore.metrics).map(([key, value]) => (
                           <div key={key} className="flex items-center gap-2">
-                            <span className="text-[10px] text-gray-500 w-24 capitalize">{key.replace('_', ' ')}</span>
+                            <span className="text-[10px] text-gray-500 w-24 capitalize">{key.replace(/_/g, ' ')}</span>
                             <div className="flex-1 h-1 rounded-full bg-gray-800 overflow-hidden">
                               <div
                                 className={`h-full rounded-full ${value >= 70 ? 'bg-green-500/70' : value >= 50 ? 'bg-yellow-500/70' : 'bg-red-500/70'}`}

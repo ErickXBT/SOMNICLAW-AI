@@ -1,6 +1,6 @@
 # SOMNICLAW Website
 
-A React-based landing page for the SOMNICLAW AI crypto project with a minimal cinematic AI theme (#0B0B0F near-black base, #8B0000 deep red accents, subtle ambient particles), featuring a Generative AI interface powered by OpenAI's gpt-image-1 model, a SOMNICLAW AI health assistant (gpt-4o-mini with streaming), and a Solana Launchpad with Phantom wallet integration.
+A React-based landing page for the SOMNICLAW AI crypto project with a cinematic neon red theme (#070707 base, #FF1A1A/#8B0000 red accents), featuring a Generative AI interface powered by OpenAI's gpt-image-1 model, a SOMNICLAW AI assistant (gpt-4o-mini with streaming), and a Solana Launchpad with Phantom wallet integration and Helius RPC.
 
 ## Tech Stack
 
@@ -8,7 +8,7 @@ A React-based landing page for the SOMNICLAW AI crypto project with a minimal ci
 - **Build Tool**: Vite 6
 - **Backend**: Express v5 (TypeScript, run with tsx)
 - **AI**: OpenAI gpt-image-1 via Replit AI Integrations
-- **Blockchain**: Solana Web3.js, SPL Token (mainnet-beta)
+- **Blockchain**: Solana Web3.js, SPL Token (mainnet-beta), Helius RPC
 - **Wallet**: Phantom wallet integration via window.solana
 - **Styling**: Tailwind CSS 4 (via `@tailwindcss/vite`), Radix UI primitives
 - **Animations**: Motion (Framer Motion), Three.js particle background
@@ -37,6 +37,13 @@ src/
   main.tsx              # Entry point with React Router setup
 server/
   index.ts              # Express backend (API + static file serving in prod)
+  lib/
+    solana.ts           # Solana connection (Helius primary, fallback to mainnet-beta)
+    raydium.ts          # Raydium integration placeholder (pool/liquidity/LP lock)
+    systemPrompt.ts     # Base system prompt for SOMNICLAW ASSISTANT
+    modeHandler.ts      # 4 consultation modes
+    riskDetector.ts     # Emergency keyword detection
+    memoryStore.ts      # In-memory conversation store
 index.html
 vite.config.ts
 ```
@@ -47,31 +54,44 @@ vite.config.ts
 - Express v5 on port 5000 (configurable via PORT env var)
 - Serves Vite-built static files from `dist/` with SPA fallback
 - `/api/generate-image` — POST endpoint for AI image generation (prompt + optional reference image)
-- `/api/chat` — POST endpoint for SOMNICLAW AI health assistant (gpt-4o-mini)
-- `/api/launch` — POST mock token launch (validates name/symbol/description, returns contract address)
-- `/api/ai-score` — POST AI risk analysis (returns score, risk level, whale interest, metrics)
-- `/api/health` — GET health check ("SOMNICLAW AI ONLINE")
-- Rate limiting: 30 req/min per IP on launch/score endpoints
+- `/api/chat` — POST endpoint for SOMNICLAW AI assistant (gpt-4o-mini)
+- `/api/deploy-token` — POST builds SPL token transaction server-side (mint keypair, ATA, 1B supply, 0.1 SOL fee), returns serialized tx for wallet signing
+- `/api/confirm-deploy` — POST confirms on-chain transaction, saves token metadata JSON
+- `/api/launch` — POST legacy mock token launch
+- `/api/ai-score` — POST AI risk analysis (score, risk, whale interest, metrics, mint/freeze authority)
+- `/api/health` — GET health check
+- Rate limiting: 30 req/min per IP, 1 deploy per wallet per hour
 - Global crash protection: uncaughtException + unhandledRejection handlers
+
+### Solana Integration (server/lib/solana.ts)
+- Primary RPC: Helius (via SOLANA_RPC env var)
+- Fallback RPC: https://api.mainnet-beta.solana.com
+- `getConnectionWithFallback()` tries primary, falls back on error
+- Treasury wallet for deploy fees (0.1 SOL)
+- Deploy fee: 100,000,000 lamports (0.1 SOL)
+
+### Raydium Integration (server/lib/raydium.ts)
+- Structural placeholder: `createPool()`, `addLiquidity()`, `lockLP()`
+- Returns "coming soon" status — ready for Raydium SDK integration
 
 ### AI Chat System (server/lib/)
 - `systemPrompt.ts` — Base system prompt for SOMNICLAW ASSISTANT (sleep/health guidance)
 - `modeHandler.ts` — 4 consultation modes: clinical (0.3), calm (0.5), data (0.4), friendly (0.7)
-- `riskDetector.ts` — Emergency keyword detection (chest pain, suicide, etc.) with immediate safety response
-- `memoryStore.ts` — In-memory conversation store per sessionId with TTL cleanup and message limits
+- `riskDetector.ts` — Emergency keyword detection with safety response
+- `memoryStore.ts` — In-memory conversation store per sessionId
 
 ### Frontend
-- Vite builds static assets to `dist/`, Express serves them
-- React Router v7 (`react-router` package, NOT `react-router-dom`)
 
 ### Launchpad (/launchpad)
-- Phantom wallet connect/disconnect with auto-reconnect
-- SOL balance display
-- Token creation form (name, ticker, description, logo, socials)
-- SPL Token mint on Solana mainnet-beta (1B supply, 9 decimals)
-- Success modal with Solscan/Dexscreener links
-- Send SOL modal
-- Recent launches sidebar
+- Server-side transaction building via `/api/deploy-token`
+- Deploy flow: prepare → sign (Phantom) → send → confirm → metadata
+- Deploy progress tracker with step-by-step status (preparing/signing/confirming/success/failed)
+- SOMNI-prefixed CA formatting: `SOMNI-{first6}...{last4}`
+- Deploy fee display: 0.1 SOL
+- Enhanced AI analysis: mint authority, freeze authority, supply distribution, liquidity ratio
+- Phantom wallet connect/disconnect with mobile deep linking
+- SOL balance display, Send SOL modal
+- Recent launches sidebar with formatted CAs
 - Toast notification system
 
 ## Routing
@@ -83,11 +103,17 @@ vite.config.ts
 - `/launchpad` — Somniclaw Launchpad page (Solana token deployment)
 - `/generative-ai` — Somniclaw Generative AI page
 
+## Environment Variables
+
+- `AI_INTEGRATIONS_OPENAI_API_KEY` — OpenAI API key (auto-configured via Replit integration)
+- `AI_INTEGRATIONS_OPENAI_BASE_URL` — OpenAI base URL (auto-configured)
+- `SOLANA_RPC` — Helius RPC URL for Solana mainnet access
+
 ## Development
 
 - `npm run dev` — builds frontend then starts Express (single server on port 5000)
 - `npm run build` — builds frontend to `dist/`
-- `npm run start` — production mode (same as dev but with NODE_ENV=production)
+- `npm run start` — production mode
 
 ## Deployment
 
@@ -95,16 +121,11 @@ vite.config.ts
 - Build: `npm run build`
 - Run: `npm run start` (Express serves both API and static frontend)
 
-## Replit Configuration
-
-- Workflow: "Start application" → `npm run dev`
-- Vite: `allowedHosts: true`, `host: '0.0.0.0'` for Replit proxy compatibility
-- AI Integration: `AI_INTEGRATIONS_OPENAI_API_KEY` and `AI_INTEGRATIONS_OPENAI_BASE_URL` env vars auto-configured
-- Node polyfills: `vite-plugin-node-polyfills` provides Buffer/crypto for Solana browser libs
-
 ## Notes
 
-- Three.js `ParticleBackground` component gracefully handles environments without WebGL support
-- Express v5 uses `/{*path}` syntax for catch-all routes (not `*`)
-- gpt-image-1 always returns b64_json format (no response_format parameter needed)
-- Phantom wallet detection uses `window.solana?.isPhantom`; redirects to phantom.app if not installed
+- Three.js `ParticleBackground` gracefully handles environments without WebGL support
+- Express v5 uses `/{*path}` syntax for catch-all routes
+- gpt-image-1 always returns b64_json format
+- Phantom wallet detection uses `window.solana?.isPhantom`; redirects to phantom.app on mobile
+- Token deploy builds transaction server-side, sends to client for Phantom signing
+- Token metadata saved to `dist/token-metadata/{mintAddress}.json`
