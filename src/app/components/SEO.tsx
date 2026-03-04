@@ -6,23 +6,36 @@ interface SEOProps {
 }
 
 export function SEO({ 
-  title = 'SOMNICLAW ($SOMNICLAW) – AI Health Agent for Insomnia',
-  description = 'SOMNICLAW is a Solana-based AI Health Agent helping crypto traders manage insomnia and optimize sleep performance in 24/7 markets.'
+  title = 'SOMNICLAW AI',
+  description = 'AI-powered Web3 Launchpad for intelligent token creation on Solana.'
 }: SEOProps) {
   useEffect(() => {
-    // Set document title
     document.title = title;
 
-    // Set or update meta description
-    let metaDescription = document.querySelector('meta[name="description"]');
-    if (!metaDescription) {
-      metaDescription = document.createElement('meta');
-      metaDescription.setAttribute('name', 'description');
-      document.head.appendChild(metaDescription);
-    }
-    metaDescription.setAttribute('content', description);
+    const metaTags: { selector: string; attr: string; attrValue: string; content: string }[] = [
+      { selector: 'meta[name="title"]', attr: 'name', attrValue: 'title', content: title },
+      { selector: 'meta[name="description"]', attr: 'name', attrValue: 'description', content: description },
+      { selector: 'meta[property="og:title"]', attr: 'property', attrValue: 'og:title', content: title },
+      { selector: 'meta[property="og:description"]', attr: 'property', attrValue: 'og:description', content: description },
+      { selector: 'meta[property="og:type"]', attr: 'property', attrValue: 'og:type', content: 'website' },
+      { selector: 'meta[property="og:url"]', attr: 'property', attrValue: 'og:url', content: 'https://somniclaw.xyz' },
+      { selector: 'meta[property="og:image"]', attr: 'property', attrValue: 'og:image', content: '/somniclaw-preview.png' },
+      { selector: 'meta[name="twitter:card"]', attr: 'name', attrValue: 'twitter:card', content: 'summary_large_image' },
+      { selector: 'meta[name="twitter:title"]', attr: 'name', attrValue: 'twitter:title', content: title },
+      { selector: 'meta[name="twitter:description"]', attr: 'name', attrValue: 'twitter:description', content: 'AI-powered Web3 Launchpad' },
+      { selector: 'meta[name="twitter:image"]', attr: 'name', attrValue: 'twitter:image', content: '/somniclaw-preview.png' },
+    ];
 
-    // Set theme color
+    metaTags.forEach(({ selector, attr, attrValue, content }) => {
+      let tag = document.querySelector(selector);
+      if (!tag) {
+        tag = document.createElement('meta');
+        tag.setAttribute(attr, attrValue);
+        document.head.appendChild(tag);
+      }
+      tag.setAttribute('content', content);
+    });
+
     let metaThemeColor = document.querySelector('meta[name="theme-color"]');
     if (!metaThemeColor) {
       metaThemeColor = document.createElement('meta');
@@ -30,49 +43,6 @@ export function SEO({
       document.head.appendChild(metaThemeColor);
     }
     metaThemeColor.setAttribute('content', '#070707');
-
-    // Set viewport
-    let metaViewport = document.querySelector('meta[name="viewport"]');
-    if (!metaViewport) {
-      metaViewport = document.createElement('meta');
-      metaViewport.setAttribute('name', 'viewport');
-      document.head.appendChild(metaViewport);
-    }
-    metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0');
-
-    // OG tags
-    const ogTags = [
-      { property: 'og:title', content: title },
-      { property: 'og:description', content: description },
-      { property: 'og:type', content: 'website' },
-    ];
-
-    ogTags.forEach(({ property, content }) => {
-      let tag = document.querySelector(`meta[property="${property}"]`);
-      if (!tag) {
-        tag = document.createElement('meta');
-        tag.setAttribute('property', property);
-        document.head.appendChild(tag);
-      }
-      tag.setAttribute('content', content);
-    });
-
-    // Twitter tags
-    const twitterTags = [
-      { name: 'twitter:card', content: 'summary_large_image' },
-      { name: 'twitter:title', content: title },
-      { name: 'twitter:description', content: description },
-    ];
-
-    twitterTags.forEach(({ name, content }) => {
-      let tag = document.querySelector(`meta[name="${name}"]`);
-      if (!tag) {
-        tag = document.createElement('meta');
-        tag.setAttribute('name', name);
-        document.head.appendChild(tag);
-      }
-      tag.setAttribute('content', content);
-    });
   }, [title, description]);
 
   return null;
