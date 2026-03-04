@@ -1,0 +1,237 @@
+Create a production-ready Web3 whitelist gate system for SOMNICLAW AI Launchpad using:
+
+- Next.js 14 (App Router)
+- TypeScript
+- Tailwind CSS
+- react-tsparticles (slim version)
+
+Return clean production-ready code only.
+No explanations.
+
+==================================================
+PROJECT GOAL
+==================================================
+
+Build a futuristic whitelist gate page that appears BEFORE the main website.
+
+Users must complete social verification before accessing the platform.
+
+Also create a reusable GlobalBackground component
+that applies a refined, black-dominant cinematic background across all pages.
+
+==================================================
+THEME – SOMNICLAW AI
+==================================================
+
+- Dark dominant
+- Deep red accents
+- No purple
+- No pink
+- Elite institutional crypto feel
+- Cyberpunk AI aesthetic
+- Clean minimal UI
+- No bright white backgrounds
+
+==================================================
+PART 1 — GLOBAL BACKGROUND COMPONENT
+==================================================
+
+Create:
+
+components/GlobalBackground.tsx
+
+REQUIREMENTS:
+
+Base background color:
+#0B0B0F
+
+Add subtle radial red glow:
+rgba(139, 0, 0, 0.12)
+Soft, diffused, no harsh edge.
+
+Particle system:
+- Use react-tsparticles (slim)
+- Reduce particle size by 60–70%
+- Opacity max 0.08
+- Color: #8B0000
+- Reduce density by 30%
+- Slow animation slightly
+- Disable links
+- GPU friendly
+- Avoid fullScreen:true
+
+Add subtle overlay layer:
+rgba(0,0,0,0.6)
+
+LAYER ORDER:
+1. Base
+2. Radial glow
+3. Particle layer
+4. Black overlay
+5. UI content
+
+Use fixed positioning and negative z-index.
+No external CSS files.
+Tailwind compatible.
+
+==================================================
+PART 2 — WHITELIST GATE PAGE
+==================================================
+
+Create:
+
+app/page.tsx
+
+This page must appear before main website access.
+
+Layout:
+Centered hero layout.
+Full screen.
+Use GlobalBackground.
+
+------------------------------
+HERO SECTION
+------------------------------
+
+Title:
+"Enter The AI Launch Protocol"
+
+Subtitle:
+"Only verified early believers gain access."
+
+Below:
+Animated glowing red AI rotating core sphere (CSS-based animation acceptable).
+
+Below:
+Glassmorphism verification card.
+
+------------------------------
+VERIFICATION CARD
+------------------------------
+
+Dark glass card.
+Rounded 16px.
+Soft neon red border glow (#ff1b1b).
+
+Step 1:
+Button:
+"Connect X Account"
+Include X icon.
+Subtext:
+"OAuth secure login required"
+
+After connection:
+Show badge:
+● Connected as @username
+
+(Mock OAuth state logic allowed.)
+
+------------------------------
+Step 2:
+Auto Verification Panel
+
+Two rows:
+
+1. Following @SomniclawAI
+2. Reposted Official Launch Post
+
+Each row must support 3 states:
+- Checking (gray animated dot)
+- Not verified (red pulse)
+- Verified (green check)
+
+Include subtle loading animation.
+
+(Mock verification logic allowed with state toggles.)
+
+------------------------------
+Step 3:
+Wallet + Email
+
+Input:
+Email field
+
+Button:
+"Connect Solana Wallet"
+(Mock wallet state allowed.)
+
+Small note:
+"Wallet required for early token allocation."
+
+------------------------------
+FINAL CTA
+------------------------------
+
+Button:
+"Unlock Early Believer Access"
+
+Style:
+Large glowing deep red gradient button (#ff1b1b)
+
+Disabled until:
+✔ X connected
+✔ Following verified
+✔ Repost verified
+✔ Email entered
+✔ Wallet connected
+
+Hover:
+Stronger glow expansion.
+
+When clicked:
+Trigger cinematic transition:
+- Fade to black
+- AI core expands
+- Red flash effect
+- Then redirect to /home
+
+------------------------------
+SOCIAL PROOF SECTION
+------------------------------
+
+Below card:
+
+Text:
+"Early Believers Verified: 2,431"
+
+Add animated counting effect.
+
+Tagline:
+"Protocol closes when allocation is filled."
+
+==================================================
+PART 3 — STRUCTURE
+==================================================
+
+Also create:
+
+app/home/page.tsx
+(Simple placeholder page for after unlock.)
+
+==================================================
+TECHNICAL RULES
+==================================================
+
+- Use TypeScript
+- Use Tailwind only
+- No external CSS files
+- Clean folder structure
+- Production-ready formatting
+- Performance optimized
+- No console errors
+- No purple or pink
+
+==================================================
+DELIVERABLE
+==================================================
+
+Return:
+
+1. Installation command for dependencies
+2. GlobalBackground.tsx
+3. app/page.tsx (Whitelist Gate)
+4. app/home/page.tsx
+5. Example layout.tsx usage
+
+No explanations.
+Only code and setup instructions.

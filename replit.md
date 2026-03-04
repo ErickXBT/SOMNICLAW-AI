@@ -32,6 +32,7 @@ src/
       AssistantPage.tsx   # /assistant
       LaunchpadPage.tsx   # /launchpad (Solana token launchpad with Phantom wallet)
       GenerativeAiPage.tsx # /generative-ai (full AI image generation UI)
+      WhitelistPage.tsx   # /whitelist (Web3 whitelist gate with X/wallet verification)
   styles/               # CSS files (Tailwind, theme, fonts, custom)
   main.tsx              # Entry point with React Router setup
 server/

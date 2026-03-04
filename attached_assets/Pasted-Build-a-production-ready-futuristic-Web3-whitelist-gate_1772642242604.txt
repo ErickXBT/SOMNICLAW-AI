@@ -1,0 +1,204 @@
+Build a production-ready futuristic Web3 whitelist gate landing page for SOMNICLAW AI Launchpad using:
+
+- Next.js 14 (App Router)
+- TypeScript
+- Tailwind CSS
+- react-tsparticles (slim)
+- No external CSS files
+
+Return clean production-ready code only.
+No explanations.
+
+==================================================
+THEME & STYLE
+==================================================
+
+Dark dominant background: #070707
+Deep neon red accent: #ff1b1b
+No purple.
+No pink.
+Clean minimal layout.
+Premium crypto launchpad feel.
+Cyberpunk AI aesthetic.
+Subtle red particle atmosphere.
+Cinematic and elite.
+
+==================================================
+STRUCTURE
+==================================================
+
+Create:
+
+1. components/BackgroundEffects.tsx
+2. app/page.tsx (Whitelist Gate)
+3. app/home/page.tsx (Main page after unlock)
+4. layout.tsx usage example
+5. Installation command
+
+==================================================
+BACKGROUND EFFECTS REQUIREMENTS
+==================================================
+
+- Base color: #070707
+- Soft radial red glow from center
+- Subtle animated red particles (react-tsparticles slim)
+- Particle color: #ff1b1b
+- Low opacity (max 0.1)
+- Small particle size
+- Slow animation
+- No particle links
+- Add subtle grid overlay (CSS background pattern)
+- Add cursor-follow red ambient glow effect
+- Must use fixed positioning and negative z-index
+- Must be GPU friendly
+
+==================================================
+WHITELIST PAGE (app/page.tsx)
+==================================================
+
+This page appears BEFORE main website access.
+
+Centered layout.
+Full screen height.
+Use BackgroundEffects component.
+
+------------------------------
+HERO SECTION
+------------------------------
+
+Large glowing red title:
+"Enter The AI Launch Protocol"
+
+Subtitle:
+"Only verified early believers gain access."
+
+Below:
+Animated glowing red AI rotating core sphere
+(CSS animated circular gradient orb)
+
+Below:
+Glassmorphism verification card.
+
+------------------------------
+VERIFICATION CARD
+------------------------------
+
+Dark glass style:
+- bg-black/40
+- backdrop-blur-md
+- border border-red-500/30
+- rounded-2xl
+- soft red glow shadow
+
+STEP 1:
+Button:
+"Connect X Account"
+Neon red gradient button.
+Include X icon (SVG).
+Subtext:
+"OAuth secure login required"
+
+Mock OAuth logic using useState.
+
+After connected:
+Show badge:
+● Connected as @username
+
+------------------------------
+STEP 2:
+Verification panel with 2 rows:
+
+Row 1:
+Following @SomniclawAI
+
+Row 2:
+Reposted Official Launch Post
+
+Each row must support:
+- Checking state (animated gray dot)
+- Not verified (red pulse dot)
+- Verified (green check icon)
+
+Use mock async timeout simulation.
+
+------------------------------
+STEP 3:
+Wallet & Email
+
+Email input field.
+Solana wallet connect button (mock state).
+
+Small note:
+"Wallet required for early token allocation."
+
+------------------------------
+FINAL CTA
+------------------------------
+
+Button:
+"Unlock Early Believer Access"
+
+Style:
+Large neon red glowing button.
+
+Disabled until:
+✔ X connected
+✔ Following verified
+✔ Repost verified
+✔ Email entered
+✔ Wallet connected
+
+Hover:
+Stronger red glow expansion.
+
+On click:
+Trigger cinematic transition:
+- Full screen fade to black
+- AI core scale animation
+- Red flash overlay
+- Redirect to /home
+
+==================================================
+SOCIAL PROOF SECTION
+==================================================
+
+Below card:
+
+"Early Believers Verified: 2,431"
+
+Add animated counter effect using useEffect.
+
+Tagline:
+"Protocol closes when allocation is filled."
+
+==================================================
+HOME PAGE
+==================================================
+
+Create simple placeholder page:
+
+Centered text:
+"SOMNICLAW AI Launchpad Access Granted"
+
+Same dark red theme.
+
+==================================================
+TECHNICAL RULES
+==================================================
+
+- Use TypeScript
+- Use functional components
+- Use Tailwind only
+- No inline style except dynamic animation values
+- Clean folder structure
+- Production-ready formatting
+- No purple or pink colors
+- No console errors
+
+Return only:
+
+1. npm install command
+2. components/BackgroundEffects.tsx
+3. app/page.tsx
+4. app/home/page.tsx
+5. layout.tsx example usage
