@@ -1,0 +1,272 @@
+Upgrade the SOMNICLAW AI Launchpad into a fully functional Solana token launch system similar to pump.fun.
+
+The system must support:
+
+• SPL Token deployment
+• Token metadata minting
+• Contract address generation
+• Automatic Raydium liquidity
+• Secure RPC connection
+• Wallet signing
+• API backend
+• Transaction status tracking
+
+Use TypeScript + Solana Web3.js + Metaplex.
+
+The system must run on Solana Mainnet.
+
+-----------------------------------
+RPC SYSTEM (CRITICAL FIX)
+-----------------------------------
+
+Implement a reliable RPC system using environment variables.
+
+Use Helius RPC.
+
+.env variables:
+
+SOLANA_RPC=https://mainnet.helius-rpc.com/?api-key=YOUR_API_KEY
+
+Create a connection module:
+
+lib/solana.ts
+
+import { Connection } from "@solana/web3.js";
+
+export const connection = new Connection(
+  process.env.SOLANA_RPC!,
+  "confirmed"
+);
+
+All blockchain operations must use this connection.
+
+-----------------------------------
+TOKEN DEPLOY SYSTEM
+-----------------------------------
+
+Create backend API:
+
+/api/deploy-token
+
+This endpoint must:
+
+1. Generate SPL token mint
+2. Create associated token account
+3. Mint total supply
+4. Return mint address (CA)
+
+Use:
+
+@solana/spl-token
+
+Implementation flow:
+
+1 Generate mint keypair
+2 Create mint account
+3 Initialize mint
+4 Create associated token account
+5 Mint supply
+
+Supply default:
+
+1,000,000,000 tokens
+Decimals: 9
+
+Return response:
+
+{
+ success: true,
+ mintAddress: "...",
+ txSignature: "..."
+}
+
+-----------------------------------
+TOKEN METADATA (METAPLEX)
+-----------------------------------
+
+Use Metaplex Token Metadata program.
+
+Install:
+
+@metaplex-foundation/js
+
+After token mint:
+
+create metadata:
+
+name
+symbol
+description
+logo
+website
+twitter
+telegram
+
+Store metadata JSON in:
+
+/public/token-metadata/
+
+Example metadata:
+
+{
+ "name": "SOMNICLAW",
+ "symbol": "SOMNI",
+ "description": "AI Health Agent for Insomnia",
+ "image": "logo.png",
+ "external_url": "https://somniclaw.xyz"
+}
+
+Mint metadata using:
+
+Metaplex.make(connection)
+
+-----------------------------------
+CA GENERATOR SYSTEM
+-----------------------------------
+
+Generate contract addresses visually branded with SOMNI prefix.
+
+Because Solana addresses are random,
+create a visual CA short format:
+
+Example display:
+
+SOMNI-7Gh82f...K91
+
+Frontend formatting:
+
+function formatCA(address){
+ return "SOMNI-" + address.slice(0,6) + "..." + address.slice(-4)
+}
+
+-----------------------------------
+RAYDIUM AUTO LIQUIDITY
+-----------------------------------
+
+Add automatic liquidity creation.
+
+Flow:
+
+After token deploy:
+
+1 Create token pool
+2 Pair with SOL
+3 Add liquidity to Raydium
+4 Lock LP tokens
+
+Create module:
+
+/lib/raydium.ts
+
+Use Raydium SDK.
+
+Functions:
+
+createPool()
+addLiquidity()
+lockLP()
+
+Default LP:
+
+1 SOL
+10% token supply
+
+-----------------------------------
+WALLET CONNECTION
+-----------------------------------
+
+Use Solana Wallet Adapter.
+
+Supported wallets:
+
+Phantom
+Solflare
+Backpack
+
+Users must sign deploy transaction.
+
+-----------------------------------
+TRANSACTION STATUS
+-----------------------------------
+
+Create deploy status system.
+
+States:
+
+pending
+confirming
+success
+failed
+
+Frontend must display progress.
+
+-----------------------------------
+SECURITY
+-----------------------------------
+
+Implement:
+
+• rate limit deploy
+• max 1 deploy per wallet per hour
+• deploy fee 0.1 SOL
+
+Fee goes to:
+
+SOMNICLAW treasury wallet.
+
+-----------------------------------
+AI TOKEN ANALYSIS
+-----------------------------------
+
+After deploy run AI risk analysis.
+
+Check:
+
+• supply distribution
+• liquidity ratio
+• mint authority
+• freeze authority
+
+Return AI score.
+
+-----------------------------------
+ERROR HANDLING
+-----------------------------------
+
+Fix RPC 403 errors.
+
+If RPC fails:
+
+retry with backup RPC.
+
+Backup RPC:
+
+https://api.mainnet-beta.solana.com
+
+-----------------------------------
+UI INTEGRATION
+-----------------------------------
+
+Connect the deploy form to API.
+
+Button:
+
+Deploy to Solana
+
+Triggers:
+
+POST /api/deploy-token
+
+Return CA and TX link.
+
+-----------------------------------
+FINAL RESULT
+-----------------------------------
+
+The SOMNICLAW launchpad must function similar to pump.fun:
+
+• Create tokens instantly
+• Auto metadata
+• Auto liquidity
+• AI token analysis
+• Professional crypto launch UI
