@@ -33,9 +33,19 @@ export function Navigation() {
     }
   }, []);
 
+  const isMobile = useCallback(() => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    );
+  }, []);
+
   const connectWallet = useCallback(async () => {
     if (!(window as any).solana?.isPhantom) {
-      window.open('https://phantom.app', '_blank');
+      if (isMobile()) {
+        window.location.href = 'https://phantom.app/ul/browse/https://somniclaw.xyz';
+      } else {
+        window.open('https://phantom.app', '_blank');
+      }
       return;
     }
     setConnecting(true);
@@ -45,7 +55,7 @@ export function Navigation() {
     } catch {} finally {
       setConnecting(false);
     }
-  }, []);
+  }, [isMobile]);
 
   const disconnectWallet = useCallback(async () => {
     try {
