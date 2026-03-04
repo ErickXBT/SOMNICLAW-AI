@@ -28,7 +28,7 @@ export function LoadingScreen() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <h1 className="text-5xl md:text-7xl font-poppins font-bold bg-gradient-to-r from-red-500 via-red-500 to-red-500 bg-clip-text text-transparent animate-gradient">
+              <h1 className="text-3xl sm:text-5xl md:text-7xl font-poppins font-bold bg-gradient-to-r from-red-500 via-red-500 to-red-500 bg-clip-text text-transparent animate-gradient leading-tight">
                 SOMNICLAW
               </h1>
               <p className="text-xl text-red-400/80 mt-2">$SOMNICLAW</p>

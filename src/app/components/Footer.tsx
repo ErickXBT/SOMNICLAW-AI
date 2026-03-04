@@ -9,7 +9,7 @@ export function Footer() {
   ];
 
   return (
-    <footer className="relative py-16 px-6 border-t border-red-600/20">
+    <footer className="relative py-12 sm:py-16 px-4 sm:px-6 border-t border-red-600/20">
       {/* Glow line at top */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-600/50 to-transparent" />
       

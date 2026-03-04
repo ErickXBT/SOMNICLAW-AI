@@ -6,7 +6,7 @@ export function RiskDisclaimer() {
   const { ref, inView } = useInView();
 
   return (
-    <section ref={ref} className="relative py-24 px-6">
+    <section ref={ref} className="relative py-16 sm:py-24 px-4 sm:px-6">
       <div className="container mx-auto max-w-5xl">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

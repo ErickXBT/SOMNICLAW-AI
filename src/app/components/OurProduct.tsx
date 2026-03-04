@@ -30,7 +30,7 @@ export function OurProduct() {
   const { ref, inView } = useInView();
 
   return (
-    <section id="ai-agent" ref={ref} className="relative py-24 px-6 overflow-hidden">
+    <section id="ai-agent" ref={ref} className="relative py-16 sm:py-24 px-4 sm:px-6 overflow-hidden">
       <div className="container mx-auto max-w-6xl text-center">
         <motion.span
           initial={{ opacity: 0, y: 10 }}
@@ -45,7 +45,7 @@ export function OurProduct() {
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.1 }}
-          className="text-4xl md:text-6xl font-poppins font-bold bg-gradient-to-r from-red-500 via-red-500 to-red-500 bg-clip-text text-transparent animate-gradient mb-6"
+          className="text-3xl sm:text-4xl md:text-6xl font-poppins font-bold bg-gradient-to-r from-red-500 via-red-500 to-red-500 bg-clip-text text-transparent animate-gradient mb-6 leading-tight break-words"
         >
           SOMNICLAW AI AGENT
         </motion.h2>
@@ -81,7 +81,7 @@ export function OurProduct() {
 
               <Link
                 to={card.link}
-                className="relative inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-red-700/20 border border-red-600/40 text-red-400 hover:text-white hover:bg-red-700/30 hover:border-red-600/50 transition-all duration-300 text-sm font-medium"
+                className="relative inline-flex items-center gap-2 w-full sm:w-auto px-5 sm:px-6 py-3.5 sm:py-3 rounded-xl sm:rounded-lg bg-red-700/20 border border-red-600/40 text-red-400 hover:text-white hover:bg-red-700/30 hover:border-red-600/50 transition-all duration-300 text-base sm:text-sm font-medium justify-center"
               >
                 {card.cta}
               </Link>

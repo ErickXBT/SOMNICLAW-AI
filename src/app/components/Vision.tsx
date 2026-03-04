@@ -6,7 +6,7 @@ export function Vision() {
   const { ref, inView } = useInView();
 
   return (
-    <section ref={ref} className="relative py-24 px-6">
+    <section ref={ref} className="relative py-16 sm:py-24 px-4 sm:px-6">
       <div className="container mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -14,11 +14,11 @@ export function Vision() {
           transition={{ duration: 0.8 }}
           className="text-center mb-12"
         >
-          <h2 className="text-4xl md:text-5xl font-poppins font-bold mb-6">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-poppins font-bold mb-6 leading-tight">
             <span className="bg-gradient-to-r from-red-500 to-red-500 bg-clip-text text-transparent">
               Health is Alpha.
             </span>
-            <span className="block text-3xl md:text-4xl text-blue-300 mt-2">
+            <span className="block text-2xl sm:text-3xl md:text-4xl text-blue-300 mt-2">
               Sleep is Strategy.
             </span>
           </h2>

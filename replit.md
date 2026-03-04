@@ -44,7 +44,7 @@ vite.config.ts
 ## Architecture
 
 ### Backend (server/index.ts) — Single Server Architecture
-- Express v5 on port 3000 (configurable via PORT env var)
+- Express v5 on port 5000 (configurable via PORT env var)
 - Serves Vite-built static files from `dist/` with SPA fallback
 - `/api/generate-image` — POST endpoint for AI image generation (prompt + optional reference image)
 - `/api/chat` — POST endpoint for SOMNICLAW AI health assistant (gpt-4o-mini)

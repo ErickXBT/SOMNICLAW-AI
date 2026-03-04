@@ -44,7 +44,7 @@ export function Solution() {
   ];
 
   return (
-    <section ref={ref} className="relative py-24 px-6">
+    <section ref={ref} className="relative py-16 sm:py-24 px-4 sm:px-6">
       <div className="container mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -52,11 +52,11 @@ export function Solution() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-poppins font-bold mb-6">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-poppins font-bold mb-6 leading-tight">
             <span className="bg-gradient-to-r from-red-500 to-blue-400 bg-clip-text text-transparent">
               Meet SOMNICLAW
             </span>
-            <span className="block text-3xl md:text-4xl text-red-400 mt-2">
+            <span className="block text-2xl sm:text-3xl md:text-4xl text-red-400 mt-2">
               AI Assistant
             </span>
           </h2>

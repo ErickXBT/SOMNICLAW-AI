@@ -34,7 +34,7 @@ export function Security() {
   ];
 
   return (
-    <section ref={ref} className="relative py-24 px-6">
+    <section ref={ref} className="relative py-16 sm:py-24 px-4 sm:px-6">
       <div className="container mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -42,7 +42,7 @@ export function Security() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-poppins font-bold mb-6">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-poppins font-bold mb-6 leading-tight">
             <span className="bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
               Security & Transparency
             </span>

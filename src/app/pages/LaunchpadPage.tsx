@@ -542,7 +542,7 @@ export default function LaunchpadPage() {
             <span className="inline-block px-4 py-1.5 rounded-full text-xs font-medium tracking-widest text-red-400 border border-red-600/30 bg-red-700/10 mb-6">
               SOMNICLAW ECOSYSTEM
             </span>
-            <h1 className="text-4xl md:text-7xl font-poppins font-bold bg-gradient-to-r from-red-500 via-red-500 to-red-500 bg-clip-text text-transparent animate-gradient mb-4">
+            <h1 className="text-3xl sm:text-4xl md:text-7xl font-poppins font-bold bg-gradient-to-r from-red-500 via-red-500 to-red-500 bg-clip-text text-transparent animate-gradient mb-4 leading-tight break-words">
               SOMNICLAW LAUNCHPAD
             </h1>
             <p className="text-base md:text-lg text-gray-400 leading-relaxed max-w-2xl mx-auto">

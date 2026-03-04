@@ -31,7 +31,7 @@ export function TokenDistribution() {
   ];
 
   return (
-    <section ref={ref} className="relative py-24 px-6">
+    <section ref={ref} className="relative py-16 sm:py-24 px-4 sm:px-6">
       <div className="container mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -39,7 +39,7 @@ export function TokenDistribution() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-poppins font-bold mb-6">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-poppins font-bold mb-6 leading-tight">
             <span className="bg-gradient-to-r from-red-500 to-blue-400 bg-clip-text text-transparent">
               Token Distribution
             </span>
@@ -71,7 +71,7 @@ export function TokenDistribution() {
                 </div>
 
                 <div className="space-y-2">
-                  <div className="text-5xl bg-gradient-to-r ${item.color} bg-clip-text text-transparent">
+                  <div className="text-3xl sm:text-5xl bg-gradient-to-r ${item.color} bg-clip-text text-transparent">
                     {item.percentage}
                   </div>
                   <div className="text-xl text-gray-400">
