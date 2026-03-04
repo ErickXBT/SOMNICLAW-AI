@@ -177,7 +177,92 @@ app.post("/api/chat", async (req, res) => {
 });
 
 app.get("/api/health", (_req, res) => {
-  res.json({ status: "ok" });
+  res.json({ status: "SOMNICLAW AI ONLINE" });
+});
+
+const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT_WINDOW = 60_000;
+const RATE_LIMIT_MAX = 30;
+
+function rateLimit(req: any, res: any, next: any) {
+  const ip = req.ip || req.connection?.remoteAddress || "unknown";
+  const now = Date.now();
+  const entry = rateLimitStore.get(ip);
+
+  if (!entry || now > entry.resetAt) {
+    rateLimitStore.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW });
+    return next();
+  }
+
+  entry.count++;
+  if (entry.count > RATE_LIMIT_MAX) {
+    return res.status(429).json({ error: "Too many requests. Please try again later." });
+  }
+  return next();
+}
+
+app.post("/api/launch", rateLimit, (req, res) => {
+  const { name, symbol, supply, description, logo } = req.body || {};
+
+  if (!name || typeof name !== "string" || name.trim().length < 1 || name.length > 64) {
+    return res.status(400).json({ error: "Token name is required (1-64 characters)" });
+  }
+  if (!symbol || typeof symbol !== "string" || symbol.trim().length < 1 || symbol.length > 10) {
+    return res.status(400).json({ error: "Token symbol is required (1-10 characters)" });
+  }
+  if (!description || typeof description !== "string" || description.trim().length < 1) {
+    return res.status(400).json({ error: "Description is required" });
+  }
+
+  const contractBytes = new Uint8Array(32);
+  for (let i = 0; i < 32; i++) {
+    contractBytes[i] = Math.floor(Math.random() * 256);
+  }
+  const chars = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+  let contract = "";
+  for (const byte of contractBytes) {
+    contract += chars[byte % chars.length];
+  }
+  contract = contract.slice(0, 44);
+
+  console.log(`[Launch] Token created: ${name} (${symbol}) → ${contract.slice(0, 8)}...`);
+
+  res.json({
+    success: true,
+    contract,
+    token: {
+      name: name.trim(),
+      symbol: symbol.trim().toUpperCase(),
+      supply: supply || "1000000000",
+      description: description.trim(),
+      hasLogo: !!logo,
+    },
+  });
+});
+
+app.post("/api/ai-score", rateLimit, (req, res) => {
+  const { name, symbol } = req.body || {};
+
+  const baseScore = 60 + Math.floor(Math.random() * 30);
+  const riskLevels = ["low", "medium", "high"] as const;
+  const riskIndex = baseScore >= 80 ? 0 : baseScore >= 65 ? 1 : 2;
+
+  const metrics = {
+    liquidity: Math.floor(50 + Math.random() * 50),
+    community: Math.floor(40 + Math.random() * 55),
+    contract_safety: Math.floor(60 + Math.random() * 40),
+    market_timing: Math.floor(45 + Math.random() * 50),
+  };
+
+  console.log(`[AI Score] ${name || "Unknown"} (${symbol || "?"}) → Score: ${baseScore}, Risk: ${riskLevels[riskIndex]}`);
+
+  res.json({
+    score: baseScore,
+    risk: riskLevels[riskIndex],
+    whale_interest: Math.random() > 0.4,
+    metrics,
+    analysis: `Token ${symbol || "analysis"} shows ${riskLevels[riskIndex]} risk profile with a composite score of ${baseScore}/100.`,
+  });
 });
 
 app.use((err: any, _req: any, res: any, _next: any) => {

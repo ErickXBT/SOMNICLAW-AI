@@ -241,6 +241,13 @@ export default function LaunchpadPage() {
   const [showSendModal, setShowSendModal] = useState(false);
   const [sending, setSending] = useState(false);
 
+  const [aiScore, setAiScore] = useState<{
+    score: number; risk: string; whale_interest: boolean;
+    metrics: { liquidity: number; community: number; contract_safety: number; market_timing: number };
+    analysis: string;
+  } | null>(null);
+  const [scoringLoading, setScoringLoading] = useState(false);
+
   const [toasts, setToasts] = useState<Toast[]>([]);
   const addToast = useCallback((type: ToastType, message: string, duration = 4000) => {
     const id = crypto.randomUUID();
@@ -316,6 +323,25 @@ export default function LaunchpadPage() {
   };
 
   const truncatedAddress = walletKey ? `${walletKey.slice(0, 4)}...${walletKey.slice(-4)}` : null;
+
+  const fetchAiScore = async () => {
+    setScoringLoading(true);
+    setAiScore(null);
+    try {
+      const res = await fetch('/api/ai-score', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: projectName || 'Unknown', symbol: ticker || 'TOKEN' }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to get AI score');
+      setAiScore(data);
+    } catch (e: any) {
+      addToast('error', e?.message || 'AI scoring failed');
+    } finally {
+      setScoringLoading(false);
+    }
+  };
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -763,6 +789,78 @@ export default function LaunchpadPage() {
                     </div>
                   </div>
                 )}
+
+                <div className="mt-6 pt-4 border-t border-red-600/10">
+                  <h4 className="text-xs text-gray-500 mb-3 font-medium flex items-center gap-1.5">
+                    <BarChart3 className="w-3.5 h-3.5" />
+                    AI RISK ANALYSIS
+                  </h4>
+
+                  <button
+                    onClick={fetchAiScore}
+                    disabled={scoringLoading}
+                    className="w-full py-2.5 rounded-xl bg-gradient-to-r from-red-700 to-red-600 text-white text-xs font-medium hover:from-red-600 hover:to-red-500 disabled:opacity-50 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer mb-3"
+                  >
+                    {scoringLoading ? (
+                      <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Analyzing...</>
+                    ) : (
+                      <><TrendingUp className="w-3.5 h-3.5" /> Run AI Analysis</>
+                    )}
+                  </button>
+
+                  {aiScore && (
+                    <div className="space-y-3">
+                      <div className="p-3 rounded-xl bg-red-950/30 border border-red-600/10">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-xs text-gray-400">Score</span>
+                          <span className={`text-lg font-bold font-mono ${
+                            aiScore.score >= 80 ? 'text-green-400' : aiScore.score >= 65 ? 'text-yellow-400' : 'text-red-400'
+                          }`}>{aiScore.score}/100</span>
+                        </div>
+                        <div className="w-full h-1.5 rounded-full bg-gray-800 overflow-hidden">
+                          <div
+                            className={`h-full rounded-full transition-all duration-700 ${
+                              aiScore.score >= 80 ? 'bg-green-500' : aiScore.score >= 65 ? 'bg-yellow-500' : 'bg-red-500'
+                            }`}
+                            style={{ width: `${aiScore.score}%` }}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="p-2.5 rounded-lg bg-red-950/30 border border-red-600/10">
+                          <p className="text-[10px] text-gray-500 mb-0.5">Risk Level</p>
+                          <p className={`text-xs font-bold uppercase ${
+                            aiScore.risk === 'low' ? 'text-green-400' : aiScore.risk === 'medium' ? 'text-yellow-400' : 'text-red-400'
+                          }`}>{aiScore.risk}</p>
+                        </div>
+                        <div className="p-2.5 rounded-lg bg-red-950/30 border border-red-600/10">
+                          <p className="text-[10px] text-gray-500 mb-0.5">Whale Interest</p>
+                          <p className={`text-xs font-bold ${aiScore.whale_interest ? 'text-green-400' : 'text-gray-500'}`}>
+                            {aiScore.whale_interest ? 'Detected' : 'None'}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        {Object.entries(aiScore.metrics).map(([key, value]) => (
+                          <div key={key} className="flex items-center gap-2">
+                            <span className="text-[10px] text-gray-500 w-24 capitalize">{key.replace('_', ' ')}</span>
+                            <div className="flex-1 h-1 rounded-full bg-gray-800 overflow-hidden">
+                              <div
+                                className={`h-full rounded-full ${value >= 70 ? 'bg-green-500/70' : value >= 50 ? 'bg-yellow-500/70' : 'bg-red-500/70'}`}
+                                style={{ width: `${value}%` }}
+                              />
+                            </div>
+                            <span className="text-[10px] font-mono text-gray-400 w-6 text-right">{value}</span>
+                          </div>
+                        ))}
+                      </div>
+
+                      <p className="text-[10px] text-gray-600 leading-relaxed">{aiScore.analysis}</p>
+                    </div>
+                  )}
+                </div>
               </motion.div>
             </div>
           </div>

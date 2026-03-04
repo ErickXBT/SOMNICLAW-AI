@@ -1,0 +1,202 @@
+Update the project to support a production-ready Web3 Launchpad deployment for SOMNICLAW.
+
+GOAL
+The project must run properly on the custom domain:
+
+https://somniclaw.xyz
+
+and support subdomains for launchpad infrastructure.
+
+ARCHITECTURE
+
+somniclaw.xyz        → landing page
+app.somniclaw.xyz    → launchpad dashboard
+api.somniclaw.xyz    → backend API
+docs.somniclaw.xyz   → documentation
+
+
+==============================
+SERVER SETUP
+==============================
+
+Create a Node.js Express backend server.
+
+File:
+server/index.js
+
+Features:
+
+1. Health check endpoint
+GET /api/health
+
+Return:
+{
+  "status": "SOMNICLAW AI ONLINE"
+}
+
+2. Launch token endpoint
+POST /api/launch
+
+Body:
+{
+  name,
+  symbol,
+  supply,
+  description,
+  logo
+}
+
+Return mock response:
+{
+  success: true,
+  contract: "generated_contract_address"
+}
+
+3. AI Token Score endpoint
+POST /api/ai-score
+
+Return:
+{
+  score: 82,
+  risk: "medium",
+  whale_interest: true
+}
+
+
+==============================
+FRONTEND SETUP
+==============================
+
+Landing page must include:
+
+Hero section
+Headline:
+
+"SOMNICLAW AI Launchpad"
+
+Subheadline:
+
+"The next generation AI powered crypto launchpad for Solana."
+
+Buttons:
+
+Launch Token
+Explore Projects
+Docs
+
+
+==============================
+UI STYLE
+==============================
+
+Theme: cyberpunk AI core
+
+Colors:
+
+background: #070707
+primary: #ff1b1b
+secondary: #111111
+
+Effects:
+
+red neon glow
+subtle particle background
+hover glow on buttons
+futuristic typography
+
+
+==============================
+LAUNCHPAD DASHBOARD
+==============================
+
+Route:
+/app
+
+Create launchpad UI with form:
+
+Token Name
+Token Symbol
+Supply
+Description
+Logo Upload
+
+Button:
+
+Generate Token
+
+When clicked call:
+
+POST /api/launch
+
+
+==============================
+AI TOKEN SCORING
+==============================
+
+Add panel:
+
+"AI Risk Analysis"
+
+Call:
+
+POST /api/ai-score
+
+Display:
+
+Risk level
+Score meter
+Whale interest
+
+
+==============================
+SECURITY
+==============================
+
+Add:
+
+Rate limiting
+Basic bot protection
+Input validation
+
+
+==============================
+DEPLOYMENT
+==============================
+
+Make project ready for Replit deployment.
+
+Add:
+
+start script
+environment variables
+CORS support
+
+
+==============================
+EXTRA VISUAL EFFECTS
+==============================
+
+Add animated AI core background:
+
+Three.js particle field
+Red glow sphere
+Mouse parallax
+
+
+==============================
+OUTPUT
+==============================
+
+Generate the full working project structure:
+
+/client
+/server
+/api routes
+/components
+/styles
+/config
+
+Ensure everything runs with:
+
+npm install
+npm run dev

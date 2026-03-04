@@ -48,7 +48,10 @@ vite.config.ts
 - Serves Vite-built static files from `dist/` with SPA fallback
 - `/api/generate-image` — POST endpoint for AI image generation (prompt + optional reference image)
 - `/api/chat` — POST endpoint for SOMNICLAW AI health assistant (gpt-4o-mini)
-- `/api/health` — GET health check
+- `/api/launch` — POST mock token launch (validates name/symbol/description, returns contract address)
+- `/api/ai-score` — POST AI risk analysis (returns score, risk level, whale interest, metrics)
+- `/api/health` — GET health check ("SOMNICLAW AI ONLINE")
+- Rate limiting: 30 req/min per IP on launch/score endpoints
 - Global crash protection: uncaughtException + unhandledRejection handlers
 
 ### AI Chat System (server/lib/)
