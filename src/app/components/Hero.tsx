@@ -101,8 +101,11 @@ export function Hero() {
             </button>
 
             {/* Join Community */}
-            <button
-              className="group relative px-8 py-4 rounded-lg bg-blue-600/20 border border-blue-500/50 text-blue-300 hover:text-white transition-all duration-300 overflow-hidden min-w-[200px]"
+            <a
+              href="https://x.com/i/communities/2027519059449823333"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative px-8 py-4 rounded-lg bg-blue-600/20 border border-blue-500/50 text-blue-300 hover:text-white transition-all duration-300 overflow-hidden min-w-[200px] inline-block text-center"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-blue-600/0 via-blue-600/30 to-blue-600/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <div className="absolute inset-0 bg-blue-500/20 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-300" />
@@ -110,7 +113,7 @@ export function Hero() {
                 Join Community
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </span>
-            </button>
+            </a>
           </motion.div>
         </motion.div>
 
