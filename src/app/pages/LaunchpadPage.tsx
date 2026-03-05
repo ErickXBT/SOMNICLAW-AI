@@ -8,8 +8,13 @@ import {
 import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Connection, PublicKey, clusterApiUrl, LAMPORTS_PER_SOL,
-  Transaction, SystemProgram
+  Transaction, SystemProgram, Keypair
 } from '@solana/web3.js';
+import {
+  createInitializeMintInstruction, createAssociatedTokenAccountInstruction,
+  createMintToInstruction, getAssociatedTokenAddress, getMinimumBalanceForRentExemptMint,
+  MINT_SIZE, TOKEN_PROGRAM_ID
+} from '@solana/spl-token';
 
 type ToastType = 'success' | 'error' | 'loading' | 'info';
 interface Toast { id: string; type: ToastType; message: string; }
@@ -68,11 +73,14 @@ function ToastContainer({ toasts, onRemove }: { toasts: Toast[]; onRemove: (id: 
   );
 }
 
+const TREASURY_WALLET = '6WiXumkgZMMYDVMqspZ7NDumiMTcz4AtnPLunafv1cCa';
+const DEPLOY_FEE_SOL = 0.02;
+
 const DEPLOY_STEPS = [
   { key: 'preparing', label: 'Preparing transaction' },
-  { key: 'signing', label: 'Wallet signing' },
-  { key: 'confirming', label: 'Confirming on-chain' },
-  { key: 'success', label: 'Complete' },
+  { key: 'signing', label: 'Request wallet signature' },
+  { key: 'confirming', label: 'Submitting & confirming on Solana' },
+  { key: 'success', label: 'Deploy complete' },
 ] as const;
 
 function DeployProgress({ status }: { status: DeployStatus }) {
@@ -459,38 +467,65 @@ export default function LaunchpadPage() {
       return;
     }
     setDeploying(true);
-
     setDeployStatus('preparing');
-    const loadingId = addToast('loading', 'Creating token on Solana mainnet...');
+    const loadingId = addToast('loading', 'Preparing token transaction...');
 
     try {
+      const payer = new PublicKey(walletKey);
+      const mintKeypair = Keypair.generate();
+      const mintPubkey = mintKeypair.publicKey;
+      const mintAddress = mintPubkey.toBase58();
 
-      const deployRes = await fetch('/api/deploy-token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          walletAddress: walletKey,
-          name: projectName.trim(),
-          symbol: ticker.trim(),
-          description: description.trim(),
-          website: website.trim() || undefined,
-          twitter: twitter.trim() || undefined,
-          telegram: telegram.trim() || undefined,
-          logo: logoPreview || undefined,
-        }),
-      });
+      const lamports = await getMinimumBalanceForRentExemptMint(connection);
+      const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
 
-      const deployData = await deployRes.json();
-      if (!deployRes.ok) throw new Error(deployData.error || 'Failed to prepare transaction');
+      const ata = await getAssociatedTokenAddress(mintPubkey, payer);
+      const mintAmount = BigInt(1_000_000_000) * BigInt(10 ** 9);
 
-      const { transaction: txBase64, mintAddress } = deployData;
+      const transaction = new Transaction();
+
+      transaction.add(
+        SystemProgram.transfer({
+          fromPubkey: payer,
+          toPubkey: new PublicKey(TREASURY_WALLET),
+          lamports: Math.floor(DEPLOY_FEE_SOL * LAMPORTS_PER_SOL),
+        })
+      );
+
+      transaction.add(
+        SystemProgram.createAccount({
+          fromPubkey: payer,
+          newAccountPubkey: mintPubkey,
+          space: MINT_SIZE,
+          lamports,
+          programId: TOKEN_PROGRAM_ID,
+        })
+      );
+
+      transaction.add(
+        createInitializeMintInstruction(mintPubkey, 9, payer, payer, TOKEN_PROGRAM_ID)
+      );
+
+      transaction.add(
+        createAssociatedTokenAccountInstruction(payer, ata, payer, mintPubkey)
+      );
+
+      transaction.add(
+        createMintToInstruction(mintPubkey, ata, payer, mintAmount)
+      );
+
+      transaction.recentBlockhash = blockhash;
+      transaction.feePayer = payer;
+      transaction.partialSign(mintKeypair);
+
+      const simulation = await connection.simulateTransaction(transaction);
+      if (simulation.value.err) {
+        throw new Error('Transaction simulation failed. Please check your SOL balance.');
+      }
 
       setDeployStatus('signing');
       removeToast(loadingId);
       const signingId = addToast('loading', 'Please sign the transaction in your wallet...');
-
-      const txBuffer = Uint8Array.from(atob(txBase64), c => c.charCodeAt(0));
-      const transaction = Transaction.from(txBuffer);
 
       const walletTimeout = setTimeout(() => {
         removeToast(signingId);
@@ -507,9 +542,12 @@ export default function LaunchpadPage() {
 
       setDeployStatus('confirming');
       removeToast(signingId);
-      const confirmingId = addToast('loading', 'Confirming transaction on Solana...');
+      const confirmingId = addToast('loading', 'Submitting to Solana...');
 
       const sig = await connection.sendRawTransaction(rawTx, { skipPreflight: false });
+      await connection.confirmTransaction({ signature: sig, blockhash, lastValidBlockHeight }, 'confirmed');
+
+      removeToast(confirmingId);
 
       const confirmRes = await fetch('/api/confirm-deploy', {
         method: 'POST',
@@ -529,7 +567,6 @@ export default function LaunchpadPage() {
 
       const confirmData = await confirmRes.json();
 
-      removeToast(confirmingId);
       setDeployStatus('success');
       addToast('success', 'Token deployed successfully!');
 

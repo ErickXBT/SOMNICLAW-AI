@@ -55,8 +55,7 @@ vite.config.ts
 - Serves Vite-built static files from `dist/` with SPA fallback
 - `/api/generate-image` — POST endpoint for AI image generation (prompt + optional reference image)
 - `/api/chat` — POST endpoint for SOMNICLAW AI assistant (gpt-4o-mini)
-- `/api/deploy-token` — POST builds SPL token transaction server-side (mint keypair, ATA, 1B supply, 0.1 SOL fee), returns serialized tx for wallet signing
-- `/api/confirm-deploy` — POST confirms on-chain transaction, saves token metadata JSON
+- `/api/confirm-deploy` — POST saves token metadata JSON after frontend-confirmed on-chain deploy
 - `/api/launch` — POST legacy mock token launch
 - `/api/ai-score` — POST AI risk analysis (score, risk, whale interest, metrics, mint/freeze authority)
 - `/api/health` — GET health check
@@ -83,11 +82,12 @@ vite.config.ts
 ### Frontend
 
 ### Launchpad (/launchpad)
-- Server-side transaction building via `/api/deploy-token`
-- Deploy flow: prepare → sign (Phantom) → send → confirm → metadata
+- Frontend-built transactions using standard SPL Token instructions (no backend tx building)
+- Deploy flow: frontend builds tx → simulate → Phantom signs → send raw tx → confirm on-chain → backend metadata
 - Deploy progress tracker with step-by-step status (preparing/signing/confirming/success/failed)
+- Transaction simulation before wallet signing for Phantom compatibility
 - SOMNI-prefixed CA formatting: `SOMNI-{first6}...{last4}`
-- Deploy fee display: 0.1 SOL
+- Deploy fee: 0.02 SOL
 - Enhanced AI analysis: mint authority, freeze authority, supply distribution, liquidity ratio
 - Phantom wallet connect/disconnect with mobile deep linking
 - SOL balance display, Send SOL modal

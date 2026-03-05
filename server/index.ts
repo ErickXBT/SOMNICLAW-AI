@@ -10,25 +10,7 @@ import { detectRisk } from "./lib/riskDetector.js";
 import { getMessages, addMessage } from "./lib/memoryStore.js";
 import {
   getConnectionWithFallback,
-  getTreasuryWallet,
-  DEPLOY_FEE_LAMPORTS,
 } from "./lib/solana.js";
-import {
-  Keypair,
-  PublicKey,
-  Transaction,
-  SystemProgram,
-  LAMPORTS_PER_SOL,
-} from "@solana/web3.js";
-import {
-  createInitializeMintInstruction,
-  createAssociatedTokenAccountInstruction,
-  createMintToInstruction,
-  getAssociatedTokenAddress,
-  getMinimumBalanceForRentExemptMint,
-  MINT_SIZE,
-  TOKEN_PROGRAM_ID,
-} from "@solana/spl-token";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -222,107 +204,6 @@ function rateLimit(req: any, res: any, next: any) {
   }
   return next();
 }
-
-app.post("/api/deploy-token", rateLimit, async (req, res) => {
-  try {
-    const { walletAddress, name, symbol, description, website, twitter, telegram, logo } = req.body || {};
-
-    if (!walletAddress || typeof walletAddress !== "string") {
-      return res.status(400).json({ error: "Wallet address is required" });
-    }
-    let payer: PublicKey;
-    try {
-      payer = new PublicKey(walletAddress);
-    } catch {
-      return res.status(400).json({ error: "Invalid wallet address" });
-    }
-
-    if (!name || typeof name !== "string" || name.trim().length < 1 || name.length > 64) {
-      return res.status(400).json({ error: "Token name is required (1-64 characters)" });
-    }
-    if (!symbol || typeof symbol !== "string" || symbol.trim().length < 1 || symbol.length > 10) {
-      return res.status(400).json({ error: "Token symbol is required (1-10 characters)" });
-    }
-    if (!description || typeof description !== "string" || description.trim().length < 1) {
-      return res.status(400).json({ error: "Description is required" });
-    }
-
-    console.log(`[Deploy] Building token tx for ${name} (${symbol}) by ${walletAddress.slice(0, 8)}...`);
-
-    const connection = await getConnectionWithFallback();
-    const mintKeypair = Keypair.generate();
-    const mintPubkey = mintKeypair.publicKey;
-
-    const lamports = await getMinimumBalanceForRentExemptMint(connection);
-    const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
-
-    const transaction = new Transaction();
-
-    transaction.add(
-      SystemProgram.createAccount({
-        fromPubkey: payer,
-        newAccountPubkey: mintPubkey,
-        space: MINT_SIZE,
-        lamports,
-        programId: TOKEN_PROGRAM_ID,
-      })
-    );
-
-    transaction.add(
-      createInitializeMintInstruction(mintPubkey, 9, payer, payer, TOKEN_PROGRAM_ID)
-    );
-
-    const ata = await getAssociatedTokenAddress(mintPubkey, payer);
-    transaction.add(
-      createAssociatedTokenAccountInstruction(payer, ata, payer, mintPubkey)
-    );
-
-    const mintAmount = BigInt(1_000_000_000) * BigInt(10 ** 9);
-    transaction.add(
-      createMintToInstruction(mintPubkey, ata, payer, mintAmount)
-    );
-
-    transaction.add(
-      SystemProgram.transfer({
-        fromPubkey: payer,
-        toPubkey: getTreasuryWallet(),
-        lamports: DEPLOY_FEE_LAMPORTS,
-      })
-    );
-
-    transaction.recentBlockhash = blockhash;
-    transaction.feePayer = payer;
-    transaction.partialSign(mintKeypair);
-
-    const serialized = transaction.serialize({
-      requireAllSignatures: false,
-      verifySignatures: false,
-    });
-    const txBase64 = serialized.toString("base64");
-
-    const mintAddress = mintPubkey.toBase58();
-    console.log(`[Deploy] Transaction built for mint ${mintAddress.slice(0, 8)}...`);
-
-    res.json({
-      success: true,
-      transaction: txBase64,
-      mintAddress,
-      blockhash,
-      lastValidBlockHeight,
-    });
-  } catch (error: any) {
-    console.error("[Deploy] Error building transaction:", error?.message || error);
-
-    let message = "Failed to build deploy transaction";
-    if (error?.message?.includes("403")) {
-      message = "RPC access denied. Retrying with fallback...";
-    } else if (error?.message) {
-      message = error.message;
-    }
-
-    res.status(500).json({ error: message });
-  }
-});
 
 app.post("/api/confirm-deploy", rateLimit, async (req, res) => {
   try {

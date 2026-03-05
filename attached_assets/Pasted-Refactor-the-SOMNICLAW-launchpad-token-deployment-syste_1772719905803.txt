@@ -1,0 +1,167 @@
+Refactor the SOMNICLAW launchpad token deployment system so that all transactions follow standard Solana SPL Token patterns and are easily simulatable by Phantom Wallet.
+
+GOAL:
+Remove Phantom security warnings and ensure wallet signing works smoothly.
+
+------------------------------------------------
+
+1. USE STANDARD SOLANA PROGRAMS ONLY
+
+Ensure all instructions use official programs:
+
+SystemProgram
+Token Program (spl-token)
+Associated Token Program
+Metaplex Metadata Program
+
+Do NOT use custom programs for token minting.
+
+------------------------------------------------
+
+2. BUILD TRANSACTION ON FRONTEND
+
+Do not build the transaction entirely on the backend.
+
+Correct flow:
+
+Frontend:
+- create transaction
+- add instructions
+- request wallet signing
+
+Backend:
+- optional metadata storage
+- confirmation monitoring
+
+Use:
+
+@solana/web3.js
+@solana/spl-token
+
+------------------------------------------------
+
+3. SPL TOKEN DEPLOY FLOW
+
+Transaction should contain these instructions only:
+
+1. createMint
+2. createAssociatedTokenAccount
+3. mintTo
+4. optional metadata creation
+
+Example structure:
+
+const transaction = new Transaction()
+
+transaction.add(
+  createInitializeMintInstruction(...),
+  createAssociatedTokenAccountInstruction(...),
+  createMintToInstruction(...)
+)
+
+------------------------------------------------
+
+4. REDUCE TRANSACTION COMPLEXITY
+
+Avoid sending more than 4 instructions in one transaction.
+
+If metadata creation is needed, create a second transaction for Metaplex metadata.
+
+Transaction 1:
+Mint token
+
+Transaction 2:
+Create metadata
+
+------------------------------------------------
+
+5. ENSURE WALLET ADAPTER STANDARD
+
+Use official Solana wallet adapter packages:
+
+@solana/wallet-adapter-react
+@solana/wallet-adapter-react-ui
+
+Wallet signing should use:
+
+const signedTx = await wallet.signTransaction(transaction)
+
+Then send:
+
+await connection.sendRawTransaction(signedTx.serialize())
+
+------------------------------------------------
+
+6. ENABLE TRANSACTION SIMULATION
+
+Before sending transaction:
+
+await connection.simulateTransaction(transaction)
+
+This helps Phantom verify the transaction safely.
+
+------------------------------------------------
+
+7. IMPROVE USER SIGNING FLOW
+
+Update deploy UI steps:
+
+Preparing transaction
+Request wallet signature
+Submitting to Solana
+Confirming transaction
+Deploy complete
+
+Ensure Phantom popup always appears when deploy button is clicked.
+
+------------------------------------------------
+
+8. ADD SAFE METADATA CREATION
+
+Use Metaplex standard:
+
+@metaplex-foundation/js
+
+Metadata must include:
+
+name
+symbol
+uri
+sellerFeeBasisPoints = 0
+
+------------------------------------------------
+
+9. KEEP DEPLOY FEE SYSTEM
+
+Deploy fee remains:
+
+0.02 SOL
+
+Send fee using:
+
+SystemProgram.transfer()
+
+before mint creation.
+
+------------------------------------------------
+
+10. SECURITY BEST PRACTICES
+
+Ensure:
+
+- no dynamic program execution
+- no unknown program IDs
+- no backend signature injection
+- transaction fully visible to wallet
+
+------------------------------------------------
+
+EXPECTED RESULT
+
+After refactor:
+
+Phantom Wallet can simulate the transaction
+No "dApp could be malicious" warning
+Wallet signing popup appears instantly
+Token deploy completes successfully
+Mint address returned to UI
