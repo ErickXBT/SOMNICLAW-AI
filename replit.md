@@ -55,6 +55,7 @@ vite.config.ts
 - Serves Vite-built static files from `dist/` with SPA fallback
 - `/api/generate-image` — POST endpoint for AI image generation (prompt + optional reference image)
 - `/api/chat` — POST endpoint for SOMNICLAW AI assistant (gpt-4o-mini)
+- `/api/create-token-transaction` — POST builds V0 VersionedTransaction for SPL token deploy (server-side)
 - `/api/confirm-deploy` — POST saves token metadata JSON after frontend-confirmed on-chain deploy
 - `/api/launch` — POST legacy mock token launch
 - `/api/ai-score` — POST AI risk analysis (score, risk, whale interest, metrics, mint/freeze authority)
@@ -66,8 +67,8 @@ vite.config.ts
 - Primary RPC: Helius (via SOLANA_RPC env var)
 - Fallback RPC: https://api.mainnet-beta.solana.com
 - `getConnectionWithFallback()` tries primary, falls back on error
-- Treasury wallet for deploy fees (0.1 SOL)
-- Deploy fee: 100,000,000 lamports (0.1 SOL)
+- Treasury wallet for deploy fees (0.02 SOL)
+- Deploy fee: 20,000,000 lamports (0.02 SOL)
 
 ### Raydium Integration (server/lib/raydium.ts)
 - Structural placeholder: `createPool()`, `addLiquidity()`, `lockLP()`
@@ -82,10 +83,10 @@ vite.config.ts
 ### Frontend
 
 ### Launchpad (/launchpad)
-- Frontend-built transactions using standard SPL Token instructions (no backend tx building)
-- Deploy flow: frontend builds tx → simulate → Phantom signs → send raw tx → confirm on-chain → backend metadata
+- Backend-built V0 VersionedTransaction via `/api/create-token-transaction`
+- Deploy flow: backend builds V0 tx → frontend simulates → Phantom signs → send raw tx → confirm on-chain → backend metadata
 - Deploy progress tracker with step-by-step status (preparing/signing/confirming/success/failed)
-- Transaction simulation before wallet signing for Phantom compatibility
+- VersionedTransaction (V0 message format) for proper Phantom simulation — no "malicious dApp" warning
 - SOMNI-prefixed CA formatting: `SOMNI-{first6}...{last4}`
 - Deploy fee: 0.02 SOL
 - Enhanced AI analysis: mint authority, freeze authority, supply distribution, liquidity ratio

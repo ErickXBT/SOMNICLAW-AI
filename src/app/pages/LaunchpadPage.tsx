@@ -8,13 +8,8 @@ import {
 import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Connection, PublicKey, LAMPORTS_PER_SOL,
-  Transaction, SystemProgram, Keypair
+  Transaction, SystemProgram, VersionedTransaction
 } from '@solana/web3.js';
-import {
-  createInitializeMintInstruction, createAssociatedTokenAccountInstruction,
-  createMintToInstruction, getAssociatedTokenAddress, getMinimumBalanceForRentExemptMint,
-  MINT_SIZE, TOKEN_PROGRAM_ID
-} from '@solana/spl-token';
 
 type ToastType = 'success' | 'error' | 'loading' | 'info';
 interface Toast { id: string; type: ToastType; message: string; }
@@ -80,7 +75,6 @@ function ToastContainer({ toasts, onRemove }: { toasts: Toast[]; onRemove: (id: 
   );
 }
 
-const TREASURY_WALLET = '6WiXumkgZMMYDVMqspZ7NDumiMTcz4AtnPLunafv1cCa';
 const DEPLOY_FEE_SOL = 0.02;
 
 const DEPLOY_STEPS = [
@@ -478,55 +472,30 @@ export default function LaunchpadPage() {
     const loadingId = addToast('loading', 'Preparing token transaction...');
 
     try {
-      const payer = new PublicKey(walletKey);
-      const mintKeypair = Keypair.generate();
-      const mintPubkey = mintKeypair.publicKey;
-      const mintAddress = mintPubkey.toBase58();
+      const buildRes = await fetch('/api/create-token-transaction', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          walletAddress: walletKey,
+          name: projectName.trim(),
+          symbol: ticker.trim(),
+          description: description.trim(),
+        }),
+      });
 
-      const lamports = await getMinimumBalanceForRentExemptMint(connection);
-      const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
+      const buildData = await buildRes.json();
+      if (!buildRes.ok || !buildData.success) {
+        throw new Error(buildData.error || 'Failed to build transaction');
+      }
 
-      const ata = await getAssociatedTokenAddress(mintPubkey, payer);
-      const mintAmount = BigInt(1_000_000_000) * BigInt(10 ** 9);
+      const { transaction: serializedTx, mintAddress, blockhash, lastValidBlockHeight } = buildData;
 
-      const transaction = new Transaction();
-
-      transaction.add(
-        SystemProgram.transfer({
-          fromPubkey: payer,
-          toPubkey: new PublicKey(TREASURY_WALLET),
-          lamports: Math.floor(DEPLOY_FEE_SOL * LAMPORTS_PER_SOL),
-        })
+      const tx = VersionedTransaction.deserialize(
+        Uint8Array.from(atob(serializedTx), (c) => c.charCodeAt(0))
       );
 
-      transaction.add(
-        SystemProgram.createAccount({
-          fromPubkey: payer,
-          newAccountPubkey: mintPubkey,
-          space: MINT_SIZE,
-          lamports,
-          programId: TOKEN_PROGRAM_ID,
-        })
-      );
-
-      transaction.add(
-        createInitializeMintInstruction(mintPubkey, 9, payer, payer, TOKEN_PROGRAM_ID)
-      );
-
-      transaction.add(
-        createAssociatedTokenAccountInstruction(payer, ata, payer, mintPubkey)
-      );
-
-      transaction.add(
-        createMintToInstruction(mintPubkey, ata, payer, mintAmount)
-      );
-
-      transaction.recentBlockhash = blockhash;
-      transaction.feePayer = payer;
-      transaction.partialSign(mintKeypair);
-
-      const simulation = await connection.simulateTransaction(transaction);
-      if (simulation.value.err) {
+      const simResult = await connection.simulateTransaction(tx);
+      if (simResult.value.err) {
         throw new Error('Transaction simulation failed. Please check your SOL balance.');
       }
 
@@ -539,18 +508,18 @@ export default function LaunchpadPage() {
         addToast('info', 'Waiting for wallet confirmation...', 15000);
       }, 10000);
 
-      let signed;
+      let signed: VersionedTransaction;
       try {
-        signed = await phantom.signTransaction(transaction);
+        signed = await phantom.signTransaction(tx);
       } finally {
         clearTimeout(walletTimeout);
       }
-      const rawTx = signed.serialize();
 
       setDeployStatus('confirming');
       removeToast(signingId);
       const confirmingId = addToast('loading', 'Submitting to Solana...');
 
+      const rawTx = signed.serialize();
       const sig = await connection.sendRawTransaction(rawTx, { skipPreflight: false });
       await connection.confirmTransaction({ signature: sig, blockhash, lastValidBlockHeight }, 'confirmed');
 

@@ -11,7 +11,25 @@ import { getMessages, addMessage } from "./lib/memoryStore.js";
 import {
   getConnectionWithFallback,
   connection as solanaConnection,
+  TREASURY_WALLET_ADDRESS,
+  DEPLOY_FEE_LAMPORTS,
 } from "./lib/solana.js";
+import {
+  Keypair,
+  PublicKey,
+  SystemProgram,
+  TransactionMessage,
+  VersionedTransaction,
+} from "@solana/web3.js";
+import {
+  createInitializeMintInstruction,
+  createAssociatedTokenAccountInstruction,
+  createMintToInstruction,
+  getAssociatedTokenAddress,
+  getMinimumBalanceForRentExemptMint,
+  MINT_SIZE,
+  TOKEN_PROGRAM_ID,
+} from "@solana/spl-token";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -226,6 +244,86 @@ function rateLimit(req: any, res: any, next: any) {
   }
   return next();
 }
+
+app.post("/api/create-token-transaction", rateLimit, async (req, res) => {
+  try {
+    const { walletAddress, name, symbol, description } = req.body || {};
+
+    if (!walletAddress || typeof walletAddress !== "string") {
+      return res.status(400).json({ error: "Wallet address is required" });
+    }
+    let payer: PublicKey;
+    try {
+      payer = new PublicKey(walletAddress);
+    } catch {
+      return res.status(400).json({ error: "Invalid wallet address" });
+    }
+
+    if (!name || typeof name !== "string" || name.trim().length < 1 || name.length > 64) {
+      return res.status(400).json({ error: "Token name is required (1-64 characters)" });
+    }
+    if (!symbol || typeof symbol !== "string" || symbol.trim().length < 1 || symbol.length > 10) {
+      return res.status(400).json({ error: "Token symbol is required (1-10 characters)" });
+    }
+    if (!description || typeof description !== "string" || description.trim().length < 1) {
+      return res.status(400).json({ error: "Description is required" });
+    }
+
+    console.log(`[Deploy] Building V0 token tx for ${name} (${symbol}) by ${walletAddress.slice(0, 8)}...`);
+
+    const connection = await getConnectionWithFallback();
+    const mintKeypair = Keypair.generate();
+    const mintPubkey = mintKeypair.publicKey;
+
+    const lamports = await getMinimumBalanceForRentExemptMint(connection);
+    const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
+    const ata = await getAssociatedTokenAddress(mintPubkey, payer);
+    const mintAmount = BigInt(1_000_000_000) * BigInt(10 ** 9);
+
+    const instructions = [
+      SystemProgram.transfer({
+        fromPubkey: payer,
+        toPubkey: new PublicKey(TREASURY_WALLET_ADDRESS),
+        lamports: DEPLOY_FEE_LAMPORTS,
+      }),
+      SystemProgram.createAccount({
+        fromPubkey: payer,
+        newAccountPubkey: mintPubkey,
+        space: MINT_SIZE,
+        lamports,
+        programId: TOKEN_PROGRAM_ID,
+      }),
+      createInitializeMintInstruction(mintPubkey, 9, payer, payer, TOKEN_PROGRAM_ID),
+      createAssociatedTokenAccountInstruction(payer, ata, payer, mintPubkey),
+      createMintToInstruction(mintPubkey, ata, payer, mintAmount),
+    ];
+
+    const messageV0 = new TransactionMessage({
+      payerKey: payer,
+      recentBlockhash: blockhash,
+      instructions,
+    }).compileToV0Message();
+
+    const versionedTx = new VersionedTransaction(messageV0);
+    versionedTx.sign([mintKeypair]);
+
+    const serialized = Buffer.from(versionedTx.serialize()).toString("base64");
+    const mintAddress = mintPubkey.toBase58();
+
+    console.log(`[Deploy] V0 transaction built for mint ${mintAddress.slice(0, 8)}...`);
+
+    res.json({
+      success: true,
+      transaction: serialized,
+      mintAddress,
+      blockhash,
+      lastValidBlockHeight,
+    });
+  } catch (error: any) {
+    console.error("[Deploy] Error building transaction:", error?.message || error);
+    res.status(500).json({ error: error?.message || "Failed to build deploy transaction" });
+  }
+});
 
 app.post("/api/confirm-deploy", rateLimit, async (req, res) => {
   try {
