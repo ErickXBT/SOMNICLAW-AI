@@ -494,11 +494,6 @@ export default function LaunchpadPage() {
         Uint8Array.from(atob(serializedTx), (c) => c.charCodeAt(0))
       );
 
-      const simResult = await connection.simulateTransaction(tx);
-      if (simResult.value.err) {
-        throw new Error('Transaction simulation failed. Please check your SOL balance.');
-      }
-
       setDeployStatus('signing');
       removeToast(loadingId);
       const signingId = addToast('loading', 'Please sign the transaction in your wallet...');
@@ -508,19 +503,21 @@ export default function LaunchpadPage() {
         addToast('info', 'Waiting for wallet confirmation...', 15000);
       }, 10000);
 
-      let signed: VersionedTransaction;
+      let sig: string;
       try {
-        signed = await phantom.signTransaction(tx);
+        const result = await phantom.signAndSendTransaction(tx, {
+          skipPreflight: false,
+          preflightCommitment: 'confirmed',
+        });
+        sig = result.signature;
       } finally {
         clearTimeout(walletTimeout);
       }
 
       setDeployStatus('confirming');
       removeToast(signingId);
-      const confirmingId = addToast('loading', 'Submitting to Solana...');
+      const confirmingId = addToast('loading', 'Confirming on Solana...');
 
-      const rawTx = signed.serialize();
-      const sig = await connection.sendRawTransaction(rawTx, { skipPreflight: false });
       await connection.confirmTransaction({ signature: sig, blockhash, lastValidBlockHeight }, 'confirmed');
 
       removeToast(confirmingId);
