@@ -10,6 +10,7 @@ import { detectRisk } from "./lib/riskDetector.js";
 import { getMessages, addMessage } from "./lib/memoryStore.js";
 import {
   getConnectionWithFallback,
+  connection as solanaConnection,
 } from "./lib/solana.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -182,6 +183,27 @@ app.post("/api/chat", async (req, res) => {
 
 app.get("/api/health", (_req, res) => {
   res.json({ status: "SOMNICLAW AI ONLINE" });
+});
+
+app.post("/api/rpc", async (req, res) => {
+  try {
+    const rpcUrl = process.env.SOLANA_RPC;
+    if (!rpcUrl) {
+      return res.status(500).json({ error: "Solana RPC not configured" });
+    }
+
+    const response = await fetch(rpcUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(req.body),
+    });
+
+    const data = await response.json();
+    res.json(data);
+  } catch (error: any) {
+    console.error("[RPC Proxy] Error:", error?.message);
+    res.status(502).json({ error: "RPC request failed" });
+  }
 });
 
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();

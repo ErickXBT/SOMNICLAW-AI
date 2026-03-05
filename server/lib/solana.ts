@@ -1,33 +1,26 @@
 import { Connection, PublicKey } from "@solana/web3.js";
 
-const PRIMARY_RPC = process.env.SOLANA_RPC || "";
-const FALLBACK_RPC = "https://api.mainnet-beta.solana.com";
+const RPC_URL = process.env.SOLANA_RPC;
 
-let primaryConnection: Connection | null = null;
-let fallbackConnection: Connection | null = null;
+if (!RPC_URL) {
+  console.error("[Solana] WARNING: SOLANA_RPC environment variable is not set. Using public RPC as fallback.");
+}
+
+const ACTIVE_RPC = RPC_URL || "https://api.mainnet-beta.solana.com";
+
+console.log("[Solana] Using RPC:", ACTIVE_RPC.replace(/api-key=.*/, "api-key=***"));
+
+export const connection = new Connection(ACTIVE_RPC, {
+  commitment: "confirmed",
+  disableRetryOnRateLimit: false,
+});
 
 export function getConnection(): Connection {
-  if (!primaryConnection && PRIMARY_RPC) {
-    primaryConnection = new Connection(PRIMARY_RPC, "confirmed");
-  }
-  if (!fallbackConnection) {
-    fallbackConnection = new Connection(FALLBACK_RPC, "confirmed");
-  }
-  return primaryConnection || fallbackConnection;
+  return connection;
 }
 
 export async function getConnectionWithFallback(): Promise<Connection> {
-  const conn = getConnection();
-  try {
-    await conn.getLatestBlockhash();
-    return conn;
-  } catch (err: any) {
-    console.warn("[Solana] Primary RPC failed, switching to fallback:", err?.message);
-    if (!fallbackConnection) {
-      fallbackConnection = new Connection(FALLBACK_RPC, "confirmed");
-    }
-    return fallbackConnection;
-  }
+  return connection;
 }
 
 export const TREASURY_WALLET_ADDRESS = "6WiXumkgZMMYDVMqspZ7NDumiMTcz4AtnPLunafv1cCa";

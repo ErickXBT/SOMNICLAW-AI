@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import {
-  Connection, PublicKey, clusterApiUrl, LAMPORTS_PER_SOL,
+  Connection, PublicKey, LAMPORTS_PER_SOL,
   Transaction, SystemProgram, Keypair
 } from '@solana/web3.js';
 import {
@@ -43,7 +43,14 @@ function formatCA(address: string): string {
   return `SOMNI-${address.slice(0, 6)}...${address.slice(-4)}`;
 }
 
-const connection = new Connection(clusterApiUrl('mainnet-beta'), 'confirmed');
+const getRpcUrl = () => {
+  if (typeof window !== 'undefined') {
+    return `${window.location.origin}/api/rpc`;
+  }
+  return 'https://api.mainnet-beta.solana.com';
+};
+
+const connection = new Connection(getRpcUrl(), 'confirmed');
 
 function ToastContainer({ toasts, onRemove }: { toasts: Toast[]; onRemove: (id: string) => void }) {
   const colors: Record<ToastType, string> = {
