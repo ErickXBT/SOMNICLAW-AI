@@ -223,26 +223,7 @@ function rateLimit(req: any, res: any, next: any) {
   return next();
 }
 
-const walletDeployStore = new Map<string, number>();
-const WALLET_DEPLOY_COOLDOWN = 3_600_000;
-
-function walletRateLimit(req: any, res: any, next: any) {
-  const wallet = req.body?.walletAddress;
-  if (!wallet) return next();
-
-  const now = Date.now();
-  const lastDeploy = walletDeployStore.get(wallet);
-
-  if (lastDeploy && now - lastDeploy < WALLET_DEPLOY_COOLDOWN) {
-    const remaining = Math.ceil((WALLET_DEPLOY_COOLDOWN - (now - lastDeploy)) / 60_000);
-    return res.status(429).json({
-      error: `Rate limited: 1 deploy per wallet per hour. Try again in ${remaining} minute(s).`,
-    });
-  }
-  return next();
-}
-
-app.post("/api/deploy-token", rateLimit, walletRateLimit, async (req, res) => {
+app.post("/api/deploy-token", rateLimit, async (req, res) => {
   try {
     const { walletAddress, name, symbol, description, website, twitter, telegram, logo } = req.body || {};
 
@@ -318,8 +299,6 @@ app.post("/api/deploy-token", rateLimit, walletRateLimit, async (req, res) => {
       verifySignatures: false,
     });
     const txBase64 = serialized.toString("base64");
-
-    walletDeployStore.set(walletAddress, Date.now());
 
     const mintAddress = mintPubkey.toBase58();
     console.log(`[Deploy] Transaction built for mint ${mintAddress.slice(0, 8)}...`);

@@ -1,0 +1,136 @@
+Fix the SOMNICLAW Launchpad deploy system.
+
+Current issue:
+Wallet signing does not appear in Phantom wallet because the backend rate limiter blocks the deploy request before the transaction reaches the wallet.
+
+Error message:
+"Rate limited: 1 deploy per wallet per hour"
+
+This prevents the Phantom wallet signing popup from appearing.
+
+-------------------------------------
+
+TASKS
+
+1. REMOVE WALLET RATE LIMIT
+
+Locate any rate limit logic in:
+
+server/api/deploy-token.ts
+server/routes/deploy.ts
+server/lib/rateLimit.ts
+
+Remove the rule:
+
+1 deploy per wallet per hour.
+
+Delete or disable any logic like:
+
+if (lastDeploy && Date.now() - lastDeploy < 3600000) {
+  throw new Error("Rate limited: 1 deploy per wallet per hour");
+}
+
+Because the launchpad already uses a deploy fee, spam protection is handled economically.
+
+-------------------------------------
+
+2. ENSURE WALLET SIGNING ALWAYS TRIGGERS
+
+The transaction must always reach Phantom wallet for signing.
+
+Correct flow:
+
+Frontend
+→ request deploy
+→ backend builds transaction
+→ transaction sent to frontend
+→ Phantom wallet signs
+→ signed transaction returned
+→ backend confirms transaction on Solana
+
+Ensure Phantom popup appears every time user clicks:
+
+"Deploy to Solana"
+
+-------------------------------------
+
+3. FIX FRONTEND DEPLOY FLOW
+
+Check LaunchpadPage.tsx
+
+Ensure deploy logic follows:
+
+const tx = await fetch("/api/deploy-token")
+const transaction = await tx.json()
+
+const signedTx = await wallet.signTransaction(transaction)
+
+await connection.sendRawTransaction(signedTx.serialize())
+
+Ensure Phantom wallet is triggered.
+
+-------------------------------------
+
+4. IMPROVE ERROR HANDLING
+
+If Phantom wallet is not connected:
+
+Show message:
+
+"Please connect Phantom wallet before deploying."
+
+If transaction fails:
+
+Show error message in UI.
+
+-------------------------------------
+
+5. KEEP DEPLOY FEE SYSTEM
+
+Keep deploy fee:
+
+0.1 SOL
+
+Ensure fee transfer goes to treasury wallet before token creation.
+
+-------------------------------------
+
+6. DEPLOY STATUS SYSTEM
+
+Keep progress UI steps:
+
+Preparing transaction
+Wallet signing
+Confirming on-chain
+Complete
+
+Ensure step changes correctly after wallet signs.
+
+-------------------------------------
+
+7. PREVENT UI FREEZE
+
+If wallet signing takes longer than 10 seconds:
+
+Show message:
+
+"Waiting for wallet confirmation..."
+
+-------------------------------------
+
+8. SECURITY
+
+Instead of rate limiting per wallet, rely on deploy fee as spam protection.
+
+-------------------------------------
+
+EXPECTED RESULT
+
+After the fix:
+
+Click "Deploy to Solana"
+→ Phantom wallet popup appears
+→ user signs transaction
+→ token deploys successfully
+→ CA (Mint Address) is returned
+→ success modal appears

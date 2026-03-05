@@ -453,12 +453,17 @@ export default function LaunchpadPage() {
 
   const handleDeploy = async () => {
     if (!walletKey || !formValid) return;
+    const phantom = (window as any).solana;
+    if (!phantom?.isPhantom) {
+      addToast('error', 'Please connect Phantom wallet before deploying.');
+      return;
+    }
     setDeploying(true);
+
     setDeployStatus('preparing');
     const loadingId = addToast('loading', 'Creating token on Solana mainnet...');
 
     try {
-      const phantom = (window as any).solana;
 
       const deployRes = await fetch('/api/deploy-token', {
         method: 'POST',
@@ -487,7 +492,17 @@ export default function LaunchpadPage() {
       const txBuffer = Uint8Array.from(atob(txBase64), c => c.charCodeAt(0));
       const transaction = Transaction.from(txBuffer);
 
-      const signed = await phantom.signTransaction(transaction);
+      const walletTimeout = setTimeout(() => {
+        removeToast(signingId);
+        addToast('info', 'Waiting for wallet confirmation...', 15000);
+      }, 10000);
+
+      let signed;
+      try {
+        signed = await phantom.signTransaction(transaction);
+      } finally {
+        clearTimeout(walletTimeout);
+      }
       const rawTx = signed.serialize();
 
       setDeployStatus('confirming');

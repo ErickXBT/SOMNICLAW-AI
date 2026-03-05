@@ -60,7 +60,7 @@ vite.config.ts
 - `/api/launch` — POST legacy mock token launch
 - `/api/ai-score` — POST AI risk analysis (score, risk, whale interest, metrics, mint/freeze authority)
 - `/api/health` — GET health check
-- Rate limiting: 30 req/min per IP, 1 deploy per wallet per hour
+- Rate limiting: 30 req/min per IP (deploy fee serves as spam protection)
 - Global crash protection: uncaughtException + unhandledRejection handlers
 
 ### Solana Integration (server/lib/solana.ts)
