@@ -814,7 +814,7 @@ export default function LaunchpadPage() {
                     <p>Supply: <span className="text-red-400 font-mono">1,000,000,000</span></p>
                     <p>Decimals: <span className="text-red-400 font-mono">9</span></p>
                     <p>Network: <span className="text-red-400">Solana Mainnet</span></p>
-                    <p>Deploy Fee: <span className="text-yellow-400 font-mono">0.1 SOL</span></p>
+                    <p>Deploy Fee: <span className="text-yellow-400 font-mono">0.02 SOL</span></p>
                   </div>
                   <div className="flex items-center gap-2">
                     {walletKey ? (
