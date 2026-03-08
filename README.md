@@ -1,7 +1,7 @@
 
-  # SOMNICLAW Website Figma
+  # SOMNICLAW AI
 
-  This is a code bundle for SOMNICLAW Website Figma. The original project is available at https://www.figma.com/design/Brkn1QxCt7uE6hp8dBTBIb/SOMNICLAW-Website-Figma.
+  This is a code bundle for SOMNICLAW AI. The original project is available at https://somniclaw.xyz/
 
   ## Running the code
 
