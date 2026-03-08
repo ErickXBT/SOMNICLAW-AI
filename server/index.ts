@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config({ path: "./.env" });
 import express from "express";
 import cors from "cors";
 import path from "path";
@@ -326,41 +328,26 @@ app.post("/api/create-token-transaction", rateLimit, async (req, res) => {
 });
 
 app.post("/api/confirm-deploy", rateLimit, async (req, res) => {
+
+  const { signature, mintAddress, name, symbol, description, website, twitter, telegram, logo } = req.body || {};
+
+  if (!signature || !mintAddress) {
+    return res.status(400).json({
+      error: "Signature and mint address are required"
+    });
+  }
+
+  console.log(`[Confirm] Confirming deploy: ${mintAddress.slice(0,8)}... sig=${signature.slice(0,8)}...`);
+
+  const connection = await getConnectionWithFallback();
+
   try {
-    const { signature, mintAddress, name, symbol, description, website, twitter, telegram, logo } = req.body || {};
 
-    if (!signature || !mintAddress) {
-      return res.status(400).json({ error: "Signature and mint address are required" });
-    }
-
-    console.log(`[Confirm] Confirming deploy: ${mintAddress.slice(0, 8)}... sig=${signature.slice(0, 8)}...`);
-
-    const connection = await getConnectionWithFallback();
-
-    let confirmed = false;
-    let attempts = 0;
-    const maxAttempts = 30;
-
-    while (!confirmed && attempts < maxAttempts) {
-      attempts++;
-      const result = await connection.getSignatureStatus(signature);
-      const status = result?.value;
-
-      if (status?.err) {
-        return res.status(400).json({ error: "Transaction failed on-chain", details: status.err });
-      }
-
-      if (status?.confirmationStatus === "confirmed" || status?.confirmationStatus === "finalized") {
-        confirmed = true;
-        break;
-      }
-
-      await new Promise((r) => setTimeout(r, 2000));
-    }
-
-    if (!confirmed) {
-      return res.status(408).json({ error: "Transaction confirmation timed out. It may still confirm — check Solscan." });
-    }
+    const confirmPromise = connection.confirmTransaction(signature, "confirmed");
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error("Confirmation timeout")), 30000)
+    );
+    const status = await Promise.race([confirmPromise, timeoutPromise]);
 
     const metadataDir = path.resolve(__dirname, "../dist/token-metadata");
     if (!fs.existsSync(metadataDir)) {
@@ -400,7 +387,7 @@ app.post("/api/confirm-deploy", rateLimit, async (req, res) => {
       mintAddress,
       metadataUrl: `/token-metadata/${mintAddress}.json`,
       explorerUrl: `https://solscan.io/token/${mintAddress}`,
-      confirmed: status?.confirmationStatus || "processed",
+      confirmed: "confirmed",
     });
   } catch (error: any) {
     console.error("[Confirm] Error:", error?.message || error);

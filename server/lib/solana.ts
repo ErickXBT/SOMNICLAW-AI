@@ -1,16 +1,13 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import { Connection, PublicKey } from "@solana/web3.js";
 
-const RPC_URL = process.env.SOLANA_RPC;
+const RPC_URL = process.env.SOLANA_RPC || "https://api.mainnet-beta.solana.com";
 
-if (!RPC_URL) {
-  console.error("[Solana] WARNING: SOLANA_RPC environment variable is not set. Using public RPC as fallback.");
-}
+console.log("[Solana] Using RPC:", RPC_URL.replace(/api-key=.*/, "api-key=***"));
 
-const ACTIVE_RPC = RPC_URL || "https://api.mainnet-beta.solana.com";
-
-console.log("[Solana] Using RPC:", ACTIVE_RPC.replace(/api-key=.*/, "api-key=***"));
-
-export const connection = new Connection(ACTIVE_RPC, {
+export const connection = new Connection(RPC_URL, {
   commitment: "confirmed",
   disableRetryOnRateLimit: false,
 });
@@ -23,7 +20,7 @@ export async function getConnectionWithFallback(): Promise<Connection> {
   return connection;
 }
 
-export const TREASURY_WALLET_ADDRESS = "6WiXumkgZMMYDVMqspZ7NDumiMTcz4AtnPLunafv1cCa";
+export const TREASURY_WALLET_ADDRESS = "kyfW9HxBCjh9Kd5zQHVEv4mpZN5CWg7yEBm7nf98Juk";
 
 export function getTreasuryWallet(): PublicKey {
   return new PublicKey(TREASURY_WALLET_ADDRESS);

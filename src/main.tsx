@@ -1,3 +1,9 @@
+import * as Sentry from "@sentry/react";
+
+Sentry.init({
+  dsn: "https://ae491c669529f2563a2ff64e2aa5590a@o4511009944043520.ingest.us.sentry.io/4511009957019648",
+  sendDefaultPii: true,
+});
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router";
 import App from "./app/App.tsx";
