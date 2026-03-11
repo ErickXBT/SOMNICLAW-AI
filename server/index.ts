@@ -48,6 +48,10 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: "20mb" }));
 
+app.get("/", (req, res) => {
+  res.send("SOMNICLAW server is running 🚀");
+});
+
 const openai = new OpenAI({
   apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
   baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
