@@ -475,7 +475,7 @@ app.use((err: any, _req: any, res: any, _next: any) => {
 
 const distPath = path.resolve(__dirname, "../dist");
 app.use(express.static(distPath));
-app.get("/{*path}", (_req, res) => {
+app.get("*", (_req, res) => {
   res.sendFile(path.join(distPath, "index.html"));
 });
 
