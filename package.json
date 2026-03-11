@@ -6,7 +6,7 @@
   "scripts": {
   "build": "vite build",
   "start": "npm run build && NODE_ENV=production tsx server/index.ts"
-}
+},
   "dependencies": {
     "@emotion/react": "11.14.0",
     "@emotion/styled": "11.14.1",
